@@ -14,3 +14,7 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: validate
+
+server:
+  servlet:
+    context-path: /api/v1
