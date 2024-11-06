@@ -12,8 +12,8 @@ USE `aboha`;
 -- Table `aboha`.`sidos`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `aboha`.`sidos` (
-    `id` BIGINT NOT NULL,
-    `name` VARCHAR(20) NULL DEFAULT NULL,
+                                               `id` BIGINT NOT NULL,
+                                               `name` VARCHAR(20) NULL DEFAULT NULL,
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB
     DEFAULT CHARACTER SET = utf8mb4
@@ -23,9 +23,9 @@ CREATE TABLE IF NOT EXISTS `aboha`.`sidos` (
 -- Table `aboha`.`guguns`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `aboha`.`guguns` (
-    `id` BIGINT NOT NULL,
-    `sido_id` BIGINT NOT NULL,
-    `name` VARCHAR(20) NULL DEFAULT NULL,
+                                                `id` BIGINT NOT NULL,
+                                                `sido_id` BIGINT NOT NULL,
+                                                `name` VARCHAR(20) NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     INDEX `guguns_sido_to_sidos_id_fk_idx` (`sido_id` ASC),
     CONSTRAINT `guguns_sido_to_sidos_id_fk`
@@ -39,8 +39,8 @@ CREATE TABLE IF NOT EXISTS `aboha`.`guguns` (
 -- Table `aboha`.`contenttypes`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `aboha`.`contenttypes` (
-    `id` BIGINT NOT NULL,
-    `name` VARCHAR(45) NULL DEFAULT NULL,
+                                                      `id` BIGINT NOT NULL,
+                                                      `name` VARCHAR(45) NULL DEFAULT NULL,
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB
     DEFAULT CHARACTER SET = utf8mb4
@@ -50,12 +50,12 @@ CREATE TABLE IF NOT EXISTS `aboha`.`contenttypes` (
 -- Table `aboha`.`attractions`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `aboha`.`attractions` (
-    `id` BIGINT NOT NULL AUTO_INCREMENT,
-    `content_id` BIGINT NULL DEFAULT NULL,
-    `sido_id` BIGINT NULL,
-    `gugun_id` BIGINT NULL,
-    `content_type_id` BIGINT NULL,
-    `first_image1` VARCHAR(100) NULL DEFAULT NULL,
+                                                     `id` BIGINT NOT NULL AUTO_INCREMENT,
+                                                     `content_id` BIGINT NULL DEFAULT NULL,
+                                                     `sido_id` BIGINT NULL,
+                                                     `gugun_id` BIGINT NULL,
+                                                     `content_type_id` BIGINT NULL,
+                                                     `first_image1` VARCHAR(100) NULL DEFAULT NULL,
     `first_image2` VARCHAR(100) NULL DEFAULT NULL,
     `map_level` BIGINT NULL DEFAULT NULL,
     `latitude` DECIMAL(20,17) NULL DEFAULT NULL,
@@ -87,8 +87,8 @@ CREATE TABLE IF NOT EXISTS `aboha`.`attractions` (
 -- Table `aboha`.`users`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `aboha`.`users` (
-    `id` BIGINT NOT NULL AUTO_INCREMENT,
-    `email` VARCHAR(255) NOT NULL,
+                                               `id` BIGINT NOT NULL AUTO_INCREMENT,
+                                               `email` VARCHAR(255) NOT NULL,
     `password` VARCHAR(255) NOT NULL,
     `nickname` VARCHAR(50) NOT NULL,
     `profile_image_url` TEXT NULL,
@@ -106,10 +106,10 @@ CREATE TABLE IF NOT EXISTS `aboha`.`users` (
 -- Table `aboha`.`reviews`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `aboha`.`reviews` (
-    `id` BIGINT NOT NULL AUTO_INCREMENT,
-    `user_id` BIGINT NULL,
-    `attraction_id` BIGINT NULL,
-    `rating` DECIMAL(3,2) NOT NULL DEFAULT 0.0,
+                                                 `id` BIGINT NOT NULL AUTO_INCREMENT,
+                                                 `user_id` BIGINT NULL,
+                                                 `attraction_id` BIGINT NULL,
+                                                 `rating` DECIMAL(3,2) NOT NULL DEFAULT 0.0,
     `content` VARCHAR(255) NULL DEFAULT NULL,
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -132,10 +132,10 @@ CREATE TABLE IF NOT EXISTS `aboha`.`reviews` (
 -- Table `aboha`.`likes`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `aboha`.`likes` (
-    `id` BIGINT NOT NULL AUTO_INCREMENT,
-    `user_id` BIGINT NOT NULL,
-    `attraction_id` BIGINT NOT NULL,
-    PRIMARY KEY (`id`),
+                                               `id` BIGINT NOT NULL AUTO_INCREMENT,
+                                               `user_id` BIGINT NOT NULL,
+                                               `attraction_id` BIGINT NOT NULL,
+                                               PRIMARY KEY (`id`),
     INDEX `likes_user_fk_idx` (`user_id` ASC),
     INDEX `likes_attraction_fk_idx` (`attraction_id` ASC),
     CONSTRAINT `likes_user_fk`
