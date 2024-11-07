@@ -51,7 +51,6 @@ CREATE TABLE IF NOT EXISTS `aboha`.`contenttypes` (
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `aboha`.`attractions` (
                                                      `id` BIGINT NOT NULL AUTO_INCREMENT,
-                                                     `content_id` BIGINT NULL DEFAULT NULL,
                                                      `sido_id` BIGINT NULL,
                                                      `gugun_id` BIGINT NULL,
                                                      `content_type_id` BIGINT NULL,
