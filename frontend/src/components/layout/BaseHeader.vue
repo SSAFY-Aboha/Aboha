@@ -1,7 +1,7 @@
 <script setup>
 import { RouterLink } from 'vue-router'
 import { ref } from 'vue'
-import { Button, Toast } from 'primevue'
+import { Button } from 'primevue'
 import { useToast } from 'primevue/usetoast'
 
 const isLoggedIn = ref(false)
@@ -18,30 +18,48 @@ const show = () => {
 </script>
 
 <template>
-  <Toast position="center" />
-  <header class="flex items-center justify-between gap-10 px-12 py-4">
-    <div class="cursor-pointer logo" @click="show()">
-      <img src="" alt="logo" />
+  <!-- Header -->
+  <header class="flex items-center justify-between gap-10 px-12 py-4 shadow-sm">
+    <div class="cursor-pointer w-44 logo">
+      <RouterLink to="/">
+        <img class="object-center" src="@/assets/aboha_logo.svg" alt="logo" />
+      </RouterLink>
     </div>
     <nav class="flex items-center justify-start flex-1 gap-5 text-gray-500">
       <RouterLink class="hover:text-black" to="/mypage" @click="show()">
-        여행 전체 리스트
+        모든 여행 보러가기
       </RouterLink>
       <RouterLink class="hover:text-black" to="/mypage" @click="show()">
-        여행 전체 리스트
+        개발자 Pick!
       </RouterLink>
+      <Button class="hover:text-black" to="/mypage" @click="show()">
+        개발자에게 커피 사주기
+      </Button>
     </nav>
 
     <div class="flex items-center gap-4">
+      <Button
+        label="당신의 특별하루를 만들어 보세요."
+        severity="secondary"
+        variant="outlined"
+      />
+
       <!-- 로그인 상태라면 로그아웃 버튼 표시 -->
       <template v-if="isLoggedIn">
         <button>로그아웃</button>
-        <RouterLink to="/mypage">마이페이지</RouterLink>
+        <RouterLink to="/mypage"
+          ><Button
+            icon="pi pi-user"
+            severity="info"
+            rounded
+            variant="outlined"
+            aria-label="User"
+        /></RouterLink>
       </template>
       <template v-else>
-        <RouterLink class="text-sm" to="/about">회원가입</RouterLink>
+        <RouterLink class="" to="/about">회원가입</RouterLink>
         <RouterLink to="/login">
-          <Button class="text-sm" label="로그인" severity="secondary" rounded />
+          <Button class="text-sm" label="로그인" severity="" />
         </RouterLink>
       </template>
     </div>
