@@ -1,7 +1,14 @@
 <script setup></script>
 
 <template>
-  <footer class="w-full px-4 py-3 bg-gray-100">footer</footer>
+  <footer class="flex justify-between w-full px-6 py-8 bg-gray-100">
+    <div>
+      <span>ⓒ 2024 Aboha, Inc.</span>
+    </div>
+    <div>
+      <span>SSAFY 12th</span>
+    </div>
+  </footer>
 </template>
 
 <style scoped></style>
