@@ -36,6 +36,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(ErrorResponse.of(HttpStatus.BAD_REQUEST, "요청 본문이 비어 있습니다."));
     }
 
+    // 401 Unauthorized
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<HttpStatus> handleAuthenticationException(UnauthorizedException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
     // 409 Conflict
     @ExceptionHandler(ConflictException.class)
     public ResponseEntity<ErrorResponse> handleConflictException(ConflictException e) {
