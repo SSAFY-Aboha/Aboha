@@ -38,8 +38,9 @@ public class GlobalExceptionHandler {
 
     // 401 Unauthorized
     @ExceptionHandler(UnauthorizedException.class)
-    public ResponseEntity<HttpStatus> handleAuthenticationException(UnauthorizedException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    public ResponseEntity<ErrorResponse> handleUnauthorizedException(UnauthorizedException e) {
+        ErrorResponse errorResponse = ErrorResponse.of(HttpStatus.UNAUTHORIZED, e.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
     }
 
     // 409 Conflict
