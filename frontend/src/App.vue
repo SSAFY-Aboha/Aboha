@@ -1,9 +1,23 @@
 <script setup>
 import { RouterView } from 'vue-router'
+import BaseHeader from '@/components/layout/BaseHeader.vue'
+import BaseFooter from '@/components/layout/BaseFooter.vue'
+
+import { Toast } from 'primevue'
 </script>
 
 <template>
-  <RouterView />
+  <!-- Toast -->
+  <Toast position="center" />
+  <div class="flex flex-col w-full h-svh">
+    <!-- Header -->
+    <BaseHeader />
+    <main class="flex-1">
+      <RouterView />
+    </main>
+    <!-- Footer -->
+    <BaseFooter />
+  </div>
 </template>
 
 <style scoped></style>
