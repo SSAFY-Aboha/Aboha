@@ -1,6 +1,7 @@
 <script setup>
 import MainIntroduction from '@/components/MainIntroduction.vue'
 import SpecsIntroduction from '@/components/SpecsIntroduction.vue'
+import SuggestTrip from '@/components/SuggestTrip.vue'
 </script>
 
 <template>
@@ -17,6 +18,6 @@ import SpecsIntroduction from '@/components/SpecsIntroduction.vue'
 
   <!-- 여행지 컨텐츠 -->
   <section class="flex flex-col items-center justify-center w-full">
-    <SpecsIntroduction />
+    <SuggestTrip />
   </section>
 </template>
