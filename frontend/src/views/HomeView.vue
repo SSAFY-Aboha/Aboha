@@ -1,14 +1,22 @@
 <script setup>
-import MainIntroduction from '@/components/layout/MainIntroduction.vue'
+import MainIntroduction from '@/components/MainIntroduction.vue'
+import SpecsIntroduction from '@/components/SpecsIntroduction.vue'
 </script>
 
 <template>
-  <!-- 소개 Section -->
-  <div class="flex flex-col items-center justify-center w-full h-full">
+  <section
+    class="flex flex-col w-full items-center justify-center h-[calc(100vh-7rem)]"
+  >
     <MainIntroduction />
-  </div>
+  </section>
 
-  <!-- 아보아 스펙 Section -->
+  <!-- 아보아 스펙 컨텐츠 -->
+  <section class="flex flex-col w-full items-center justify-center bg-[#eee]">
+    <SpecsIntroduction />
+  </section>
 
-  <!-- 추천하는 여행지 Section -->
+  <!-- 여행지 컨텐츠 -->
+  <section class="flex flex-col items-center justify-center w-full">
+    <SpecsIntroduction />
+  </section>
 </template>
