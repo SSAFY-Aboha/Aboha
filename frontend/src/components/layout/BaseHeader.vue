@@ -26,10 +26,10 @@ const show = () => {
       </RouterLink>
     </div>
     <nav class="flex items-center justify-start flex-1 gap-5 text-gray-500">
-      <RouterLink class="hover:text-black" to="/mypage" @click="show()">
+      <RouterLink class="hover:text-black" to="/trips" @click="show()">
         모든 여행 보러가기
       </RouterLink>
-      <RouterLink class="hover:text-black" to="/mypage" @click="show()">
+      <RouterLink class="hover:text-black" to="/trips" @click="show()">
         개발자 Pick!
       </RouterLink>
       <Button class="hover:text-black" to="/mypage" @click="show()">
@@ -38,6 +38,7 @@ const show = () => {
     </nav>
 
     <div class="flex items-center gap-4">
+      <!-- 클릭시 SurveyModal 띄우기 -->
       <Button
         label="당신의 특별하루를 만들어 보세요."
         severity="secondary"
@@ -57,7 +58,7 @@ const show = () => {
         /></RouterLink>
       </template>
       <template v-else>
-        <RouterLink class="" to="/about">회원가입</RouterLink>
+        <RouterLink class="" to="/signup">회원가입</RouterLink>
         <RouterLink to="/login">
           <Button class="text-sm" label="로그인" severity="" />
         </RouterLink>
