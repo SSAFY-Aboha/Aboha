@@ -1,16 +1,23 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterView } from 'vue-router'
+import BaseHeader from '@/components/layout/BaseHeader.vue'
+import BaseFooter from '@/components/layout/BaseFooter.vue'
+
+import { Toast } from 'primevue'
 </script>
 
 <template>
-  <header>
-    <nav>
-      <RouterLink to="/">Home</RouterLink>
-      <RouterLink to="/about">About</RouterLink>
-    </nav>
-  </header>
-
-  <RouterView />
+  <!-- Toast -->
+  <Toast position="center" />
+  <div class="flex flex-col w-full h-svh">
+    <!-- Header -->
+    <BaseHeader />
+    <main class="flex-1 w-full">
+      <RouterView />
+    </main>
+    <!-- Footer -->
+    <BaseFooter />
+  </div>
 </template>
 
 <style scoped></style>
