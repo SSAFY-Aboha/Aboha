@@ -12,7 +12,7 @@ import { Toast } from 'primevue'
   <div class="flex flex-col w-full h-svh">
     <!-- Header -->
     <BaseHeader />
-    <main class="flex flex-col items-center justify-center flex-1 w-full">
+    <main class="flex-1 w-full">
       <RouterView />
     </main>
     <!-- Footer -->

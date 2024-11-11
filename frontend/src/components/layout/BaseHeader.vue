@@ -3,8 +3,10 @@ import { RouterLink } from 'vue-router'
 import { ref } from 'vue'
 import { Button } from 'primevue'
 import { useToast } from 'primevue/usetoast'
+import SurveyModal from '../SurveyModal.vue'
 
 const isLoggedIn = ref(false)
+const visible = ref(false)
 const toast = useToast()
 
 const show = () => {
@@ -32,9 +34,6 @@ const show = () => {
       <RouterLink class="hover:text-black" to="/trips" @click="show()">
         개발자 Pick!
       </RouterLink>
-      <Button class="hover:text-black" to="/mypage" @click="show()">
-        개발자에게 커피 사주기
-      </Button>
     </nav>
 
     <div class="flex items-center gap-4">
@@ -43,6 +42,7 @@ const show = () => {
         label="당신의 특별하루를 만들어 보세요."
         severity="secondary"
         variant="outlined"
+        @click="visible = true"
       />
 
       <!-- 로그인 상태라면 로그아웃 버튼 표시 -->
@@ -65,6 +65,8 @@ const show = () => {
       </template>
     </div>
   </header>
+  <!-- SurveyModal -->
+  <SurveyModal v-model:visible="visible" />
 </template>
 
 <style scoped></style>
