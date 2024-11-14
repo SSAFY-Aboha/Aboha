@@ -1,6 +1,4 @@
-<script setup>
-import 'primeicons/primeicons.css'
-</script>
+<script setup></script>
 
 <template>
   <div class="flex flex-col items-center justify-center py-10 gap-7 size-full">
@@ -41,6 +39,7 @@ import 'primeicons/primeicons.css'
             <span class="text-3xl font-bold">{{ 22 }}</span>
             <span class="text-lg text-gray-500">등록된 여행 계획</span>
           </div>
+          <!-- 아이콘 -->
           <span class="text-2xl pi pi-calendar icon-size"></span>
         </li>
       </ul>

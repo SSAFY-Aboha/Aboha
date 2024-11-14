@@ -1,22 +1,10 @@
 <script setup>
 import { RouterLink } from 'vue-router'
 import { ref } from 'vue'
-import { Button } from 'primevue'
-import { useToast } from 'primevue/usetoast'
-import SurveyModal from '../SurveyModal.vue'
+import { Button } from '@/components/ui/button'
 
 const isLoggedIn = ref(false)
 const visible = ref(false)
-const toast = useToast()
-
-const show = () => {
-  toast.add({
-    severity: 'secondary',
-    summary: '로그인 경고',
-    detail: '로그인 후 이용해주세요.',
-    life: 1000,
-  })
-}
 </script>
 
 <template>
@@ -60,13 +48,13 @@ const show = () => {
       <template v-else>
         <RouterLink class="" to="/signup">회원가입</RouterLink>
         <RouterLink to="/login">
-          <Button class="text-sm" label="로그인" severity="" />
+          <Button class="text-sm bg-green-500">로그인</Button>
         </RouterLink>
       </template>
     </div>
   </header>
   <!-- SurveyModal -->
-  <SurveyModal v-model:visible="visible" />
+  <!-- <SurveyModal v-model:visible="visible" /> -->
 </template>
 
 <style scoped></style>
