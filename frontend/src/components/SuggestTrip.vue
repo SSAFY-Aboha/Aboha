@@ -16,7 +16,7 @@ import { RouterLink } from 'vue-router'
           :key="index"
           class="relative z-10 transition-all duration-300 cursor-pointer hover:scale-95"
         >
-          <RouterLink :to="`/place/${index}`">
+          <RouterLink :to="`#` /*`/place/${index}`*/">
             <div class="flex flex-col items-center justify-center gap-2">
               <!-- <Image
                 imageClass="min-w-[240px] max-h-[240px] rounded-md"

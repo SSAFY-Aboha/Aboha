@@ -10,12 +10,26 @@ import BaseFooter from '@/components/layout/BaseFooter.vue'
   <div class="flex flex-col w-full h-svh">
     <!-- Header -->
     <BaseHeader />
-    <main class="flex-1 w-full">
-      <RouterView />
+    <main class="flex-1 w-full will-change-auto">
+      <RouterView v-slot="{ Component }">
+        <Transition name="fade" mode="out-in" appear>
+          <component :is="Component" :key="$route.path" />
+        </Transition>
+      </RouterView>
     </main>
     <!-- Footer -->
     <BaseFooter />
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 150ms ease-in;
+}
+</style>
