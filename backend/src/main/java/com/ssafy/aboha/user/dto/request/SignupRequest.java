@@ -15,7 +15,7 @@ public record SignupRequest(
         String email,
         @NotBlank(message = "비밀번호가 입력되지 않았습니다.")
         @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,20}$",
-                message = "비밀번호는 8자 아상의 영문, 숫자, 특수문자로 구성되어야 합니다.")
+                message = "비밀번호는 8자 이상의 영문, 숫자, 특수문자로 구성되어야 합니다.")
         String password
 ) {
 }
