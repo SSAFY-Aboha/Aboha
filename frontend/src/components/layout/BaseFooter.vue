@@ -1,5 +1,5 @@
 <script setup>
-import { Button } from 'primevue'
+import { Button } from '@/components/ui/button'
 </script>
 
 <template>

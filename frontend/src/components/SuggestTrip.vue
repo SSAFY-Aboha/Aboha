@@ -1,5 +1,4 @@
 <script setup>
-import { Image } from 'primevue'
 import { RouterLink } from 'vue-router'
 </script>
 
@@ -19,11 +18,11 @@ import { RouterLink } from 'vue-router'
         >
           <RouterLink :to="`/place/${index}`">
             <div class="flex flex-col items-center justify-center gap-2">
-              <Image
+              <!-- <Image
                 imageClass="min-w-[240px] max-h-[240px] rounded-md"
                 src="/src/assets/mainPage_image.jpg"
                 alt="Image"
-              />
+              /> -->
               <div class="flex items-center justify-between w-full">
                 <div class="flex flex-col justify-start text-xl font-bold">
                   <span class="text-sm">{{ '여행지 이름' }}</span>
