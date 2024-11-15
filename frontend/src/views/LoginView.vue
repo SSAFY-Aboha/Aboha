@@ -17,7 +17,7 @@ import SocialLoginBox from '@/components/Login/SocialLoginBox.vue'
         <!-- 로그인 Form -->
         <LoginForm />
         <div class="text-sm text-center">
-          <p class="italic">아직 아보하 회원이 아니신가요?</p>
+          <span class="mr-2 italic">아직 아보하 회원이 아니신가요?</span>
           <router-link class="underline hover:font-bold" to="/signup"
             >가입하러가기</router-link
           >
