@@ -16,12 +16,16 @@ const visible = ref(false)
       </RouterLink>
     </div>
     <nav class="flex items-center justify-start flex-1 gap-5 text-gray-500">
-      <RouterLink class="hover:text-black" to="/trips" @click="show()">
+      <RouterLink class="hover:text-black" to="/trips">
         모든 여행 보러가기
       </RouterLink>
-      <RouterLink class="hover:text-black" to="/trips" @click="show()">
-        개발자 Pick!
+      <RouterLink class="hover:text-black" to="/"> 개발자 Pick! </RouterLink>
+      <RouterLink class="hover:text-black" :to="{ name: 'abog' }">
+        아보하 Log
       </RouterLink>
+      <Button class="text-black bg-white hover:bg-gray-50">
+        아보하 추천받기
+      </Button>
     </nav>
 
     <div class="flex items-center gap-4">
