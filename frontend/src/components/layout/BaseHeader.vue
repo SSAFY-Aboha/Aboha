@@ -35,15 +35,11 @@ const visible = ref(false)
 
       <!-- 로그인 상태라면 로그아웃 버튼 표시 -->
       <template v-if="isLoggedIn">
-        <button>로그아웃</button>
-        <RouterLink to="/mypage"
-          ><Button
-            icon="pi pi-user"
-            severity="info"
-            rounded
-            variant="outlined"
-            aria-label="User"
-        /></RouterLink>
+        <button class="px-3 py-2 rounded-xl hover:bg-gray-100">로그아웃</button>
+        <RouterLink to="/mypage">
+          <Button class="bg-transparent rounded-full hover:bg-gray-100">
+            <i class="text-black pi pi-user"></i> </Button
+        ></RouterLink>
       </template>
       <template v-else>
         <RouterLink class="" to="/signup">회원가입</RouterLink>
