@@ -19,7 +19,13 @@ server:
   servlet:
     context-path: /api/v1
     session:
-      timeout: 1m
+      cookie:
+        max-age: 604800 # 쿠키 만료 시간: 7일 (초 단위)
+        path: "/"       # 쿠키 경로
+        secure: false    # HTTPS 환경에서만 쿠키 전송
+        http-only: true # JavaScript에서 쿠키 접근 금지
+        same-site: lax  # SameSite 설정
+      timeout: 7d       # 세션 유지 시간: 7일
 
 logging:
   level:
