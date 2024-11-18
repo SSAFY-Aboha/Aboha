@@ -1,5 +1,4 @@
 <script setup>
-import { Button } from '@/components/ui/button'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { ref } from 'vue'
 import Input from '../ui/input/Input.vue'

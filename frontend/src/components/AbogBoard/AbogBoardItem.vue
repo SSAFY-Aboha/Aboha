@@ -18,10 +18,10 @@ const { id, nickname, title, content, date, tags, image, like } = props.data
 
 <template>
   <li
-    class="flex flex-col items-center justify-start w-screen max-w-5xl min-w-80"
+    class="flex flex-col items-center justify-start w-screen max-w-6xl min-w-80"
   >
     <!-- header -->
-    <div class="flex flex-col justify-center h-full max-w-md gap-2">
+    <div class="flex flex-col justify-center h-full max-w-xl gap-2">
       <div class="relative flex items-center justify-between gap-2 px-2">
         <!-- user 정보 -->
         <Avatar class="size-8">

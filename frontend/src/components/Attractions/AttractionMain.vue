@@ -1,43 +1,21 @@
 <script setup>
 import AttractionList from '@/components/Attractions/AttractionList.vue'
-import { onMounted, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref } from 'vue'
 import AttractionNav from './AttractionNav.vue'
 
-const route = useRoute()
-
-const attractionListRef = ref(null)
-
-onMounted(() => {
-  const infiniteScrollHandler = (entries, observer) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        // 데이터 가져오기
-        console.log('데이터 가져오기')
-
-        // 현재 observer에서 제외
-        observer.unobserve(entry.target)
-
-        // 새로운 observer 추가
-        // observer.observe(attractionListRef.value.observerTarget)
-      }
-    })
-  }
-  // 무한 스크롤을 위한 observer
-  const observer = new IntersectionObserver(infiniteScrollHandler, {
-    threshold: 0.7,
-  })
-
-  attractionListRef.value?.observerTarget &&
-    observer.observe(attractionListRef.value.observerTarget)
-})
-
-watch(
-  () => route.query,
-  query => {
-    console.log(query)
+const attractionList = ref([
+  {
+    id: 26183,
+    title: '괴산고추축제',
+    sidoCode: 33,
+    sidoName: '충청북도',
+    gugunCode: 1,
+    gugunName: '괴산군',
+    image: 'http://tong.visitkorea.or.kr/cms/resource/77/2997377_image2_1.png',
+    likeCount: 0,
+    tags: ['축제', '충청북도', '괴산군'],
   },
-)
+])
 </script>
 
 <template>
@@ -52,7 +30,7 @@ watch(
     </div>
 
     <div class="mx-auto my-0 mb-3 max-w-7xl md:px-8">
-      <AttractionList ref="attractionListRef" />
+      <AttractionList ref="attractionListRef" :initData="attractionList" />
     </div>
     <div class="w-full bg-[#eee] h-52"></div>
   </main>

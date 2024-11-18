@@ -7,7 +7,7 @@ import SuggestTrip from '@/components/SuggestTrip.vue'
 <template>
   <div class="home">
     <section
-      class="flex flex-col w-full items-center justify-center h-[calc(100vh-7rem)]"
+      class="flex flex-col w-full items-center justify-center h-[calc(100vh-5rem)]"
     >
       <MainIntroduction />
     </section>

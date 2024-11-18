@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import AbogBoardItem from './AbogBoardItem.vue'
+import AbogBoardSkeleton from '@/components/AbogBoard/AbogBoardSkeleton.vue'
 
 const boardList = ref([
   {
@@ -40,6 +41,7 @@ const boardList = ref([
   <div class="w-full h-full">
     <ul class="flex flex-col gap-6">
       <AbogBoardItem v-for="each in boardList" :data="each" :key="each.id" />
+      <AbogBoardSkeleton v-for="each in 3" :key="each" />
     </ul>
   </div>
 </template>

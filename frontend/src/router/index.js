@@ -8,6 +8,7 @@ import AbogBoardView from '@/views/AbogBoardView.vue'
 import AbogBoardEditor from '@/components/AbogBoard/AbogBoardEditor.vue'
 import AbogBoardMain from '@/components/AbogBoard/AbogBoardMain.vue'
 import AttractionDetail from '@/components/Attractions/AttractionDetail.vue'
+import AttractionMain from '@/components/Attractions/AttractionMain.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -41,8 +42,7 @@ const router = createRouter({
         {
           path: '',
           name: 'trips-main',
-          component: () =>
-            import('@/components/Attractions/AttractionMain.vue'),
+          component: AttractionMain,
         },
         {
           path: ':tripId',

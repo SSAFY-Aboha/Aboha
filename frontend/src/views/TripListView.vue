@@ -5,7 +5,6 @@ import { RouterView } from 'vue-router'
 <template>
   <div>
     <!-- 여기에 TripListView의 다른 내용들 -->
-
     <router-view></router-view>
   </div>
 </template>
