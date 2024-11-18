@@ -4,7 +4,18 @@ package com.ssafy.aboha.abog.domain;
 import com.ssafy.aboha.attraction.domain.Attraction;
 import com.ssafy.aboha.common.BaseEntity;
 import com.ssafy.aboha.user.domain.User;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -40,7 +51,10 @@ public class Abog extends BaseEntity {
     @Column(name = "comment_count")
     private Long commentCount;
 
-    // TODO: 이미지 적용 전
+    @OneToMany(mappedBy = "abog", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AbogImage> images;
+
+    // TODO: 해시태그 적용 전
 
     @Builder
     public Abog(User user, Attraction attraction, String title, String content) {
