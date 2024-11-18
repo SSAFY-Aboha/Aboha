@@ -1,18 +1,23 @@
 <script setup>
 import { RouterLink } from 'vue-router'
-import { ref } from 'vue'
 import { Button } from '@/components/ui/button'
+import useUserStore from '@/stores/user'
 
-const isLoggedIn = ref(false)
-const visible = ref(false)
+const { isLogin } = useUserStore()
+
+// const isLoggedIn = ref(false)
 </script>
 
 <template>
   <!-- Header -->
-  <header class="flex items-center justify-between gap-10 px-12 py-4 shadow-sm">
+  <header class="flex items-center justify-between gap-10 px-12 py-2 shadow-sm">
     <div class="cursor-pointer w-44 logo">
-      <RouterLink to="/">
-        <img class="object-center" src="@/assets/aboha_logo.svg" alt="logo" />
+      <RouterLink to="/" replace>
+        <img
+          class="object-center w-36"
+          src="@/assets/aboha_logo.svg"
+          alt="logo"
+        />
       </RouterLink>
     </div>
     <nav class="flex items-center justify-start flex-1 gap-5 text-gray-500">
@@ -34,11 +39,10 @@ const visible = ref(false)
         label="당신의 특별하루를 만들어 보세요."
         severity="secondary"
         variant="outlined"
-        @click="visible = true"
       />
 
       <!-- 로그인 상태라면 로그아웃 버튼 표시 -->
-      <template v-if="isLoggedIn">
+      <template v-if="isLogin">
         <button class="px-3 py-2 rounded-xl hover:bg-gray-100">로그아웃</button>
         <RouterLink to="/mypage">
           <Button class="bg-transparent rounded-full hover:bg-gray-100">

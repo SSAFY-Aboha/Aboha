@@ -2,6 +2,20 @@ import { localAxios } from '@/utils/http-commons'
 
 const axios = localAxios()
 
+// 로그인 상태 확인
+const checkLogin = async (success, fail) => {
+  try {
+    const response = await axios.get('/api/v1/auth/check-status')
+    if (response.status === 200) {
+      success && success()
+      return response
+    }
+  } catch (error) {
+    fail && fail()
+    return error
+  }
+}
+
 // 로그인
 /**
  * @param { email : string, password : string } user
@@ -10,10 +24,10 @@ const login = async (user, success, fail) => {
   const response = await axios.post('/api/v1/auth/login', user)
 
   if (response.status === 200) {
-    success()
+    success && success()
     return response.data
   } else {
-    fail()
+    fail && fail()
     return response
   }
 }
@@ -27,10 +41,10 @@ const logout = async (user, success, fail) => {
   const response = await axios.post('/api/v1/auth/logout', user)
 
   if (response.status === 200) {
-    success()
+    success && success()
     return response
   } else {
-    fail()
+    fail && fail()
     return response
   }
 }
@@ -47,10 +61,10 @@ const logout = async (user, success, fail) => {
 const signup = async (user, success, fail) => {
   const response = await axios.post('/api/v1/users/signup', user)
   if (response.status === 200) {
-    success()
+    success && success()
     return response
   } else {
-    fail()
+    fail && fail()
     return response
   }
 }
@@ -60,10 +74,10 @@ const checkNickname = async (nickname, success, fail) => {
   const response = await axios.get('/api/v1/users/check-nickname', nickname)
 
   if (response.status === 200) {
-    success()
+    success && success()
     return response
   } else {
-    fail()
+    fail && fail()
     return response
   }
 }
@@ -73,10 +87,10 @@ const checkEmail = async (email, success, fail) => {
   const response = await axios.get('/api/v1/users/check-email', email)
 
   if (response.status === 200) {
-    success()
+    success && success()
     return response
   } else {
-    fail()
+    fail && fail()
     return response
   }
 }
@@ -87,4 +101,4 @@ const checkEmail = async (email, success, fail) => {
 
 // 회원 탈퇴
 
-export default { login, signup, logout, checkNickname, checkEmail }
+export default { checkLogin, login, signup, logout, checkNickname, checkEmail }

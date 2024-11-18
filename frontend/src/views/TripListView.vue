@@ -1,6 +1,12 @@
+<script setup>
+import { RouterView } from 'vue-router'
+</script>
+
 <template>
-  <div class="login">
-    <h1>This is an TripList page</h1>
+  <div>
+    <!-- 여기에 TripListView의 다른 내용들 -->
+
+    <router-view></router-view>
   </div>
 </template>
 

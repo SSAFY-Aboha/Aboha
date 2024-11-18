@@ -6,21 +6,20 @@ const useUserStore = defineStore('user', () => {
   // ? state
   // 로그인 상태
   const isLogin = ref(false)
+  const userInfo = ref({})
 
   // ? computed
 
   // ? action
   // 초기화 함수 - 쿠키에서 JSESSIONID 확인
   const initializeAuth = () => {
-    // 쿠키에서 JSESSIONID 확인
-    const jSessionId = document.cookie
-      .split('; ')
-      .find(row => row.startsWith('JSESSIONID='))
-
-    // JSESSIONID가 존재하면 로그인 상태로 설정
-    if (jSessionId) {
-      isLogin.value = true
-    }
+    userAPI.checkLogin().then(response => {
+      if (response.status === 200) {
+        console.log('in store', response)
+        isLogin.value = true
+        userInfo.value = response.data
+      }
+    })
   }
 
   // 로그인

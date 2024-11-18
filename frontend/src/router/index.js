@@ -7,7 +7,7 @@ import TripListView from '@/views/TripListView.vue'
 import AbogBoardView from '@/views/AbogBoardView.vue'
 import AbogBoardEditor from '@/components/AbogBoard/AbogBoardEditor.vue'
 import AbogBoardMain from '@/components/AbogBoard/AbogBoardMain.vue'
-import AbogBoardDetail from '@/components/AbogBoard/AbogBoardDetail.vue'
+import AttractionDetail from '@/components/Attractions/AttractionDetail.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -15,12 +15,12 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView,
+      component: () => import('@/views/HomeView.vue'),
     },
     {
       path: '/login',
       name: 'login',
-      component: LoginView,
+      component: () => import('@/views/LoginView.vue'),
     },
     {
       path: '/signup',
@@ -36,37 +36,46 @@ const router = createRouter({
       path: '/trips',
       name: 'trips',
       component: TripListView,
-    },
-    {
-      path: '/trips/:tripId',
-      name: 'trips-detail',
-      component: TripListView,
-    },
-    {
-      path: '/abog',
-      name: 'abog',
-      component: AbogBoardView,
-      redirect: { name: 'abog-main' },
+      redirect: { name: 'trips-main' },
       children: [
         {
-          path: '/abog/main',
-          name: 'abog-main',
-          component: AbogBoardMain,
+          path: '',
+          name: 'trips-main',
+          component: () =>
+            import('@/components/Attractions/AttractionMain.vue'),
         },
         {
-          path: '/abog/edit',
-          name: 'abog-edit',
-          component: AbogBoardEditor,
-        },
-        {
-          path: ':abogId',
-          name: 'abog-detail',
-          component: AbogBoardDetail,
+          path: ':tripId',
+          name: 'trips-detail',
+          component: AttractionDetail,
           props: true,
         },
       ],
     },
+    {
+      path: '/abog',
+      name: 'abog',
+      component: () => import('@/views/AbogBoardView.vue'),
+      redirect: { name: 'abog-main' },
+      children: [
+        {
+          path: '',
+          name: 'abog-main',
+          component: () => import('@/components/AbogBoard/AbogBoardMain.vue'),
+        },
+        {
+          path: 'edit',
+          name: 'abog-edit',
+          component: () => import('@/components/AbogBoard/AbogBoardEditor.vue'),
+        },
+      ],
+    },
   ],
+})
+
+router.beforeEach((to, from, next) => {
+  console.log('Navigating from:', from.path, 'to:', to.path)
+  next()
 })
 
 export default router
