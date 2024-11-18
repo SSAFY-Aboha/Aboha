@@ -2,11 +2,15 @@ package com.ssafy.aboha.attraction.repository;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.ssafy.aboha.attraction.domain.*;
+import com.ssafy.aboha.attraction.domain.Attraction;
+import com.ssafy.aboha.attraction.domain.QAttraction;
+import com.ssafy.aboha.attraction.domain.QContentType;
+import com.ssafy.aboha.attraction.domain.QGugun;
+import com.ssafy.aboha.attraction.domain.QSido;
 import jakarta.persistence.EntityManager;
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
+import java.util.Optional;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public class AttractionCustomRepositoryImpl implements AttractionCustomRepository {
@@ -47,6 +51,21 @@ public class AttractionCustomRepositoryImpl implements AttractionCustomRepositor
                 .distinct()
                 .toList();
 
+    }
+
+    @Override
+    public Optional<Attraction> findByAttractionId(Integer id) {
+        QAttraction qAttraction = QAttraction.attraction;
+        QGugun qGugun = QGugun.gugun;
+
+        return Optional.ofNullable(
+            queryFactory
+                .selectFrom(qAttraction)
+                .leftJoin(qAttraction.gugun, qGugun).fetchJoin()
+                .where(qAttraction.id.eq(id))
+                .limit(1)
+                .fetchOne()
+        );
     }
 
 }
