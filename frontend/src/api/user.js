@@ -6,9 +6,16 @@ const axios = localAxios()
 /**
  * @param { email : string, password : string } user
  * */
-const login = async user => {
-  const response = await axios.get('/api/v1/auth/login', user)
-  return response.data
+const login = async (user, success, fail) => {
+  const response = await axios.post('/api/v1/auth/login', user)
+
+  if (response.status === 200) {
+    success()
+    return response.data
+  } else {
+    fail()
+    return response
+  }
 }
 
 // 로그아웃
@@ -16,9 +23,16 @@ const login = async user => {
  * @param { email : string, password : string } user
  * @header { Authorization : Bearer token }
  * */
-const logout = async user => {
+const logout = async (user, success, fail) => {
   const response = await axios.post('/api/v1/auth/logout', user)
-  return response.data
+
+  if (response.status === 200) {
+    success()
+    return response
+  } else {
+    fail()
+    return response
+  }
 }
 
 // 회원가입
@@ -30,21 +44,41 @@ const logout = async user => {
  * ❗8자 이상 20자 이하 ❗
  * ❗영문자, 숫자, 특수문자 조합 ❗
  */
-const signup = async user => {
+const signup = async (user, success, fail) => {
   const response = await axios.post('/api/v1/users/signup', user)
-  return response.data
+  if (response.status === 200) {
+    success()
+    return response
+  } else {
+    fail()
+    return response
+  }
 }
 
 // 닉네임 중복 확인
-const checkNickname = async nickname => {
+const checkNickname = async (nickname, success, fail) => {
   const response = await axios.get('/api/v1/users/check-nickname', nickname)
-  return response.data
+
+  if (response.status === 200) {
+    success()
+    return response
+  } else {
+    fail()
+    return response
+  }
 }
 
 // 이메일 중복 확인
-const checkEmail = async email => {
+const checkEmail = async (email, success, fail) => {
   const response = await axios.get('/api/v1/users/check-email', email)
-  return response.data
+
+  if (response.status === 200) {
+    success()
+    return response
+  } else {
+    fail()
+    return response
+  }
 }
 
 // 회원 정보 조회
@@ -53,4 +87,4 @@ const checkEmail = async email => {
 
 // 회원 탈퇴
 
-export { login, signup, logout, checkNickname, checkEmail }
+export default { login, signup, logout, checkNickname, checkEmail }

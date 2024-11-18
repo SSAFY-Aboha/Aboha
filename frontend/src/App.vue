@@ -1,7 +1,15 @@
 <script setup>
+import { onMounted } from 'vue'
 import { RouterView } from 'vue-router'
 import BaseHeader from '@/components/layout/BaseHeader.vue'
 import BaseFooter from '@/components/layout/BaseFooter.vue'
+import useUserStore from '@/stores/user'
+
+const userStore = useUserStore()
+// cookie에서 JSESSIONID 확인
+onMounted(() => {
+  userStore.initializeAuth()
+})
 </script>
 
 <template>
