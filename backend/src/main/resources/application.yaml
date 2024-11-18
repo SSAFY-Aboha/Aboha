@@ -18,3 +18,5 @@ spring:
 server:
   servlet:
     context-path: /api/v1
+    session:
+      timeout: 1m
