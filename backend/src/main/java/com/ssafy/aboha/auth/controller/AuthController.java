@@ -6,7 +6,9 @@ import com.ssafy.aboha.user.dto.response.UserResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +34,16 @@ public class AuthController {
             session.invalidate(); // 세션 무효화
         }
         return ResponseEntity.noContent().build(); // 204 No Content 반환
+    }
+
+    // 세션에 저장된 사용자 정보 확인용 엔드포인트
+    @GetMapping("/session-user")
+    public ResponseEntity<UserResponse> getSessionUser(HttpSession session) {
+        UserResponse user = (UserResponse) session.getAttribute("user");
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.ok(user);
     }
 
 }
