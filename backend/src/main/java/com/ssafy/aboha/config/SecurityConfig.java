@@ -2,6 +2,7 @@ package com.ssafy.aboha.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -18,18 +19,18 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session
-                    .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // 세션을 통한 인증 관리
-                )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/users/signup", "/users/check-nickname", "/users/check-email").permitAll()
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/attractions/**").permitAll()
-                        .requestMatchers("/abogs/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/abogs/**").permitAll()
 
-//                        .requestMatchers("/users/**", "/auth/**", "/attractions", "/abogs/**").permitAll()
                         .anyRequest().authenticated()
+                )
+                .sessionManagement(session -> session
+                    .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // 세션을 통한 인증 관리
                 );
+        // TODO: 403 Forbidden에 대한 예외 처리 추가
         return http.build();
     }
 
