@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,13 +17,18 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/users/**", "/attractions", "/abogs/**").permitAll()
-                        .anyRequest().authenticated()
-                )
+                .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // 세션을 통한 인증 관리
+                    .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // 세션을 통한 인증 관리
+                )
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/users/signup", "/users/check-nickname", "/users/check-email").permitAll()
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/attractions/**").permitAll()
+                        .requestMatchers("/abogs/**").permitAll()
+
+//                        .requestMatchers("/users/**", "/auth/**", "/attractions", "/abogs/**").permitAll()
+                        .anyRequest().authenticated()
                 );
         return http.build();
     }
