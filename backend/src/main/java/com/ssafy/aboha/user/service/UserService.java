@@ -1,13 +1,11 @@
 package com.ssafy.aboha.user.service;
 
+import com.ssafy.aboha.common.exception.ConflictException;
 import com.ssafy.aboha.user.domain.User;
 import com.ssafy.aboha.user.dto.request.SignupRequest;
 import com.ssafy.aboha.user.dto.response.UniqueResponse;
-import com.ssafy.aboha.user.exception.DuplicateEmailException;
-import com.ssafy.aboha.user.exception.DuplicateNicknameException;
 import com.ssafy.aboha.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * 회원가입
@@ -58,13 +56,13 @@ public class UserService {
 
     private void verifyUniqueNickname(String nickname) {
         if(userRepository.existsUserByNickname(nickname)) {
-            throw new DuplicateNicknameException("이미 존재하는 닉네임입니다.");
+            throw new ConflictException("이미 존재하는 닉네임입니다.");
         }
     }
 
     private void verifyUniqueEmail(String email) {
         if(userRepository.existsUserByEmail(email)) {
-            throw new DuplicateEmailException("이미 회원가입한 이메일입니다.");
+            throw new ConflictException("이미 회원가입한 이메일입니다.");
         }
     }
 

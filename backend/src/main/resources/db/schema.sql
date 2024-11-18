@@ -92,7 +92,7 @@ CREATE TABLE IF NOT EXISTS `aboha`.`attractions` (
 -- Table `aboha`.`users`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `aboha`.`users` (
-                                               `id` BIGINT NOT NULL AUTO_INCREMENT,
+                                               `id` INT NOT NULL AUTO_INCREMENT,
                                                `email` VARCHAR(255) NOT NULL,
     `password` VARCHAR(255) NOT NULL,
     `nickname` VARCHAR(50) NOT NULL,
@@ -108,14 +108,34 @@ CREATE TABLE IF NOT EXISTS `aboha`.`users` (
     COLLATE = utf8mb4_0900_ai_ci;
 
 -- -----------------------------------------------------
+-- Table `aboha`.`attraction_likes`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `aboha`.`attraction_likes` (
+                                                          `id` INT NOT NULL AUTO_INCREMENT,
+                                                          `user_id` INT NOT NULL,
+                                                          `attraction_id` INT NOT NULL,
+                                                          PRIMARY KEY (`id`),
+    INDEX `attraction_likes_user_fk_idx` (`user_id` ASC),
+    INDEX `attraction_likes_attraction_fk_idx` (`attraction_id` ASC),
+    CONSTRAINT `attraction_likes_user_fk`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `aboha`.`users` (`id`),
+    CONSTRAINT `attraction_likes_attraction_fk`
+    FOREIGN KEY (`attraction_id`)
+    REFERENCES `aboha`.`attractions` (`no`)
+    ) ENGINE = InnoDB
+    DEFAULT CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_0900_ai_ci;
+
+-- -----------------------------------------------------
 -- Table `aboha`.`reviews`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `aboha`.`reviews` (
-                                                 `id` BIGINT NOT NULL AUTO_INCREMENT,
-                                                 `user_id` BIGINT NULL,
-                                                 `attraction_id` INT NULL,
+                                                 `id` INT NOT NULL AUTO_INCREMENT,
+                                                 `user_id` INT NOT NULL,
+                                                 `attraction_id` INT NOT NULL,
                                                  `rating` DECIMAL(3,2) NOT NULL DEFAULT 0.0,
-    `content` VARCHAR(255) NULL DEFAULT NULL,
+    `content` TEXT NULL,
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `is_deleted` TINYINT(1) NOT NULL DEFAULT 0,
@@ -133,21 +153,94 @@ CREATE TABLE IF NOT EXISTS `aboha`.`reviews` (
     COLLATE = utf8mb4_0900_ai_ci;
 
 -- -----------------------------------------------------
--- Table `aboha`.`likes`
+-- Table `aboha`.`abogs`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `aboha`.`likes` (
-                                               `id` BIGINT NOT NULL AUTO_INCREMENT,
-                                               `user_id` BIGINT NOT NULL,
-                                               `attraction_id` INT NOT NULL,
-                                               PRIMARY KEY (`id`),
-    INDEX `likes_user_fk_idx` (`user_id` ASC),
-    INDEX `likes_attraction_fk_idx` (`attraction_id` ASC),
-    CONSTRAINT `likes_user_fk`
+CREATE TABLE IF NOT EXISTS `aboha`.`abogs` (
+                                               `id` INT NOT NULL AUTO_INCREMENT,
+                                               `user_id` INT NOT NULL,
+                                               `attraction_id` INT NULL,
+                                               `title` VARCHAR(255) NOT NULL,
+    `content` TEXT NOT NULL,
+    `comment_count` BIGINT NOT NULL DEFAULT 0,
+    `like_count` BIGINT NOT NULL DEFAULT 0,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `is_deleted` TINYINT(1) NOT NULL DEFAULT 0,
+    PRIMARY KEY (`id`),
+    INDEX `abogs_user_fk_idx` (`user_id` ASC),
+    INDEX `abogs_attraction_fk_idx` (`attraction_id` ASC),
+    CONSTRAINT `abogs_user_fk`
     FOREIGN KEY (`user_id`)
     REFERENCES `aboha`.`users` (`id`),
-    CONSTRAINT `likes_attraction_fk`
+    CONSTRAINT `abogs_attraction_fk`
     FOREIGN KEY (`attraction_id`)
     REFERENCES `aboha`.`attractions` (`no`)
+    ) ENGINE = InnoDB
+    DEFAULT CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_0900_ai_ci;
+
+-- -----------------------------------------------------
+-- Table `aboha`.`abog_images`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `aboha`.`abog_images` (
+                                                     `id` INT NOT NULL AUTO_INCREMENT,
+                                                     `abog_id` INT NOT NULL,
+                                                     `image_url` TEXT NOT NULL,
+                                                     PRIMARY KEY (`id`),
+    INDEX `abog_images_abog_fk_idx` (`abog_id` ASC),
+    CONSTRAINT `abog_images_abog_fk`
+    FOREIGN KEY (`abog_id`)
+    REFERENCES `aboha`.`abogs` (`id`)
+    ) ENGINE = InnoDB
+    DEFAULT CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_0900_ai_ci;
+
+-- -----------------------------------------------------
+-- Table `aboha`.`comments`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `aboha`.`comments` (
+                                                  `id` INT NOT NULL AUTO_INCREMENT,
+                                                  `user_id` INT NOT NULL,
+                                                  `abog_id` INT NOT NULL,
+                                                  `parent_id` INT NULL DEFAULT NULL,
+                                                  `content` TEXT NOT NULL,
+                                                  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                                  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                                  `is_deleted` TINYINT(1) NOT NULL DEFAULT 0,
+    PRIMARY KEY (`id`),
+    INDEX `comments_user_fk_idx` (`user_id` ASC),
+    INDEX `comments_abog_fk_idx` (`abog_id` ASC),
+    INDEX `comments_parent_fk_idx` (`parent_id` ASC),
+    CONSTRAINT `comments_user_fk`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `aboha`.`users` (`id`),
+    CONSTRAINT `comments_abog_fk`
+    FOREIGN KEY (`abog_id`)
+    REFERENCES `aboha`.`abogs` (`id`),
+    CONSTRAINT `comments_parent_fk`
+    FOREIGN KEY (`parent_id`)
+    REFERENCES `aboha`.`comments` (`id`)
+    ON DELETE CASCADE
+    ) ENGINE = InnoDB
+    DEFAULT CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_0900_ai_ci;
+
+-- -----------------------------------------------------
+-- Table `aboha`.`abog_likes`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `aboha`.`abog_likes` (
+                                                    `id` INT NOT NULL AUTO_INCREMENT,
+                                                    `user_id` INT NOT NULL,
+                                                    `abog_id` INT NOT NULL,
+                                                    PRIMARY KEY (`id`),
+    INDEX `abog_likes_user_fk_idx` (`user_id` ASC),
+    INDEX `abog_likes_abog_fk_idx` (`abog_id` ASC),
+    CONSTRAINT `abog_likes_user_fk`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `aboha`.`users` (`id`),
+    CONSTRAINT `abog_likes_abog_fk`
+    FOREIGN KEY (`abog_id`)
+    REFERENCES `aboha`.`abogs` (`id`)
     ) ENGINE = InnoDB
     DEFAULT CHARACTER SET = utf8mb4
     COLLATE = utf8mb4_0900_ai_ci;
