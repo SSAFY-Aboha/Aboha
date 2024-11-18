@@ -2,29 +2,36 @@
 import Button from '@/components/ui/button/Button.vue'
 import Input from '@/components/ui/input/Input.vue'
 import { ref } from 'vue'
+import useUserStore from '@/stores/user'
+
+const userStore = useUserStore()
 
 // 입력값
 const inputValue = ref({ email: '', password: '', save: false })
 
 const handleLogin = () => {
-  console.log(inputValue.value)
+  userStore.login(
+    inputValue.value,
+    () => console.log('로그인 성공'),
+    () => console.log('로그인 실패'),
+  )
 }
 </script>
 <template>
   <form class="w-full" @submit.prevent="handleLogin">
-    <div class="flex flex-col flex-1 gap-3">
+    <div class="flex flex-col flex-1 gap-2">
       <div class="flex flex-col gap-4">
         <Input
           class="bg-gray-100"
           type="email"
           placeholder="Email"
-          @input="inputValue.email"
+          @input="e => (inputValue.email = e.target.value)"
         />
         <Input
           class="bg-gray-100"
           type="password"
           placeholder="Password"
-          @input="inputValue.password"
+          @input="e => (inputValue.password = e.target.value)"
         />
       </div>
       <div class="flex justify-between w-full">

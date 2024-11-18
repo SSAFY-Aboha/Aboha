@@ -6,10 +6,11 @@ import axios from 'axios'
 const localAxios = () => {
   const instance = axios.create({
     // baseURL: url,
-    baseURL: 'http://localhost:8080',
+    baseURL: 'http://70.12.60.184:8080',
     headers: {
       'Content-Type': 'application/json;charset=utf-8',
     },
+    withCredentials: true,
   })
   return instance
 }
