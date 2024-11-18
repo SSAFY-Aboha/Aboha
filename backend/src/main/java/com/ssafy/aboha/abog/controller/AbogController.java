@@ -7,12 +7,19 @@ import com.ssafy.aboha.common.exception.UnauthorizedException;
 import com.ssafy.aboha.user.dto.response.UserResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import java.net.URI;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.net.URI;
 
 @RestController
 @RequestMapping("/abogs")
@@ -23,18 +30,20 @@ public class AbogController {
 
     @PostMapping
     public ResponseEntity<AbogResponse> createAbog(
-            @Valid @RequestBody AbogRequest request, HttpSession session) {
+            @Valid @RequestParam("images") List<MultipartFile> images,
+            @Valid @ModelAttribute AbogRequest request,
+            HttpSession session) {
         // 세션에서 인증된 사용자 정보 확인
         UserResponse userResponse = (UserResponse) session.getAttribute("user");
         if (userResponse == null) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 인증 실패 시 401 반환
-            throw new UnauthorizedException("로그인이 필요합니다.");
+            throw new UnauthorizedException("로그인이 필요합니다."); // 인증 실패
         }
 
-        AbogResponse response = abogService.createAbog(request, userResponse);
+        // 아보그 생성 및 이미지 처리
+        AbogResponse response = abogService.createAbog(userResponse, request, images);
         URI uri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/api/v1/abogs/{id}")
-                .buildAndExpand(response.id()).toUri();
+                .buildAndExpand(response.abog().id()).toUri();
 
         return ResponseEntity.created(uri).body(response);
     }
