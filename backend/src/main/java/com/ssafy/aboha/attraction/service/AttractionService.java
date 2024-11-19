@@ -6,6 +6,7 @@ import com.ssafy.aboha.attraction.domain.Gugun;
 import com.ssafy.aboha.attraction.domain.Sido;
 import com.ssafy.aboha.attraction.dto.request.AttractionSearchRequest;
 import com.ssafy.aboha.attraction.dto.response.AttractionInfo;
+import com.ssafy.aboha.attraction.dto.response.AttractionResponse;
 import com.ssafy.aboha.attraction.dto.response.GugunInfo;
 import com.ssafy.aboha.attraction.dto.response.SidoInfo;
 import com.ssafy.aboha.attraction.repository.AttractionRepository;
@@ -14,13 +15,12 @@ import com.ssafy.aboha.attraction.repository.GugunRepository;
 import com.ssafy.aboha.attraction.repository.SidoRepository;
 import com.ssafy.aboha.common.exception.BadRequestException;
 import com.ssafy.aboha.common.exception.NotFoundException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -31,21 +31,49 @@ public class AttractionService {
     private final SidoRepository sidoRepository;
     private final GugunRepository gugunRepository;
     private final ContentTypeRepository contentTypeRepository;
+    private final AttractionDescriptionService attractionDescriptionService;
 
     /**
      * 관광지 목록 조회
      */
     public Slice<AttractionInfo> getAttractionsByFilters(AttractionSearchRequest request, Pageable pageable) {
+        Integer sidoCode = request.sidoCode();
+        Integer gugunCode = request.gugunCode();
+        Integer contentTypeId = request.contentTypeId();
+
+
+        validateSidoGugun(sidoCode, gugunCode);
+        validateContentTypeId(contentTypeId);
+
         Slice<Attraction> slice = attractionRepository.findByFilters(
-                request.sidoCode(),
-                request.gugunCode(),
-                request.contentTypeId(),
+                sidoCode,
+                gugunCode,
+                contentTypeId,
                 request.keyword(),
                 request.getSortOrDefault(),
                 pageable
         );
 
         return slice.map(AttractionInfo::from);
+    }
+
+    /**
+     * 관광지 상세 조회
+     */
+    public AttractionResponse getAttraction(Integer id) {
+        Attraction attraction = attractionRepository.findByAttractionId(id)
+            .orElseThrow(() -> new NotFoundException("관광지가 존재하지 않습니다."));
+
+        // 조회수 증가
+        attraction.increaseViewCount();
+
+        // Spring AI 활용한 설명 생성
+        String description = attractionDescriptionService.generateDescription(
+            attraction.getTitle(),
+            attraction.getAddr1() + attraction.getAddr2()
+        );
+
+        return AttractionResponse.of(attraction, description);
     }
 
     /**
