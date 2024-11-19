@@ -34,13 +34,7 @@ public class AttractionService {
         Integer gugunCode = request.gugunCode();
         Integer contentTypeId = request.contentTypeId();
 
-        // sidoCode 없이 gugunCode가 제공되는 경우 예외 발생
-        if (gugunCode != null && sidoCode == null) {
-            throw new BadRequestException("시도 코드 없이 구군 코드만 존재할 수 없습니다.");
-        }
-
-        validateSidoCode(sidoCode);
-        validateGugunCodeWithSido(gugunCode, sidoCode);
+        validateSidoGugun(sidoCode, gugunCode);
         validateContentTypeId(contentTypeId);
 
         List<Attraction> attractions = attractionRepository.findByFilters(sidoCode, gugunCode, contentTypeId);
@@ -48,6 +42,20 @@ public class AttractionService {
         return attractions.stream()
                 .map(AttractionInfo::from)
                 .toList();
+    }
+
+    private void validateSidoGugun(Integer sidoCode, Integer gugunCode) {
+        if(sidoCode == null && gugunCode == null) {
+            return;
+        }
+
+        // sidoCode 없이 gugunCode가 제공되는 경우 예외 발생
+        if (gugunCode != null && sidoCode == null) {
+            throw new BadRequestException("시도 코드 없이 구군 코드만 존재할 수 없습니다.");
+        }
+
+        validateSidoCode(sidoCode);
+        validateGugunCodeWithSido(gugunCode, sidoCode);
     }
 
     // 시도 코드 유효성 검사
@@ -64,6 +72,9 @@ public class AttractionService {
 
     // 관광지 유형 식별자 유효성 검사
     private void validateContentTypeId(Integer contentTypeId) {
+        if(contentTypeId == null) {
+            return;
+        }
         contentTypeRepository.findById(contentTypeId)
                 .orElseThrow(() -> new NotFoundException("관광지 유형 식별자가 존재하지 않습니다."));
     }
