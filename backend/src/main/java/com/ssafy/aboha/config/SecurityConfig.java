@@ -22,8 +22,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/users/signup", "/users/check-nickname", "/users/check-email").permitAll()
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/attractions/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/abogs/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/attractions/**", "/sidos", "/guguns/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/abogs/{id}").permitAll()
 
                         .anyRequest().authenticated()
                 )
