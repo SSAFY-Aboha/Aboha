@@ -2,8 +2,13 @@ package com.ssafy.aboha.attraction.repository;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.ssafy.aboha.attraction.domain.*;
+import com.ssafy.aboha.attraction.domain.Attraction;
+import com.ssafy.aboha.attraction.domain.QAttraction;
+import com.ssafy.aboha.attraction.domain.QGugun;
 import jakarta.persistence.EntityManager;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -19,38 +24,57 @@ public class AttractionCustomRepositoryImpl implements AttractionCustomRepositor
     }
 
     @Override
-    public List<Attraction> findByFilters(Integer sidoCode, Integer gugunCode, Integer contentTypeId) {
+    public Slice<Attraction> findByFilters(Integer sidoCode, Integer gugunCode, Integer contentTypeId, String keyword, Pageable pageable) {
         QAttraction qAttraction = QAttraction.attraction;
-        QSido qSido = QSido.sido;
         QGugun qGugun = QGugun.gugun;
-        QContentType qContenttype = QContentType.contentType;
 
         BooleanBuilder builder = new BooleanBuilder();
 
         // 조건 추가
         if (sidoCode != null) {
-            builder.and(qSido.code.eq(sidoCode));
-            builder.and(qGugun.sido.code.eq(sidoCode));
+            builder.and(qAttraction.sido.code.eq(sidoCode));
+            builder.and(qAttraction.gugun.sido.code.eq(sidoCode));
         }
         if (gugunCode != null) {
-            builder.and(qGugun.code.eq(gugunCode));
+            builder.and(qAttraction.gugun.code.eq(gugunCode));
         }
         if (contentTypeId != null) {
-            builder.and(qContenttype.id.eq(contentTypeId));
+            builder.and(qAttraction.contentType.id.eq(contentTypeId));
         }
 
-        return queryFactory.selectFrom(qAttraction)
-                .leftJoin(qAttraction.sido, qSido).fetchJoin()
+        // 키워드 검색 (앞뒤에 % 추가)
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            String trimmedKeyword = keyword.trim();
+            builder.and(qAttraction.title.containsIgnoreCase(trimmedKeyword));
+        }
+
+        // 추가 데이터를 가져와 다음 페이지 여부 확인
+        int fetchSize = pageable.getPageSize() + 1;
+
+        // 중복 제거를 위한 데이터 로드
+        List<Attraction> results = queryFactory
+                .selectFrom(qAttraction)
                 .leftJoin(qAttraction.gugun, qGugun).fetchJoin()
-                .leftJoin(qAttraction.contentType, qContenttype).fetchJoin()
                 .where(builder)
                 .fetch()
                 .stream()
-                .distinct()  // In-memory distinct filtering
-                .limit(10)  // Limit applied after distinct
+                .distinct()
                 .toList();
-    }
 
+        // 중복 제거된 데이터에서 offset과 limit을 적용
+        int offset = (int) pageable.getOffset();
+        int limit = pageable.getPageSize();
+
+        List<Attraction> pagedResults = results.stream()
+                .skip(offset) // offset 적용
+                .limit(limit) // limit 적용
+                .toList();
+
+        // 다음 페이지 여부 판단
+        boolean hasNext = results.size() > offset + limit;
+
+        return new SliceImpl<>(pagedResults, pageable, hasNext);
+    }
 
     @Override
     public Optional<Attraction> findByAttractionId(Integer id) {
