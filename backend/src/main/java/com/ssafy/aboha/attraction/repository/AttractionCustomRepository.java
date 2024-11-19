@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface AttractionCustomRepository {
 
-    Slice<Attraction> findByFilters(Integer sidoCode, Integer gugunCode, Integer contentTypeId, String keyword, Pageable pageable);
+    Slice<Attraction> findByFilters(Integer sidoCode, Integer gugunCode, Integer contentTypeId, String keyword, String sort, Pageable pageable);
 
     Optional<Attraction> findByAttractionId(Integer id);
 }

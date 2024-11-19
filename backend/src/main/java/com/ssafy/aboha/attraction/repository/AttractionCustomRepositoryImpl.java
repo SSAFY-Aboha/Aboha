@@ -1,6 +1,7 @@
 package com.ssafy.aboha.attraction.repository;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.aboha.attraction.domain.Attraction;
 import com.ssafy.aboha.attraction.domain.QAttraction;
@@ -24,7 +25,7 @@ public class AttractionCustomRepositoryImpl implements AttractionCustomRepositor
     }
 
     @Override
-    public Slice<Attraction> findByFilters(Integer sidoCode, Integer gugunCode, Integer contentTypeId, String keyword, Pageable pageable) {
+    public Slice<Attraction> findByFilters(Integer sidoCode, Integer gugunCode, Integer contentTypeId, String keyword, String sort, Pageable pageable) {
         QAttraction qAttraction = QAttraction.attraction;
         QGugun qGugun = QGugun.gugun;
 
@@ -48,14 +49,15 @@ public class AttractionCustomRepositoryImpl implements AttractionCustomRepositor
             builder.and(qAttraction.title.containsIgnoreCase(trimmedKeyword));
         }
 
-        // 추가 데이터를 가져와 다음 페이지 여부 확인
-        int fetchSize = pageable.getPageSize() + 1;
+        // 정렬 조건 적용
+        OrderSpecifier<?> orderSpecifier = getOrderSpecifier(sort, qAttraction);
 
         // 중복 제거를 위한 데이터 로드
         List<Attraction> results = queryFactory
                 .selectFrom(qAttraction)
                 .leftJoin(qAttraction.gugun, qGugun).fetchJoin()
                 .where(builder)
+                .orderBy(orderSpecifier)
                 .fetch()
                 .stream()
                 .distinct()
@@ -89,6 +91,15 @@ public class AttractionCustomRepositoryImpl implements AttractionCustomRepositor
                 .limit(1)
                 .fetchOne()
         );
+    }
+
+    private OrderSpecifier<?> getOrderSpecifier(String sort, QAttraction qAttraction) {
+        return switch (sort) {
+            case "POPULAR" -> qAttraction.likeCount.desc();
+            case "REVIEW" -> qAttraction.reviewCount.desc();
+            case "VIEW" -> qAttraction.viewCount.desc();
+            default -> qAttraction.id.desc(); // 기본값: 최신순
+        };
     }
 
 }
