@@ -22,11 +22,13 @@ const handleGetAttraction = async () => {
   isLoading.value = true
   try {
     await attractionAPI.getAttractions(
-      { ...searchData.value, pageNo: pageNo.value },
+      { ...searchData.value, page: pageNo.value },
       data => {
-        if (data.length > 0) {
-          attractionList.value = [...attractionList.value, ...data]
-          pageNo.value++
+        const { content, hasNext, pageNumber } = data
+        console.log(data)
+        if (content.length > 0) {
+          attractionList.value = [...attractionList.value, ...content]
+          pageNo.value = pageNumber + 1
         } else {
           hasMore.value = false
         }

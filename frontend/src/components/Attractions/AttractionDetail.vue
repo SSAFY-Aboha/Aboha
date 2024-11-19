@@ -1,7 +1,28 @@
 <script setup>
-import { Button } from '@/components/ui/button'
-import { onMounted, ref } from 'vue'
-import { RouterLink } from 'vue-router'
+import { onMounted, ref, watch } from 'vue'
+import defaultImage from '@/assets/default_image_xl.png'
+import attractionAPI from '@/api/attractions'
+import Map from '../common/Map.vue'
+import AttractionReview from './AttractionReview.vue'
+import { Button } from '../ui/button'
+
+const props = defineProps({
+  tripId: {
+    type: Number,
+  },
+})
+
+onMounted(() => {
+  attractionAPI.getAttractionDetail(props.tripId, data => {
+    console.log(data)
+    data.value = data
+  })
+})
+
+const mapData = ref({
+  lat: 33.450701,
+  lng: 126.570667,
+})
 
 const data = ref({
   id: 26183,
@@ -14,8 +35,11 @@ const data = ref({
   likeCount: 0,
 })
 
-onMounted(() => {
-  console.log('mounted')
+watch(data.value, () => {
+  mapData.value = {
+    lat: data.value.lat,
+    lng: data.value.lng,
+  }
 })
 </script>
 
@@ -26,16 +50,16 @@ onMounted(() => {
     <!-- header -->
     <header class="w-full py-4">
       <div class="flex items-center justify-start mx-auto max-w-7xl">
-        <RouterLink
+        <Button
           class="px-3 py-1 text-lg text-black transition-all bg-white rounded-lg shadow-none hover:bg-gray-200"
-          to="/trips"
+          @click="$router.go(-1)"
           ><i class="pi pi-angle-left"></i
-          ><span>목록으로 돌아가기</span></RouterLink
+          ><span>목록으로 돌아가기</span></Button
         >
       </div>
     </header>
     <!-- content -->
-    <div class="flex flex-col w-full max-w-4xl gap-6">
+    <Main class="flex flex-col w-full max-w-4xl gap-6 pb-6">
       <!-- title -->
       <!-- 날짜 & 태그 -->
       <!-- 제목 & 내용 -->
@@ -49,7 +73,7 @@ onMounted(() => {
         <!-- title -->
         <div class="flex items-baseline justify-between w-full gap-3">
           <h1 class="text-3xl font-bold">{{ data.title }}</h1>
-          <div class="flex items-center justify-end gap-2">
+          <div class="flex items-center justify-end gap-3">
             <span>좋아요</span>
             <i
               class="overflow-hidden text-red-500 cursor-pointer pi pi-heart hover:font-bold"
@@ -61,16 +85,34 @@ onMounted(() => {
         <!-- 좋아요 -->
       </div>
       <!-- 이미지 -->
-      <div class="w-full overflow-hidden bg-red-300 rounded-lg h-96">
+      <div class="w-full overflow-hidden rounded-2xl h-96">
         <img
           class="object-cover w-full h-full"
-          :src="data.image"
+          :src="data.image || defaultImage"
           alt="attraction image"
         />
       </div>
-    </div>
-    <!-- 지도 -->
-    <!-- 리뷰 -->
+      <!-- 설명 -->
+      <div class="flex flex-col items-start justify-between w-full gap-3">
+        <div class="flex items-center gap-2 text-lg text-gray-600">
+          <i class="pi pi-info"></i>
+          <span>설명</span>
+        </div>
+        <div class="flex items-start justify-between w-full gap-3">
+          <span>{{ data.description }}</span>
+        </div>
+      </div>
+      <!-- 지도 -->
+      <div class="flex flex-col w-full gap-3 overflow-hidden rounded-2xl">
+        <h1 class="text-2xl font-bold">위치</h1>
+        <Map :map-Data="mapData" />
+      </div>
+      <!-- 리뷰 -->
+      <div class="flex flex-col w-full gap-3 overflow-hidden">
+        <h1 class="text-2xl font-bold">리뷰</h1>
+        <AttractionReview />
+      </div>
+    </Main>
   </div>
 </template>
 

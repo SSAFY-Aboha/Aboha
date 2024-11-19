@@ -13,8 +13,7 @@ const handleSearch = inject('handleSearch')
 
 const handleKeywordChange = keyword => {
   searchData.value.keyword = keyword
-  console.log(searchData.value)
-  handleSearch()
+  handleSearch(searchData.value)
 }
 </script>
 

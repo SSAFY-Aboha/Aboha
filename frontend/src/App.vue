@@ -8,7 +8,7 @@ import useUserStore from '@/stores/user'
 const userStore = useUserStore()
 // cookie에서 JSESSIONID 확인
 onMounted(() => {
-  userStore.initializeAuth()
+  // userStore.initializeAuth()
 })
 </script>
 
@@ -20,8 +20,21 @@ onMounted(() => {
     <BaseHeader />
     <main class="flex-1 w-full will-change-auto">
       <RouterView v-slot="{ Component }">
+        <KeepAlive>
+          <Transition name="fade" mode="out-in" appear>
+            <component
+              :is="Component"
+              :key="$route.path"
+              v-if="$route.meta.keepAlive"
+            />
+          </Transition>
+        </KeepAlive>
         <Transition name="fade" mode="out-in" appear>
-          <component :is="Component" :key="$route.path" />
+          <component
+            :is="Component"
+            :key="$route.path"
+            v-if="!$route.meta.keepAlive"
+          />
         </Transition>
       </RouterView>
     </main>

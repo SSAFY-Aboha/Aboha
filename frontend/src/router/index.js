@@ -38,6 +38,7 @@ const router = createRouter({
       name: 'trips',
       component: TripListView,
       redirect: { name: 'trips-main' },
+      meta: { keepAlive: true },
       children: [
         {
           path: '',

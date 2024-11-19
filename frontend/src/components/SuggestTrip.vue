@@ -8,9 +8,9 @@ import { RouterLink } from 'vue-router'
     <div class="flex flex-col items-center gap-2">
       <h1 class="text-3xl font-bold font-Namum">가장 인기있는 여행지</h1>
     </div>
-    <div class="relative w-5/6 ul-wrapper">
+    <div class="relative w-full overflow-hidden ul-wrapper">
       <ul
-        class="flex items-center justify-around gap-5 px-10 carousel basis-4/5 shrink-0"
+        class="flex items-center justify-around gap-5 px-10 carousel shrink-0"
       >
         <li
           v-for="(item, index) in 10"

@@ -3,10 +3,11 @@ import { RouterView } from 'vue-router'
 </script>
 
 <template>
-  <div>
-    <!-- 여기에 TripListView의 다른 내용들 -->
-    <router-view></router-view>
-  </div>
+  <keep-alive>
+    <router-view v-slot="{ Component }">
+      <component :is="Component" />
+    </router-view>
+  </keep-alive>
 </template>
 
 <style></style>

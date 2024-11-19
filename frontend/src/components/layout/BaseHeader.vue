@@ -2,10 +2,15 @@
 import { RouterLink } from 'vue-router'
 import { Button } from '@/components/ui/button'
 import useUserStore from '@/stores/user'
+import { storeToRefs } from 'pinia'
 
-const { isLogin } = useUserStore()
+const userStore = useUserStore()
 
-// const isLoggedIn = ref(false)
+const { isLogin } = storeToRefs(userStore)
+
+const handleLogout = () => {
+  userStore.logout()
+}
 </script>
 
 <template>
@@ -43,7 +48,12 @@ const { isLogin } = useUserStore()
 
       <!-- 로그인 상태라면 로그아웃 버튼 표시 -->
       <template v-if="isLogin">
-        <button class="px-3 py-2 rounded-xl hover:bg-gray-100">로그아웃</button>
+        <button
+          class="px-3 py-2 rounded-xl hover:bg-gray-100"
+          @click="handleLogout"
+        >
+          로그아웃
+        </button>
         <RouterLink to="/mypage">
           <Button class="bg-transparent rounded-full hover:bg-gray-100">
             <i class="text-black pi pi-user"></i> </Button
