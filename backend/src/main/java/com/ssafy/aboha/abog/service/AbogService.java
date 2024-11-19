@@ -2,12 +2,12 @@
 package com.ssafy.aboha.abog.service;
 
 import com.ssafy.aboha.abog.domain.Abog;
+import com.ssafy.aboha.abog.domain.AbogImage;
 import com.ssafy.aboha.abog.dto.request.AbogRequest;
 import com.ssafy.aboha.abog.dto.response.AbogResponse;
 import com.ssafy.aboha.abog.repository.AbogRepository;
 import com.ssafy.aboha.attraction.domain.Attraction;
 import com.ssafy.aboha.attraction.repository.AttractionRepository;
-import com.ssafy.aboha.common.exception.BadRequestException;
 import com.ssafy.aboha.common.exception.NotFoundException;
 import com.ssafy.aboha.user.domain.User;
 import com.ssafy.aboha.user.dto.response.UserResponse;
@@ -23,15 +23,13 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional(readOnly = true)
 public class AbogService {
 
-    private static final int MAX_IMAGES = 5;    // 최대 이미지 개수
-
     private final AbogRepository abogRepository;
     private final UserRepository userRepository;
     private final AttractionRepository attractionRepository;
     private final AbogImageService abogImageService;
 
     @Transactional
-    public AbogResponse createAbog(UserResponse userResponse, AbogRequest request, List<MultipartFile> images) {
+    public AbogResponse createAbog(UserResponse userResponse, AbogRequest request) {
         // 사용자 확인
         User user = userRepository.findById(userResponse.id())
                 .orElseThrow(() -> new NotFoundException("로그인한 사용자가 존재하지 않습니다."));
@@ -39,11 +37,6 @@ public class AbogService {
         // 관광지 확인
         Attraction attraction = attractionRepository.findByAttractionId(request.attractionId())
                 .orElseThrow(() -> new NotFoundException("관광지가 존재하지 않습니다."));
-
-        // 이미지 개수 확인
-        if(images.size() > MAX_IMAGES) {
-            throw new BadRequestException("최대 " + MAX_IMAGES + "개의 이미지만 업로드 가능합니다.");
-        }
 
         // 아보그 생성
         Abog abog = Abog.builder()
@@ -56,9 +49,10 @@ public class AbogService {
         abogRepository.save(abog);
 
         // 아보그 이미지 생성
+        List<MultipartFile> images = request.images();
         abogImageService.uploadImages(abog, images);
 
-        return AbogResponse.from(abog);
+        return getAbogById(abog.getId()); // 생성 후 상세 조회
     }
 
     /**
@@ -67,6 +61,14 @@ public class AbogService {
     public AbogResponse getAbogById(Integer id) {
         Abog abog = abogRepository.findByAbogId(id)
                 .orElseThrow(() -> new NotFoundException("해당 아보그가 존재하지 않습니다."));
-        return AbogResponse.from(abog);
+
+        // 아보그 이미지 URL 리스트 조회
+        List<String> imageUrls = abogImageService.getAbogImages(id)
+            .stream()
+            .map(AbogImage::getImageUrl)
+            .toList();
+
+        return AbogResponse.from(abog, imageUrls);
     }
+
 }
