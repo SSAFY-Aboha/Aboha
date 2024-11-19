@@ -8,7 +8,6 @@ import com.ssafy.aboha.user.dto.response.UserResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import java.net.URI;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,9 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
@@ -30,7 +27,6 @@ public class AbogController {
 
     @PostMapping
     public ResponseEntity<AbogResponse> createAbog(
-            @Valid @RequestParam("images") List<MultipartFile> images,
             @Valid @ModelAttribute AbogRequest request,
             HttpSession session) {
         // 세션에서 인증된 사용자 정보 확인
@@ -40,7 +36,7 @@ public class AbogController {
         }
 
         // 아보그 생성 및 이미지 처리
-        AbogResponse response = abogService.createAbog(userResponse, request, images);
+        AbogResponse response = abogService.createAbog(userResponse, request);
         URI uri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/api/v1/abogs/{id}")
                 .buildAndExpand(response.abog().id()).toUri();
