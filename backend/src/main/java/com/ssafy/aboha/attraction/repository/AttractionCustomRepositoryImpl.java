@@ -2,15 +2,12 @@ package com.ssafy.aboha.attraction.repository;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.ssafy.aboha.attraction.domain.Attraction;
-import com.ssafy.aboha.attraction.domain.QAttraction;
-import com.ssafy.aboha.attraction.domain.QContentType;
-import com.ssafy.aboha.attraction.domain.QGugun;
-import com.ssafy.aboha.attraction.domain.QSido;
+import com.ssafy.aboha.attraction.domain.*;
 import jakarta.persistence.EntityManager;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 import java.util.Optional;
-import org.springframework.stereotype.Repository;
 
 @Repository
 public class AttractionCustomRepositoryImpl implements AttractionCustomRepository {
@@ -30,6 +27,7 @@ public class AttractionCustomRepositoryImpl implements AttractionCustomRepositor
 
         BooleanBuilder builder = new BooleanBuilder();
 
+        // 조건 추가
         if (sidoCode != null) {
             builder.and(qSido.code.eq(sidoCode));
             builder.and(qGugun.sido.code.eq(sidoCode));
@@ -48,10 +46,11 @@ public class AttractionCustomRepositoryImpl implements AttractionCustomRepositor
                 .where(builder)
                 .fetch()
                 .stream()
-                .distinct()
+                .distinct()  // In-memory distinct filtering
+                .limit(10)  // Limit applied after distinct
                 .toList();
-
     }
+
 
     @Override
     public Optional<Attraction> findByAttractionId(Integer id) {
