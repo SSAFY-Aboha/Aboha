@@ -1,8 +1,12 @@
 package com.ssafy.aboha.attraction.service;
 
 import com.ssafy.aboha.attraction.domain.Attraction;
+import com.ssafy.aboha.attraction.domain.Gugun;
+import com.ssafy.aboha.attraction.domain.Sido;
 import com.ssafy.aboha.attraction.dto.request.AttractionSearchRequest;
 import com.ssafy.aboha.attraction.dto.response.AttractionInfo;
+import com.ssafy.aboha.attraction.dto.response.GugunInfo;
+import com.ssafy.aboha.attraction.dto.response.SidoInfo;
 import com.ssafy.aboha.attraction.repository.AttractionRepository;
 import com.ssafy.aboha.attraction.repository.ContentTypeRepository;
 import com.ssafy.aboha.attraction.repository.GugunRepository;
@@ -37,10 +41,35 @@ public class AttractionService {
         validateSidoGugun(sidoCode, gugunCode);
         validateContentTypeId(contentTypeId);
 
-        List<Attraction> attractions = attractionRepository.findByFilters(sidoCode, gugunCode, contentTypeId);
+        List<Attraction> attractions = attractionRepository.findByFilters(request);
 
         return attractions.stream()
                 .map(AttractionInfo::from)
+                .toList();
+    }
+
+    /**
+     * 시도 조회
+     */
+    public List<SidoInfo> getSidos() {
+        List<Sido> sidos = sidoRepository.findAll();
+
+        return sidos.stream()
+                .map(SidoInfo::from)
+                .toList();
+    }
+
+    /**
+     * 구군 조회
+     */
+    public List<GugunInfo> getGuguns(Integer sidoCode) {
+        // 시도 코드 유효성 검사
+        validateSidoCode(sidoCode);
+
+        List<Gugun> guguns = gugunRepository.findBySidoCode(sidoCode);
+
+        return guguns.stream()
+                .map(GugunInfo::from)
                 .toList();
     }
 
