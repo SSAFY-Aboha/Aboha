@@ -23,13 +23,15 @@ server:
   servlet:
     context-path: /api/v1
     session:
-      cookie:
-        max-age: 604800 # 쿠키 만료 시간: 7일 (초 단위)
-        path: "/"       # 쿠키 경로
-        secure: false    # HTTPS 환경에서만 쿠키 전송
-        http-only: true # JavaScript에서 쿠키 접근 금지
-        same-site: lax  # SameSite 설정
-      timeout: 7d       # 세션 유지 시간: 7일
+#      cookie:
+#        max-age: 604800 # 쿠키 만료 시간: 7일 (초 단위)
+#        path: "/"       # 쿠키 경로
+#        secure: false    # HTTPS 환경에서만 쿠키 전송
+#        http-only: true # JavaScript에서 쿠키 접근 금지
+#        same-site: lax  # SameSite 설정
+      timeout: 30m       # 세션 유지 시간: 7일
+  tomcat:
+    max-swallow-size: 20MB # Tomcat에서 요청의 최대 크기 제한
 
 logging:
   level:
