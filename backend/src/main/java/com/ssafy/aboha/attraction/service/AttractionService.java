@@ -15,6 +15,8 @@ import com.ssafy.aboha.attraction.repository.SidoRepository;
 import com.ssafy.aboha.common.exception.BadRequestException;
 import com.ssafy.aboha.common.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,20 +35,16 @@ public class AttractionService {
     /**
      * 관광지 목록 조회
      */
-    // TODO: Pagenation 적용 전
-    public List<AttractionInfo> getAttractionsByFilters(AttractionSearchRequest request) {
-        Integer sidoCode = request.sidoCode();
-        Integer gugunCode = request.gugunCode();
-        Integer contentTypeId = request.contentTypeId();
+    public Slice<AttractionInfo> getAttractionsByFilters(AttractionSearchRequest request, Pageable pageable) {
+        Slice<Attraction> slice = attractionRepository.findByFilters(
+                request.sidoCode(),
+                request.gugunCode(),
+                request.contentTypeId(),
+                request.keyword(),
+                pageable
+        );
 
-        validateSidoGugun(sidoCode, gugunCode);
-        validateContentTypeId(contentTypeId);
-
-        List<Attraction> attractions = attractionRepository.findByFilters(request);
-
-        return attractions.stream()
-                .map(AttractionInfo::from)
-                .toList();
+        return slice.map(AttractionInfo::from);
     }
 
     /**
