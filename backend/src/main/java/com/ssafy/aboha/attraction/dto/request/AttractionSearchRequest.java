@@ -8,6 +8,8 @@ public record AttractionSearchRequest(
         @Nullable
         Integer gugunCode,
         @Nullable
-        Integer contentTypeId
+        Integer contentTypeId,
+        @Nullable
+        String keyword
 ) {
 }
