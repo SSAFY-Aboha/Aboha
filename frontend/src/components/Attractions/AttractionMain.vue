@@ -1,21 +1,46 @@
 <script setup>
 import AttractionList from '@/components/Attractions/AttractionList.vue'
-import { ref } from 'vue'
+import { provide, ref } from 'vue'
 import AttractionNav from './AttractionNav.vue'
+import attractionAPI from '@/api/attractions'
 
-const attractionList = ref([
-  {
-    id: 26183,
-    title: '괴산고추축제',
-    sidoCode: 33,
-    sidoName: '충청북도',
-    gugunCode: 1,
-    gugunName: '괴산군',
-    image: 'http://tong.visitkorea.or.kr/cms/resource/77/2997377_image2_1.png',
-    likeCount: 0,
-    tags: ['축제', '충청북도', '괴산군'],
-  },
-])
+const attractionList = ref([])
+const pageNo = ref(1)
+const SIZE = 12
+
+const searchDataName = ref({
+  sidoName: '',
+  gugunName: '',
+  contentName: '',
+})
+
+const searchData = ref({
+  sidoCode: '',
+  gugunCode: '',
+  contentTypeId: '',
+  keyword: '',
+})
+const isLoading = ref(false)
+
+const handleSearch = async () => {
+  // 로딩 시작
+  isLoading.value = true
+
+  // 관광지 조회
+  try {
+    await attractionAPI.getAttractions(searchData.value, data => {
+      attractionList.value = data
+    })
+  } finally {
+    // 로딩 종료
+    isLoading.value = false
+  }
+}
+
+provide('handleSearch', handleSearch)
+provide('searchData', searchData)
+provide('searchDataName', searchDataName)
+provide('pageNo', pageNo)
 </script>
 
 <template>
@@ -30,9 +55,12 @@ const attractionList = ref([
     </div>
 
     <div class="mx-auto my-0 mb-3 max-w-7xl md:px-8">
-      <AttractionList ref="attractionListRef" :initData="attractionList" />
+      <AttractionList
+        ref="attractionListRef"
+        v-model:isLoading="isLoading"
+        v-model:attractionList="attractionList"
+      />
     </div>
-    <div class="w-full bg-[#eee] h-52"></div>
   </main>
 </template>
 

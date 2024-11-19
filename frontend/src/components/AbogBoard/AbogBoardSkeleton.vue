@@ -6,7 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton'
   <li class="max-w-6xl min-w-80">
     <div class="flex flex-col gap-3">
       <!-- header -->
-      <div class="flex items-center max-w-2xl gap-4">
+      <div class="flex items-center justify-center w-full gap-4">
         <!-- user 정보 -->
         <Skeleton class="rounded-full size-12" />
         <div class="flex flex-col w-2/4 gap-2">
@@ -16,10 +16,12 @@ import { Skeleton } from '@/components/ui/skeleton'
         </div>
       </div>
       <!-- 제목 -->
-      <Skeleton class="w-3/4 h-5 rounded-lg" />
+      <div class="flex justify-center w-3/4">
+        <Skeleton class="w-3/4 h-5 rounded-lg" />
+      </div>
       <!-- 이미지 -->
       <div class="flex items-center justify-center overflow-hidden rounded-xl">
-        <Skeleton class="w-full rounded-md aspect-square" />
+        <Skeleton class="w-2/4 rounded-md aspect-square" />
       </div>
 
       <Skeleton class="w-3/4 h-5" />
