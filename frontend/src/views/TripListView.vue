@@ -3,11 +3,11 @@ import { RouterView } from 'vue-router'
 </script>
 
 <template>
-  <keep-alive>
-    <router-view v-slot="{ Component }">
+  <router-view v-slot="{ Component }">
+    <keep-alive>
       <component :is="Component" />
-    </router-view>
-  </keep-alive>
+    </keep-alive>
+  </router-view>
 </template>
 
 <style></style>

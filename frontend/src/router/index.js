@@ -1,13 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '@/views/HomeView.vue'
-import LoginView from '@/views/LoginView.vue'
-import SignUpView from '@/views/SignUpView.vue'
 import MyPageView from '@/views/MyPageView.vue'
 import TripListView from '@/views/TripListView.vue'
-import AbogBoardView from '@/views/AbogBoardView.vue'
-import AbogBoardEditor from '@/components/AbogBoard/AbogBoardEditor.vue'
-import AbogBoardMain from '@/components/AbogBoard/AbogBoardMain.vue'
-import AttractionDetail from '@/components/Attractions/AttractionDetail.vue'
 import AttractionMain from '@/components/Attractions/AttractionMain.vue'
 
 const router = createRouter({
@@ -22,11 +15,13 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: () => import('@/views/LoginView.vue'),
+      meta: { hideLayout: true },
     },
     {
       path: '/signup',
       name: 'signup',
-      component: SignUpView,
+      component: () => import('@/views/SignUpView.vue'),
+      meta: { hideLayout: true },
     },
     {
       path: '/mypage',
@@ -48,7 +43,8 @@ const router = createRouter({
         {
           path: ':tripId',
           name: 'trips-detail',
-          component: AttractionDetail,
+          component: () =>
+            import('@/components/Attractions/AttractionDetail.vue'),
           props: true,
         },
       ],
