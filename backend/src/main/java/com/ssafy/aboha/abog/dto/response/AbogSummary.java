@@ -1,7 +1,6 @@
 package com.ssafy.aboha.abog.dto.response;
 
 import com.ssafy.aboha.abog.domain.Abog;
-import com.ssafy.aboha.abog.domain.AbogImage;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.Builder;
@@ -18,7 +17,7 @@ public record AbogSummary(
     List<String> images
 ) {
 
-    public static AbogSummary from(Abog abog) {
+    public static AbogSummary of(Abog abog, List<String> imageUrls) {
         return AbogSummary.builder()
             .id(abog.getId())
             .title(abog.getTitle())
@@ -27,9 +26,7 @@ public record AbogSummary(
             .commentCount(abog.getCommentCount())
             .createdAt(abog.getCreatedAt().toLocalDate())
             .updatedAt(abog.getUpdatedAt().toLocalDate())
-            .images(abog.getImages().stream()
-                .map(AbogImage::getImageUrl)
-                .toList())
+            .images(imageUrls)
             .build();
     }
 
