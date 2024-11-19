@@ -1,6 +1,7 @@
 package com.ssafy.aboha.attraction.service;
 
 import com.ssafy.aboha.attraction.domain.Attraction;
+import com.ssafy.aboha.attraction.domain.ContentType;
 import com.ssafy.aboha.attraction.domain.Gugun;
 import com.ssafy.aboha.attraction.domain.Sido;
 import com.ssafy.aboha.attraction.dto.request.AttractionSearchRequest;
@@ -71,6 +72,13 @@ public class AttractionService {
         return guguns.stream()
                 .map(GugunInfo::from)
                 .toList();
+    }
+
+    /**
+     * 관광지 유형 조회
+     */
+    public List<ContentType> getContentTypes() {
+        return contentTypeRepository.findAll();
     }
 
     private void validateSidoGugun(Integer sidoCode, Integer gugunCode) {
