@@ -23,7 +23,7 @@ public class SecurityConfig {
                         .requestMatchers("/users/signup", "/users/check-nickname", "/users/check-email").permitAll()
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/attractions/**", "/sidos", "/guguns/**", "/contenttypes").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/abogs/{id}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/abogs/**").permitAll()
 
                         .anyRequest().authenticated()
                 )
