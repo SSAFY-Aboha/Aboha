@@ -1,6 +1,7 @@
 <script setup>
 import { Badge } from '@/components/ui/badge'
 import { RouterLink } from 'vue-router'
+import defaultImage from '@/assets/default_image.png'
 
 const data = defineProps({
   data: Object,
@@ -32,7 +33,12 @@ const {
       <div
         class="w-full overflow-hidden border border-gray-100 shadow-sm h-52 rounded-xl"
       >
-        <img class="object-cover w-full h-full" :src="image" alt="" />
+        <img
+          class="object-cover w-full h-full"
+          :src="image ?? defaultImage"
+          loading="lazy"
+          alt=""
+        />
       </div>
 
       <!-- 제목 & 내용 -->

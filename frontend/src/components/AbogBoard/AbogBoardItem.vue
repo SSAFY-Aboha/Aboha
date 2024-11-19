@@ -51,7 +51,7 @@ const { id, nickname, title, content, date, tags, image, like } = props.data
       <div class="flex items-center justify-center overflow-hidden rounded-xl">
         <Carousel v-slot="{ canScrollNext, canScrollPrev }" class="w-full">
           <CarouselContent>
-            <CarouselItem v-for="(_, index) in 1" :key="index">
+            <CarouselItem v-for="(_, index) in 3" :key="index">
               <div class="p-1">
                 <Card class="">
                   <CardContent
@@ -59,7 +59,7 @@ const { id, nickname, title, content, date, tags, image, like } = props.data
                   >
                     <img
                       class="object-cover w-full h-full col-start-1 col-end-3 row-start-1 row-end-3"
-                      :src="image"
+                      :src="image || '../../assets/default_image.png'"
                       alt=""
                     />
                   </CardContent>
