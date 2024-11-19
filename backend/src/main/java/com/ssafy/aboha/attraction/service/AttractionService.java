@@ -41,6 +41,7 @@ public class AttractionService {
                 request.gugunCode(),
                 request.contentTypeId(),
                 request.keyword(),
+                request.getSortOrDefault(),
                 pageable
         );
 
