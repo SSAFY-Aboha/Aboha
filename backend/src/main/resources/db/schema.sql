@@ -71,6 +71,7 @@ CREATE TABLE IF NOT EXISTS `aboha`.`attractions` (
     `view_count` BIGINT NOT NULL DEFAULT 0,
     `like_count` BIGINT NOT NULL DEFAULT 0,
     `review_count` BIGINT NOT NULL DEFAULT 0,
+    `rating_sum` DECIMAL(5,1) NOT NULL DEFAULT 0.0, -- 평점 합계 (소수점 첫째자리 포함)
     PRIMARY KEY (`no`),
     INDEX `attractions_typeid_to_types_typeid_fk_idx` (`content_type_id` ASC) VISIBLE,
     INDEX `attractions_sido_to_sidos_code_fk_idx` (`area_code` ASC) VISIBLE,
