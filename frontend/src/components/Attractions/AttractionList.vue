@@ -1,28 +1,29 @@
 <script setup>
 import AttractionItem from '@/components/Attractions/AttractionItem.vue'
-import { ref, onMounted, onUnmounted, inject } from 'vue'
+import { ref, inject } from 'vue'
 import attractionAPI from '@/api/attractions'
 import AttractionSkeleton from '@/components/Attractions/AttractionSkeleton.vue'
-import AttractionHasMore from './AttractionHasMore.vue'
+import AttractionHasMore from '../common/DataHasMore.vue'
+import { useInfiniteScroll } from '@/composables/useInfiniteScroll'
 
-const props = defineProps({
+defineProps({
   initData: Array,
 })
 
 const attractionList = defineModel('attractionList')
 const isLoading = defineModel('isLoading')
-const searchData = inject('searchData')
+const searchParams = inject('searchParams')
 const pageNo = inject('pageNo')
 
 const hasMore = ref(true) // 더 가져올 데이터가 있는지 여부
-const observerTarget = ref(null)
+const observerTarget = ref(null) // 무한 스크롤 타겟
 
 const handleGetAttraction = async () => {
   // 로딩 시작
   isLoading.value = true
   try {
     await attractionAPI.getAttractions(
-      { ...searchData.value, page: pageNo.value },
+      { ...searchParams.value, page: pageNo.value },
       data => {
         const { content, hasNext, pageNumber } = data
         console.log(data)
@@ -42,26 +43,8 @@ const handleGetAttraction = async () => {
 }
 
 // 무한 스크롤
-onMounted(() => {
-  const infiniteScrollHandler = entries => {
-    const target = entries[0]
-
-    if (target.isIntersecting && hasMore.value) {
-      // 데이터 가져오기
-      handleGetAttraction()
-      // 현재 observer에서 제외
-    }
-  }
-  // 무한 스크롤을 위한 observer
-  const observer = new IntersectionObserver(infiniteScrollHandler, {
-    threshold: 1,
-  })
-
-  observerTarget.value && observer.observe(observerTarget.value)
-
-  onUnmounted(() => {
-    observerTarget.value && observer.unobserve(observerTarget.value)
-  })
+useInfiniteScroll(observerTarget, () => {
+  handleGetAttraction()
 })
 </script>
 

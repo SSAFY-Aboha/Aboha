@@ -1,6 +1,6 @@
 <script setup>
 import AttractionList from '@/components/Attractions/AttractionList.vue'
-import { provide, ref, watch } from 'vue'
+import { provide, ref, watch, watchEffect } from 'vue'
 import AttractionNav from './AttractionNav.vue'
 import attractionAPI from '@/api/attractions'
 import AttractionSortSelector from './AttractionFilter/AttractionSortSelector.vue'
@@ -11,7 +11,7 @@ const pageNo = ref(0)
 const SIZE = 12
 const isLoading = ref(false)
 
-const searchData = ref({
+const searchParams = ref({
   sidoCode: '',
   gugunCode: '',
   contentTypeId: '',
@@ -20,17 +20,26 @@ const searchData = ref({
 })
 
 // 정렬 변경 시 검색
-watch(searchData.value.sort, () => {
-  console.log(searchData.value)
-  handleSearch(searchData.value)
-})
+watch(
+  () => searchParams.value.sort,
+  () => {
+    console.log(searchParams.value)
+    handleSearch(searchParams.value)
+  },
+)
+
+// watch(
+//   () => searchParams.value.sidoCode,
+//   () => searchParams.value.gugunCode,
+//   () => searchParams.value.contentTypeId,
+//   () => {
+
+//     searchDataName.value = []
+//   },
+// )
 
 // 부가 상태
-const searchDataName = ref({
-  sidoName: '',
-  gugunName: '',
-  contentName: '',
-})
+const searchDataName = ref([])
 
 const handleSearch = async searchData => {
   // 로딩 시작
@@ -48,7 +57,7 @@ const handleSearch = async searchData => {
 }
 
 provide('handleSearch', handleSearch)
-provide('searchData', searchData)
+provide('searchParams', searchParams)
 provide('searchDataName', searchDataName)
 provide('pageNo', pageNo)
 </script>

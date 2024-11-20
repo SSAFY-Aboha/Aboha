@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/select'
 import { inject, ref } from 'vue'
 
-const searchData = inject('searchData')
+const searchParams = inject('searchParams')
 
 const sortMeta = ref([
   { key: 'NEW', value: '최근 등록순' },
@@ -20,7 +20,7 @@ const sortMeta = ref([
 
 const handleSortChange = sortKey => {
   // 정렬 로직 작성
-  searchData.value.sort = sortKey
+  searchParams.value.sort = sortKey
 }
 </script>
 

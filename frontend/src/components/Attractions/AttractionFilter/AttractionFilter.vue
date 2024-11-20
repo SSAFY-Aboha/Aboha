@@ -16,19 +16,21 @@ import { inject, ref } from 'vue'
 const isOpen = ref(false)
 
 const onSearch = inject('handleSearch')
-const searchData = inject('searchData')
+const searchParams = inject('searchParams')
 
 const handleSearch = () => {
   isOpen.value = false
   // TODO: 검색 처리
-  onSearch(searchData.value)
+  onSearch(searchParams.value)
 }
 </script>
 
 <template>
   <Dialog v-model:open="isOpen">
     <DialogTrigger as-child>
-      <Button variant="outline"> 필터 </Button>
+      <Button variant="outline">
+        <i class="pi pi-filter"></i><span>필터 </span></Button
+      >
     </DialogTrigger>
     <DialogContent class="sm:max-w-[425px] lg:max-w-[600px] overflow-y-auto">
       <!-- Header -->
@@ -43,15 +45,15 @@ const handleSearch = () => {
         <section class="flex flex-col gap-3">
           <!-- ! 지역 필터 -->
           <AttractionFilterSelector
-            v-model:sidoCode="searchData.sidoCode"
-            v-model:gugunCode="searchData.gugunCode"
+            v-model:sidoCode="searchParams.sidoCode"
+            v-model:gugunCode="searchParams.gugunCode"
           />
         </section>
         <!-- ! 주제 선택 -->
         <section class="flex flex-col gap-3">
           <AttractionFilterToggle
             title="테마"
-            v-model:contentTypeId="searchData.contentTypeId"
+            v-model:contentTypeId="searchParams.contentTypeId"
           />
         </section>
       </main>
