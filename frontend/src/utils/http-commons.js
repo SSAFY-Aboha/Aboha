@@ -26,7 +26,7 @@ const localAxios = () => {
       }
 
       // 요청 로깅
-      console.log('Request:', config)
+      console.log('Request 시작:', config)
       return config
     },
     error => {
@@ -36,16 +36,13 @@ const localAxios = () => {
     },
 
     // 응답 인터셉터: 데이터 추출 및 에러 처리
-    instance.interceptors.response.use(
-      response => response.data,
-      error => {
-        if (error.response && error.response.status === 401) {
-          console.error('Authentication required. Redirecting to login.')
-          router.push('/login')
-        }
-        return Promise.reject(error)
-      },
-    ),
+    // instance.interceptors.response.use(error => {
+    //   if (error.response && error.response.status === 401) {
+    //     console.error('Authentication required. Redirecting to login.')
+    //     router.push('/login')
+    //   }
+    //   return Promise.reject(error)
+    // }),
   )
   return instance
 }
