@@ -24,6 +24,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/attractions/**", "/sidos", "/guguns/**", "/contenttypes").permitAll()
                         .requestMatchers(HttpMethod.GET, "/abogs/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "reviews/**").permitAll()
 
                         .anyRequest().authenticated()
                 )
