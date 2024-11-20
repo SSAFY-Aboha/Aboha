@@ -21,7 +21,7 @@ public class UserController {
 
     // 회원가입 API
     @PostMapping("/signup")
-    public ResponseEntity<Void> signUp(@RequestBody @Valid SignupRequest request) {
+    public ResponseEntity<Void> signUp(@Valid @RequestBody SignupRequest request) {
         userService.signUp(request);
         URI uri = URI.create("/");  // 메인 페이지로 이동
         return ResponseEntity.created(uri).build();
@@ -29,14 +29,14 @@ public class UserController {
 
     // 닉네임 중복 확인 API
     @GetMapping("/check-nickname")
-    public ResponseEntity<UniqueResponse> checkNickname(@RequestBody @Valid NicknameRequest request) {
+    public ResponseEntity<UniqueResponse> checkNickname(@Valid @ModelAttribute NicknameRequest request) {
         UniqueResponse response = userService.isNicknameAvailable(request.nickname());
         return ResponseEntity.ok(response);
     }
 
     // 이메일 중복 확인 API
     @GetMapping("/check-email")
-    public ResponseEntity<UniqueResponse> checkEmail(@RequestBody @Valid EmailRequest request) {
+    public ResponseEntity<UniqueResponse> checkEmail(@Valid @ModelAttribute EmailRequest request) {
         UniqueResponse response = userService.isEmailAvailable(request.email());
         return ResponseEntity.ok(response);
     }
