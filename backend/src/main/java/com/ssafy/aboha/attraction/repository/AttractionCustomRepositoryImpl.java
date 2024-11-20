@@ -7,6 +7,7 @@ import com.ssafy.aboha.attraction.domain.Attraction;
 import com.ssafy.aboha.attraction.domain.QAttraction;
 import com.ssafy.aboha.attraction.domain.QGugun;
 import com.ssafy.aboha.attraction.dto.response.AttractionInfo;
+import com.ssafy.aboha.attraction.dto.response.AttractionSummary;
 import com.ssafy.aboha.common.dto.response.PaginatedResponse;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Pageable;
@@ -99,6 +100,25 @@ public class AttractionCustomRepositoryImpl implements AttractionCustomRepositor
                 .limit(1)
                 .fetchOne()
         );
+    }
+
+    @Override
+    public List<AttractionSummary> findByTitle(String title) {
+        QAttraction qAttraction = QAttraction.attraction;
+        QGugun qGugun = QGugun.gugun;
+
+        List<Attraction> results = queryFactory
+                .selectFrom(qAttraction)
+                .leftJoin(qAttraction.gugun, qGugun).fetchJoin()
+                .where(qAttraction.title.containsIgnoreCase(title))
+                .fetch()
+                .stream()
+                .distinct()
+                .toList();
+
+        return results.stream()
+                .map(AttractionSummary::from)
+                .toList();
     }
 
     private OrderSpecifier<?> getOrderSpecifier(String sort, QAttraction qAttraction) {
