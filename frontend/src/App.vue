@@ -17,29 +17,19 @@ onMounted(() => {
   <!-- <Toast position="center" /> -->
   <div class="flex flex-col w-full h-svh">
     <!-- Header -->
-    <BaseHeader />
+    <BaseHeader v-if="!$route.meta.hideLayout" />
     <main class="flex-1 w-full will-change-auto">
       <RouterView v-slot="{ Component }">
-        <KeepAlive>
-          <Transition name="fade" mode="out-in" appear>
-            <component
-              :is="Component"
-              :key="$route.path"
-              v-if="$route.meta.keepAlive"
-            />
-          </Transition>
-        </KeepAlive>
         <Transition name="fade" mode="out-in" appear>
-          <component
-            :is="Component"
-            :key="$route.path"
-            v-if="!$route.meta.keepAlive"
-          />
+          <KeepAlive v-if="$route.meta.keepAlive">
+            <component :is="Component" :key="$route.path" />
+          </KeepAlive>
+          <component v-else :is="Component" :key="$route.path" />
         </Transition>
       </RouterView>
     </main>
     <!-- Footer -->
-    <BaseFooter />
+    <BaseFooter v-if="!$route.meta.hideLayout" />
   </div>
 </template>
 

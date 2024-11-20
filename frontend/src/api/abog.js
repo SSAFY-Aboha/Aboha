@@ -6,10 +6,10 @@ const axios = localAxios()
 const getAbog = async (success, fail) => {
   const response = await axios.get('/api/v1/abogs')
   if (response.status === 200) {
-    success()
+    success(response.data)
     return response
   } else {
-    fail()
+    fail(response)
     return response
   }
 }
@@ -18,7 +18,7 @@ const getAbog = async (success, fail) => {
 const getAbogComments = async (abogId, success, fail) => {
   const response = await axios.get(`/api/v1/abogs/${abogId}/comments`)
   if (response.status === 200) {
-    success()
+    success(response.data)
     return response
   } else {
     fail()

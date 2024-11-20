@@ -29,10 +29,19 @@ const handleLogout = () => {
       <RouterLink class="hover:text-black" to="/trips">
         모든 여행 보러가기
       </RouterLink>
-      <RouterLink class="hover:text-black" to="/"> 개발자 Pick! </RouterLink>
+      <RouterLink class="hover:text-black" to="/">
+        지도에서 찾아보기
+      </RouterLink>
       <RouterLink class="hover:text-black" :to="{ name: 'abog' }">
         아보하 Log
       </RouterLink>
+      <span
+        class="cursor-pointer hover:text-black"
+        :to="{ name: 'abog' }"
+        @click="window.alert('아직 준비중입니다.')"
+      >
+        여행 계획 세우기
+      </span>
       <Button class="text-black bg-white hover:bg-gray-50">
         아보하 추천받기
       </Button>

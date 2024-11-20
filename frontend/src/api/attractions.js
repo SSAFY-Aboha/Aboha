@@ -2,6 +2,12 @@ import { localAxios } from '@/utils/http-commons.js'
 
 const axios = localAxios()
 
+// 관광지 조회
+/**
+ * @param {Object} searchData - 검색 조건
+ * @param {Function} success - 성공 콜백 함수
+ * @param {Function} fail - 실패 콜백 함수
+ */
 const getAttractions = async (searchData, success, fail) => {
   try {
     const response = await axios.get(`/api/v1/attractions`, {
@@ -14,81 +20,6 @@ const getAttractions = async (searchData, success, fail) => {
     }
   } catch (error) {
     fail && fail(error)
-  }
-}
-
-// 페이지네이션을 통한 관광지 조회
-const getAttractionsPageNaition = async (page, size, success, fail) => {
-  try {
-    const response = await axios.get(`/api/v1/attractions`, {
-      params: { page, size },
-    })
-    if (response.status === 200) {
-      success && success(response.data)
-      return response.data
-    } else {
-      return response.data
-    }
-  } catch (error) {
-    fail && fail(error)
-  }
-}
-
-// 관광지 상세 조회
-const getAttractionDetail = async (attractionId, success, fail) => {
-  const response = await axios.get(`/api/v1/attractions/${attractionId}`)
-  if (response.status === 200) {
-    success && success()
-    return response
-  } else {
-    fail()
-    return response
-  }
-}
-
-// 관광지 검색 by keyword
-const getAttractionsByKeyword = async (keyword, success, fail) => {
-  const response = await axios.get(`/api/v1/attractions`, {
-    params: { keyword },
-  })
-  if (response.status === 200) {
-    success && success()
-    return response
-  } else {
-    fail()
-    return response
-  }
-}
-
-// 관광지 검색 by address
-const getAttractionsByAddress = async (
-  { sidoCode, gugunCode },
-  success,
-  fail,
-) => {
-  const response = await axios.get(`/api/v1/attractions`, {
-    params: { sidoCode, gugunCode },
-  })
-  if (response.status === 200) {
-    success && success()
-    return response
-  } else {
-    fail()
-    return response
-  }
-}
-
-// 관광지 검색 by contentTypeId
-const getAttractionsByContentTypeId = async (contentTypeId, success, fail) => {
-  const response = await axios.get(`/api/v1/attractions`, {
-    params: { contentTypeId },
-  })
-  if (response.status === 200) {
-    success && success()
-    return response
-  } else {
-    fail()
-    return response
   }
 }
 
@@ -130,12 +61,7 @@ const getContentType = async (success, fail) => {
 
 export default {
   getContentType,
-  getAttractionsPageNaition,
   getSido,
   getGugun,
   getAttractions,
-  getAttractionDetail,
-  getAttractionsByKeyword,
-  getAttractionsByAddress,
-  getAttractionsByContentTypeId,
 }
