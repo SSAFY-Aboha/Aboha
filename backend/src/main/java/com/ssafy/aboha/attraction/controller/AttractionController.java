@@ -4,17 +4,12 @@ import com.ssafy.aboha.attraction.dto.request.AttractionSearchRequest;
 import com.ssafy.aboha.attraction.dto.response.AttractionInfo;
 import com.ssafy.aboha.attraction.dto.response.AttractionResponse;
 import com.ssafy.aboha.attraction.service.AttractionService;
-import com.ssafy.aboha.common.dto.response.SimplifiedResponse;
+import com.ssafy.aboha.common.dto.response.PaginatedResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/attractions")
@@ -25,11 +20,11 @@ public class AttractionController {
 
     // 관광지 목록 필터링 조회
     @GetMapping
-    public ResponseEntity<SimplifiedResponse<AttractionInfo>> filterAttractions(
+    public ResponseEntity<PaginatedResponse<AttractionInfo>> filterAttractions(
             @ModelAttribute AttractionSearchRequest request,
             @PageableDefault(size = 12) Pageable pageable) {
-        Slice<AttractionInfo> response = attractionService.getAttractionsByFilters(request, pageable);
-        return ResponseEntity.ok().body(SimplifiedResponse.from(response));
+        PaginatedResponse<AttractionInfo> response = attractionService.getAttractionsByFilters(request, pageable);
+        return ResponseEntity.ok().body(response);
     }
 
     // 관광지 상세 조회

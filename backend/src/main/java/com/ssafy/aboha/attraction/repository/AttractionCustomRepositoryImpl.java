@@ -6,6 +6,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.aboha.attraction.domain.Attraction;
 import com.ssafy.aboha.attraction.domain.QAttraction;
 import com.ssafy.aboha.attraction.domain.QGugun;
+import com.ssafy.aboha.attraction.dto.response.AttractionInfo;
+import com.ssafy.aboha.common.dto.response.PaginatedResponse;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -25,7 +27,7 @@ public class AttractionCustomRepositoryImpl implements AttractionCustomRepositor
     }
 
     @Override
-    public Slice<Attraction> findByFilters(Integer sidoCode, Integer gugunCode, Integer contentTypeId, String keyword, String sort, Pageable pageable) {
+    public PaginatedResponse<AttractionInfo> findByFilters(Integer sidoCode, Integer gugunCode, Integer contentTypeId, String keyword, String sort, Pageable pageable) {
         QAttraction qAttraction = QAttraction.attraction;
         QGugun qGugun = QGugun.gugun;
 
@@ -52,7 +54,7 @@ public class AttractionCustomRepositoryImpl implements AttractionCustomRepositor
         // 정렬 조건 적용
         OrderSpecifier<?> orderSpecifier = getOrderSpecifier(sort, qAttraction);
 
-        // 중복 제거를 위한 데이터 로드
+        // 전체 데이터 조회 - 중복 제거를 위한 데이터 로드
         List<Attraction> results = queryFactory
                 .selectFrom(qAttraction)
                 .leftJoin(qAttraction.gugun, qGugun).fetchJoin()
@@ -67,15 +69,21 @@ public class AttractionCustomRepositoryImpl implements AttractionCustomRepositor
         int offset = (int) pageable.getOffset();
         int limit = pageable.getPageSize();
 
-        List<Attraction> pagedResults = results.stream()
+        List<AttractionInfo> pagedResults = results.stream()
                 .skip(offset) // offset 적용
                 .limit(limit) // limit 적용
+                .map(AttractionInfo::from) // Attraction을 AttractionInfo로 매핑
                 .toList();
 
         // 다음 페이지 여부 판단
         boolean hasNext = results.size() > offset + limit;
+        long totalElements = results.size();
 
-        return new SliceImpl<>(pagedResults, pageable, hasNext);
+        // Slice 객체 생성
+        Slice<AttractionInfo> slice = new SliceImpl<>(pagedResults, pageable, hasNext);
+
+        // PaginatedResponse 반환
+        return PaginatedResponse.from(slice, totalElements);
     }
 
     @Override
@@ -98,7 +106,7 @@ public class AttractionCustomRepositoryImpl implements AttractionCustomRepositor
             case "POPULAR" -> qAttraction.likeCount.desc();
             case "REVIEW" -> qAttraction.reviewCount.desc();
             case "VIEW" -> qAttraction.viewCount.desc();
-            default -> qAttraction.id.desc(); // 기본값: 최신순
+            default -> qAttraction.id.asc(); // 기본값: 최신순(이지만, 오름차순으로)
         };
     }
 
