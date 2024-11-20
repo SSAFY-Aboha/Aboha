@@ -5,14 +5,14 @@ import com.ssafy.aboha.attraction.repository.AttractionRepository;
 import com.ssafy.aboha.common.exception.NotFoundException;
 import com.ssafy.aboha.review.domain.Review;
 import com.ssafy.aboha.review.dto.request.ReviewRequest;
+import com.ssafy.aboha.review.dto.response.ReviewResponse;
 import com.ssafy.aboha.review.repository.ReviewRepository;
 import com.ssafy.aboha.user.domain.User;
 import com.ssafy.aboha.user.repository.UserRepository;
+import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
@@ -27,13 +27,13 @@ public class ReviewService {
      * 리뷰 작성
      */
     @Transactional
-    public Integer createReview(Integer userId, Integer attractionId, ReviewRequest request) {
+    public Integer createReview(Integer userId, ReviewRequest request) {
         // 사용자 확인
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("로그인한 사용자가 존재하지 않습니다."));
 
         // 관광지 확인
-        Attraction attraction = attractionRepository.findByAttractionId(attractionId)
+        Attraction attraction = attractionRepository.findByAttractionId(request.attractionId())
                 .orElseThrow(() -> new NotFoundException("관광지가 존재하지 않습니다."));
 
         // 리뷰 생성
@@ -52,4 +52,16 @@ public class ReviewService {
 
         return review.getId();
     }
+
+    /**
+     * 리뷰 상세 조회
+     */
+    public ReviewResponse getReview(Integer id) {
+        // 리뷰 확인
+        Review review = reviewRepository.findById(id)
+            .orElseThrow(() -> new NotFoundException("리뷰가 존재하지 않습니다."));
+
+        return ReviewResponse.from(review);
+    }
+
 }
