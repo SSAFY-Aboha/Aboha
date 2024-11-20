@@ -3,8 +3,9 @@ import Button from '@/components/ui/button/Button.vue'
 import Input from '@/components/ui/input/Input.vue'
 import { ref } from 'vue'
 import useUserStore from '@/stores/user'
-
+import { useRouter } from 'vue-router'
 const userStore = useUserStore()
+const router = useRouter()
 
 // 입력값
 const inputValue = ref({ email: '', password: '', save: false })
@@ -12,8 +13,11 @@ const inputValue = ref({ email: '', password: '', save: false })
 const handleLogin = () => {
   userStore.login(
     inputValue.value,
-    () => console.log('로그인 성공'),
-    () => console.log('로그인 실패'),
+    () => {
+      console.log('로그인 성공')
+      router.push('/')
+    },
+    () => alert('아이디 및 비밀번호를 확인해주세요.'),
   )
 }
 </script>

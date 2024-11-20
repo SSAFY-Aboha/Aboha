@@ -1,7 +1,13 @@
+<script setup>
+import { RouterView } from 'vue-router'
+</script>
+
 <template>
-  <div class="login">
-    <h1>This is an TripList page</h1>
-  </div>
+  <router-view v-slot="{ Component }">
+    <keep-alive>
+      <component :is="Component" />
+    </keep-alive>
+  </router-view>
 </template>
 
 <style></style>

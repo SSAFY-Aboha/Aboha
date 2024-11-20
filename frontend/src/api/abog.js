@@ -6,7 +6,19 @@ const axios = localAxios()
 const getAbog = async (success, fail) => {
   const response = await axios.get('/api/v1/abogs')
   if (response.status === 200) {
-    success()
+    success(response.data)
+    return response
+  } else {
+    fail(response)
+    return response
+  }
+}
+
+// 아보그 댓글 조회
+const getAbogComments = async (abogId, success, fail) => {
+  const response = await axios.get(`/api/v1/abogs/${abogId}/comments`)
+  if (response.status === 200) {
+    success(response.data)
     return response
   } else {
     fail()
@@ -62,4 +74,11 @@ const deleteAbog = async (abog, success, fail) => {
   }
 }
 
-export default { getAbog, addAbog, updateAbog, deleteAbog, getAbogDetail }
+export default {
+  getAbogComments,
+  getAbog,
+  addAbog,
+  updateAbog,
+  deleteAbog,
+  getAbogDetail,
+}

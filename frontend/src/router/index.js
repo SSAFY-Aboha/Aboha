@@ -1,13 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '@/views/HomeView.vue'
-import LoginView from '@/views/LoginView.vue'
-import SignUpView from '@/views/SignUpView.vue'
 import MyPageView from '@/views/MyPageView.vue'
 import TripListView from '@/views/TripListView.vue'
-import AbogBoardView from '@/views/AbogBoardView.vue'
-import AbogBoardEditor from '@/components/AbogBoard/AbogBoardEditor.vue'
-import AbogBoardMain from '@/components/AbogBoard/AbogBoardMain.vue'
-import AbogBoardDetail from '@/components/AbogBoard/AbogBoardDetail.vue'
+import AttractionMain from '@/components/Attractions/AttractionMain.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -15,17 +9,19 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView,
+      component: () => import('@/views/HomeView.vue'),
     },
     {
       path: '/login',
       name: 'login',
-      component: LoginView,
+      component: () => import('@/views/LoginView.vue'),
+      meta: { hideLayout: true },
     },
     {
       path: '/signup',
       name: 'signup',
-      component: SignUpView,
+      component: () => import('@/views/SignUpView.vue'),
+      meta: { hideLayout: true },
     },
     {
       path: '/mypage',
@@ -36,37 +32,47 @@ const router = createRouter({
       path: '/trips',
       name: 'trips',
       component: TripListView,
-    },
-    {
-      path: '/trips/:tripId',
-      name: 'trips-detail',
-      component: TripListView,
-    },
-    {
-      path: '/abog',
-      name: 'abog',
-      component: AbogBoardView,
-      redirect: { name: 'abog-main' },
+      redirect: { name: 'trips-main' },
+      // meta: { keepAlive: true },
       children: [
         {
-          path: '/abog/main',
-          name: 'abog-main',
-          component: AbogBoardMain,
+          path: '',
+          name: 'trips-main',
+          component: AttractionMain,
         },
         {
-          path: '/abog/edit',
-          name: 'abog-edit',
-          component: AbogBoardEditor,
-        },
-        {
-          path: ':abogId',
-          name: 'abog-detail',
-          component: AbogBoardDetail,
+          path: ':tripId',
+          name: 'trips-detail',
+          component: () =>
+            import('@/components/Attractions/AttractionDetail.vue'),
           props: true,
         },
       ],
     },
+    {
+      path: '/abog',
+      name: 'abog',
+      component: () => import('@/views/AbogBoardView.vue'),
+      redirect: { name: 'abog-main' },
+      children: [
+        {
+          path: '',
+          name: 'abog-main',
+          component: () => import('@/components/AbogBoard/AbogBoardMain.vue'),
+        },
+        {
+          path: 'edit',
+          name: 'abog-edit',
+          component: () => import('@/components/AbogBoard/AbogBoardEditor.vue'),
+        },
+      ],
+    },
   ],
+})
+
+router.beforeEach((to, from, next) => {
+  console.log('Navigating from:', from.path, 'to:', to.path)
+  next()
 })
 
 export default router

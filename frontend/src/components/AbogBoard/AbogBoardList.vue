@@ -1,100 +1,60 @@
 <script setup>
-import AbogBoardItem from '@/components/AbogBoard/AbogBoardItem.vue'
+import { useInfiniteScroll } from '@/composables/useInfiniteScroll'
+import AbogBoardItem from './AbogBoardItem.vue'
+import AbogBoardSkeleton from '@/components/AbogBoard/AbogBoardSkeleton.vue'
+import DataHasMore from '@/components/common/DataHasMore.vue'
 import { ref } from 'vue'
+import abogAPI from '@/api/abog'
 
-const boardList = ref([
-  {
-    id: 1,
-    nickname: 'nickname',
-    title: '여기 다녀왔어요!',
-    date: '2021. 10. 10',
-    content:
-      '어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구',
-    createdAt: '2021-10-10',
-    updatedAt: '2021-10-10',
-    tags: ['tag1', 'tag2', 'tag3'],
-    image: '/src/assets/mainPage_image.jpg',
-    like: 10,
-    comment: 10,
-    view: 10,
-  },
-  {
-    id: 1,
-    nickname: 'nickname',
-    title: '여기 다녀왔어요!',
-    date: '2021. 10. 10',
-    content:
-      '어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구',
-    createdAt: '2021-10-10',
-    updatedAt: '2021-10-10',
-    tags: ['tag1', 'tag2', 'tag3'],
-    image: '/src/assets/test1.jpg',
-    like: 10,
-    comment: 10,
-    view: 10,
-  },
-  {
-    id: 1,
-    nickname: 'nickname',
-    title: '여기 다녀왔어요!',
-    date: '2021. 10. 10',
-    content:
-      '어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구',
-    createdAt: '2021-10-10',
-    updatedAt: '2021-10-10',
-    tags: ['tag1', 'tag2', 'tag3'],
-    image: '/src/assets/test2.jpg',
-    like: 10,
-    comment: 10,
-    view: 10,
-  },
-  {
-    id: 1,
-    nickname: 'nickname',
-    title: '여기 다녀왔어요!',
-    date: '2021. 10. 10',
-    content:
-      '어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구',
-    createdAt: '2021-10-10',
-    updatedAt: '2021-10-10',
-    tags: ['tag1', 'tag2', 'tag3'],
-    image: '/src/assets/test3.jpg',
-    like: 10,
-    comment: 10,
-    view: 10,
-  },
-  {
-    id: 1,
-    nickname: 'nickname',
-    title: '여기 다녀왔어요!',
-    date: '2021. 10. 10',
-    content: '',
-    createdAt: '2021-10-10',
-    updatedAt: '2021-10-10',
-    tags: ['tag1', 'tag2', 'tag3'],
-    image: '/src/assets/test4.jpg',
-    like: 10,
-    comment: 10,
-    view: 10,
-  },
-])
+const boardList = defineModel('boardList', { type: Array })
+const observerTarget = ref(null)
+
+const hasMore = ref(true) // 더 이상 로드할 데이터 여부
+const isLoading = ref(false) // 로딩 중 상태
+
+const handleGetAbog = async () => {
+  isLoading.value = true
+
+  try {
+    await abogAPI.getAbog(
+      data => {
+        if (data.content.length > 0) {
+          boardList.value = [...boardList.value, ...data.content]
+        } else {
+          hasMore.value = false // 더 이상 로드할 데이터가 없는 경우
+        }
+      },
+      () => console.log('아보그 조회 실패'),
+    )
+  } finally {
+    isLoading.value = false
+  }
+}
+
+// 무한 스크롤
+useInfiniteScroll(observerTarget, () => {
+  console.log(observerTarget.value)
+  handleGetAbog()
+})
 </script>
 
 <template>
-  <div class="w-full h-full">
-    <ul
-      class="grid grid-cols-1 gap-x-8 gap-y-11 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
-    >
-      <AbogBoardItem
-        v-for="each in boardList"
-        :data="each"
-        :key="each.id"
-      /><AbogBoardItem
-        v-for="each in boardList"
-        :data="each"
-        :key="each.id"
-      /><AbogBoardItem v-for="each in boardList" :data="each" :key="each.id" />
+  <div class="flex flex-col w-full h-full gap-4">
+    <ul class="flex flex-col gap-6">
+      <AbogBoardItem v-for="each in boardList" :data="each" :key="each.id" />
     </ul>
+
+    <!-- 스켈레톤 및 관찰 대상 요소, isLoading 상태일 때 로드 중 표시 -->
+    <div ref="observerTarget" class="flex-1 w-full h-full">
+      <ul v-if="isLoading" class="flex flex-col gap-6">
+        <AbogBoardSkeleton v-for="each in 1" :key="each" />
+      </ul>
+
+      <!-- 더 이상 로드할 데이터가 없는 경우 -->
+      <div v-if="!hasMore && !isLoading" class="flex-1 w-full">
+        <DataHasMore />
+      </div>
+    </div>
   </div>
 </template>
 
