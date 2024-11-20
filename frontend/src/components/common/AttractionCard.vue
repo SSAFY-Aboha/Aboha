@@ -1,12 +1,9 @@
 <script setup>
 const props = defineProps({
-  infoData: {
-    type: Object,
-    required: true,
-  },
+  data: Object,
 })
 
-const { id, image, likeCount, title, sidoName, gugunName } = props.infoData
+const { id, image, likeCount, title, sidoName, gugunName } = props.data
 </script>
 
 <template>

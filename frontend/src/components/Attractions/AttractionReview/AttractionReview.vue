@@ -1,9 +1,16 @@
 <script setup>
 import Button from '@/components/ui/button/Button.vue'
 import AttractionReviewList from './AttractionReviewList.vue'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
+import AttractionReviewEditor from '@/components/Attractions/AttractionReview/AttractionReviewEditor.vue'
+// import attractionAPI from '@/api/attraction'
 
 const limit = ref(4)
+
+const props = defineProps({
+  attractionId: [Number, String],
+  // reviews: Array,
+})
 
 const reviews = ref([
   {
@@ -72,14 +79,16 @@ const reviews = ref([
     profileImage: '',
   },
 ])
+
+// review 데이터 받아오기
+// onMounted(() => {
+//   attractionAPI.getAttractionReview(props.attractionId, () => {})
+// })
 </script>
 <template>
   <div class="flex items-center justify-between w-full">
     <h1 class="text-3xl font-bold">후기</h1>
-    <Button
-      class="px-4 py-6 text-lg text-black bg-white border shadow-sm hover:bg-gray-200"
-      >후기 작성하기</Button
-    >
+    <AttractionReviewEditor v-model:reviews="reviews" />
   </div>
   <section class="flex flex-col w-full gap-3 rounded-xl">
     <!-- 전체 리뷰 평점 -->
