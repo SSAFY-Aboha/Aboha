@@ -4,11 +4,8 @@ import com.ssafy.aboha.attraction.domain.Attraction;
 import com.ssafy.aboha.attraction.domain.ContentType;
 import com.ssafy.aboha.attraction.domain.Gugun;
 import com.ssafy.aboha.attraction.domain.Sido;
-import com.ssafy.aboha.attraction.dto.request.AttractionSearchRequest;
-import com.ssafy.aboha.attraction.dto.response.AttractionInfo;
-import com.ssafy.aboha.attraction.dto.response.AttractionResponse;
-import com.ssafy.aboha.attraction.dto.response.GugunInfo;
-import com.ssafy.aboha.attraction.dto.response.SidoInfo;
+import com.ssafy.aboha.attraction.dto.request.AttractionReadRequest;
+import com.ssafy.aboha.attraction.dto.response.*;
 import com.ssafy.aboha.attraction.repository.AttractionRepository;
 import com.ssafy.aboha.attraction.repository.ContentTypeRepository;
 import com.ssafy.aboha.attraction.repository.GugunRepository;
@@ -37,7 +34,7 @@ public class AttractionService {
     /**
      * 관광지 목록 조회
      */
-    public PaginatedResponse<AttractionInfo> getAttractionsByFilters(AttractionSearchRequest request, Pageable pageable) {
+    public PaginatedResponse<AttractionInfo> getAttractionsByFilters(AttractionReadRequest request, Pageable pageable) {
         Integer sidoCode = request.sidoCode();
         Integer gugunCode = request.gugunCode();
         Integer contentTypeId = request.contentTypeId();
@@ -106,6 +103,13 @@ public class AttractionService {
      */
     public List<ContentType> getContentTypes() {
         return contentTypeRepository.findAll();
+    }
+
+    /**
+     * 관광지 이름 검색
+     */
+    public List<AttractionSummary> getAttractionsByTitle(String keyword) {
+        return attractionRepository.findByTitle(keyword);
     }
 
     private void validateSidoGugun(Integer sidoCode, Integer gugunCode) {
