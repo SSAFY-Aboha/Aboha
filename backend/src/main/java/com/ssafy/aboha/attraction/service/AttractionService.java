@@ -42,8 +42,6 @@ public class AttractionService {
         validateSidoGugun(sidoCode, gugunCode);
         validateContentTypeId(contentTypeId);
 
-
-
         return attractionRepository.findByFilters(
                 sidoCode,
                 gugunCode,
@@ -57,6 +55,7 @@ public class AttractionService {
     /**
      * 관광지 상세 조회
      */
+    @Transactional
     public AttractionResponse getAttraction(Integer id) {
         Attraction attraction = attractionRepository.findByAttractionId(id)
             .orElseThrow(() -> new NotFoundException("관광지가 존재하지 않습니다."));
