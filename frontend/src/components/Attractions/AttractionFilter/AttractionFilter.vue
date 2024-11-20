@@ -18,7 +18,7 @@ const isOpen = ref(false)
 const onSearch = inject('handleSearch')
 const searchParams = inject('searchParams')
 
-const handleSearch = () => {
+const handleSearchBtn = () => {
   isOpen.value = false
   // TODO: 검색 처리
   onSearch(searchParams.value)
@@ -58,7 +58,7 @@ const handleSearch = () => {
         </section>
       </main>
       <DialogFooter>
-        <Button type="submit" @click="handleSearch"> 검색하기 </Button>
+        <Button type="submit" @click="handleSearchBtn"> 검색하기 </Button>
       </DialogFooter>
     </DialogContent>
   </Dialog>
