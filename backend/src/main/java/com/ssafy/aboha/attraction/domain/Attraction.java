@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Entity
 @Table(name = "attractions")
@@ -75,6 +76,9 @@ public class Attraction {
     @Column(name = "review_count")
     private Long reviewCount;
 
+    @Column(name = "rating_sum", precision = 5, scale = 1)
+    private BigDecimal ratingSum;
+
     public void increaseViewCount() {
         this.viewCount++;
     }
@@ -85,6 +89,31 @@ public class Attraction {
 
     public void decreaseLikeCount() {
         this.likeCount--;
+    }
+
+    // 리뷰 추가
+    public void addReview(BigDecimal rating) {
+        this.ratingSum = this.ratingSum.add(rating);
+        this.reviewCount += 1;
+    }
+
+    // 리뷰 수정
+    public void updateReview(BigDecimal oldRating, BigDecimal newRating) {
+        this.ratingSum = this.ratingSum.subtract(oldRating).add(newRating);
+    }
+
+    // 리뷰 삭제
+    public void deleteReview(BigDecimal rating) {
+        this.ratingSum = this.ratingSum.subtract(rating);
+        this.reviewCount -= 1;
+    }
+
+    // 평균 평점 계산
+    public BigDecimal calculateAverageRating() {
+        return this.reviewCount == 0
+                ? BigDecimal.ZERO
+                : this.ratingSum
+                .divide(BigDecimal.valueOf(this.reviewCount), 1, RoundingMode.HALF_UP); // 소수점 첫째자리 반올림
     }
 
 }
