@@ -1,15 +1,18 @@
 <script setup>
 import AttractionList from '@/components/Attractions/AttractionList.vue'
-import { provide, ref, watch, watchEffect } from 'vue'
-import AttractionNav from './AttractionNav.vue'
+import { provide, ref, watch } from 'vue'
+import AttractionNav from '@/components/Attractions/AttractionNav/AttractionNav.vue'
 import attractionAPI from '@/api/attractions'
 import AttractionSortSelector from './AttractionFilter/AttractionSortSelector.vue'
 
 // 현재 상태
-const attractionList = ref([])
+const attractionList = ref([]) // 관광지 리스트
 const pageNo = ref(0)
-const SIZE = 12
 const isLoading = ref(false)
+const hasMore = ref(true)
+const totalElements = ref(0)
+
+provide('hasMore', hasMore)
 
 const searchParams = ref({
   sidoCode: '',
@@ -28,31 +31,31 @@ watch(
   },
 )
 
-// watch(
-//   () => searchParams.value.sidoCode,
-//   () => searchParams.value.gugunCode,
-//   () => searchParams.value.contentTypeId,
-//   () => {
-
-//     searchDataName.value = []
-//   },
-// )
-
 // 부가 상태
 const searchDataName = ref([])
 
-const handleSearch = async searchData => {
-  // 로딩 시작
-  isLoading.value = true
+watch(hasMore, () => {
+  console.log('hasMore', hasMore.value)
+})
 
+const handleSearch = async searchData => {
+  isLoading.value = true // 로딩 시작
+  attractionList.value = [] // 관광지 리스트 초기화 : 이전 검색 결과 초기화
+
+  pageNo.value = 0 // 페이지 초기화
   //관광지 조회
   try {
-    attractionAPI.getAttractions(searchData, data => {
-      attractionList.value = data.content
-    })
+    const data = await attractionAPI.getAttractions(searchData)
+    console.log('검색 결과', data)
+    const { content, hasNext, pageNumber, totalElements: total } = data
+    content.length > 0 && (attractionList.value = content)
+
+    totalElements.value = total
+
+    hasNext && (pageNo.value = pageNumber + 1) // 다음 페이지 존재 시 페이지 번호 업데이트
+    hasMore.value = hasNext // 더 가져올 데이터 존재 여부 업데이트
   } finally {
-    // 로딩 종료
-    isLoading.value = false
+    isLoading.value = false // 로딩 종료
   }
 }
 
@@ -60,6 +63,7 @@ provide('handleSearch', handleSearch)
 provide('searchParams', searchParams)
 provide('searchDataName', searchDataName)
 provide('pageNo', pageNo)
+provide('totalElements', totalElements)
 </script>
 
 <template>
@@ -77,7 +81,9 @@ provide('pageNo', pageNo)
       <div class="flex justify-between">
         <div>
           <span>총 </span>
-          <span class="text-lg font-bold">{{ attractionList.length }}</span
+          <span class="text-lg font-bold">{{
+            new Intl.NumberFormat('ko-KR').format(totalElements)
+          }}</span
           ><span>개의 여행지가 있습니다.</span>
         </div>
         <div>

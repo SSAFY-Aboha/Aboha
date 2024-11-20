@@ -14,28 +14,34 @@ const attractionList = defineModel('attractionList')
 const isLoading = defineModel('isLoading')
 const searchParams = inject('searchParams')
 const pageNo = inject('pageNo')
+const hasMore = inject('hasMore')
+const total = inject('totalElements')
 
-const hasMore = ref(true) // 더 가져올 데이터가 있는지 여부
 const observerTarget = ref(null) // 무한 스크롤 타겟
 
 const handleGetAttraction = async () => {
   // 로딩 시작
   isLoading.value = true
   try {
-    await attractionAPI.getAttractions(
+    const data = await attractionAPI.getAttractions(
       { ...searchParams.value, page: pageNo.value },
-      data => {
-        const { content, hasNext, pageNumber } = data
-        console.log(data)
-        if (content.length > 0) {
-          attractionList.value = [...attractionList.value, ...content]
-          pageNo.value = pageNumber + 1
-        } else {
-          hasMore.value = false
-        }
-      },
+      () => console.log('성공'),
       () => console.log('조회 실패'),
     )
+    const { content, hasNext, pageNumber, totalElements } = data
+
+    console.log(totalElements)
+
+    if (content.length > 0) {
+      attractionList.value = [...attractionList.value, ...content]
+    } else {
+      hasMore.value = false
+    }
+
+    total.value = totalElements
+
+    hasNext && (pageNo.value = pageNumber + 1) // 다음 페이지 존재 시 페이지 번호 업데이트
+    !hasNext && (hasMore.value = false) // 다음 페이지 없을 시 더 가져올 데이터 없음 처리
   } finally {
     // 로딩 완료
     isLoading.value = false
@@ -44,7 +50,7 @@ const handleGetAttraction = async () => {
 
 // 무한 스크롤
 useInfiniteScroll(observerTarget, () => {
-  handleGetAttraction()
+  hasMore.value && handleGetAttraction() // 더 가져올 데이터가 있는 경우 관광지 조회
 })
 </script>
 
