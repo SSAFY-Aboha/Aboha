@@ -15,11 +15,26 @@ const getAttractions = async (searchData, success, fail) => {
     })
     if (response.status === 200) {
       success && success(response.data)
+      return response.data
     } else {
       fail && fail(response.data)
+      return response.data
     }
   } catch (error) {
     fail && fail(error)
+    return error
+  }
+}
+
+// 관광지 상세 조회
+const getAttractionDetail = async (attractionId, success, fail) => {
+  const response = await axios.get(`/api/v1/attractions/${attractionId}`)
+  if (response.status === 200) {
+    success && success(response.data)
+    return response.data
+  } else {
+    fail && fail(response.data)
+    return response.data
   }
 }
 
@@ -64,4 +79,5 @@ export default {
   getSido,
   getGugun,
   getAttractions,
+  getAttractionDetail,
 }
