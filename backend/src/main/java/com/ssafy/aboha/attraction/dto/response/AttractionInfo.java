@@ -14,7 +14,9 @@ public record AttractionInfo(
         Integer gugunCode,
         String gugunName,
         String image,
-        Long likeCount
+        Long likeCount,
+        Long viewCount,
+        Long reviewCount
 ) {
 
     public static AttractionInfo from(Attraction attraction) {
@@ -32,6 +34,8 @@ public record AttractionInfo(
                 .gugunName(attraction.getGugun().getName())
                 .image(image)
                 .likeCount(attraction.getLikeCount())
+                .viewCount(attraction.getViewCount())
+                .reviewCount(attraction.getReviewCount())
                 .build();
     }
 }

@@ -1,5 +1,7 @@
 package com.ssafy.aboha.common.exception;
 
+import java.util.HashMap;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,9 +10,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 @RestControllerAdvice
 @Slf4j
@@ -58,6 +58,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ConflictException.class)
     public ResponseEntity<ErrorResponse> handleConflictException(ConflictException e) {
         return ResponseEntity.badRequest().body(ErrorResponse.of(HttpStatus.CONFLICT, e.getMessage()));
+    }
+
+    // 413 Request Entity Too Large
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ErrorResponse> handleMaxSizeException(MaxUploadSizeExceededException e) {
+        return ResponseEntity
+            .status(HttpStatus.PAYLOAD_TOO_LARGE) // Deprecated된 REQUEST_ENTITY_TOO_LARGE 대신 사용
+            .body(ErrorResponse.of(HttpStatus.PAYLOAD_TOO_LARGE, "업로드한 파일 크기가 너무 큽니다."));
     }
 
     // 500 Internal Server Error

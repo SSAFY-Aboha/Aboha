@@ -1,13 +1,8 @@
 package com.ssafy.aboha.attraction.dto.request;
 
-import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.NotBlank;
 
 public record AttractionSearchRequest(
-        @Nullable
-        Integer sidoCode,
-        @Nullable
-        Integer gugunCode,
-        @Nullable
-        Integer contentTypeId
-) {
-}
+        @NotBlank(message = "검색 키워드는 필수입니다.")
+        String keyword
+) {}
