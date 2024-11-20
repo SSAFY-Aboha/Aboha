@@ -135,7 +135,7 @@ CREATE TABLE IF NOT EXISTS `aboha`.`reviews` (
                                                  `id` INT NOT NULL AUTO_INCREMENT,
                                                  `user_id` INT NOT NULL,
                                                  `attraction_id` INT NOT NULL,
-                                                 `rating` DECIMAL(3,2) NOT NULL DEFAULT 0.0,
+                                                 `rating` INT NOT NULL CHECK (`rating` BETWEEN 1 AND 5), -- 1~5 점 제한
     `content` TEXT NULL,
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
