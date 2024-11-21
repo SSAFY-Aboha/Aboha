@@ -5,7 +5,7 @@ import AttractionReview from './AttractionReview/AttractionReview.vue'
 import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
 import { computed } from 'vue'
-
+import attractionAPI from '@/api/attractions'
 const props = defineProps({
   attraction: Object,
 })
@@ -18,6 +18,19 @@ const mapData = computed(() => {
     lng: props.attraction.longitude,
   }
 })
+
+const handleLike = async () => {
+  console.log('like')
+  try {
+    await attractionAPI.toggleAttractionLike(
+      props.attraction.id,
+      console.log,
+      console.log,
+    )
+  } catch (error) {
+    console.error('handleLike error', error)
+  }
+}
 </script>
 
 <template>
@@ -42,6 +55,7 @@ const mapData = computed(() => {
 
           <div class="flex items-center justify-end gap-2">
             <i
+              @click="handleLike"
               class="overflow-hidden text-red-500 cursor-pointer pi pi-heart hover:font-bold"
             >
             </i>

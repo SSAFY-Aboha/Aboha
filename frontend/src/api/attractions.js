@@ -116,13 +116,12 @@ const toggleAttractionLike = async (attractionId, success, fail) => {
   const response = await axios.post(
     `/api/v1/attractions/${attractionId}/like`,
     null,
-    // 헤더에 JSession Cookie 포함
   )
   if (response.status === 200) {
-    success && success(response.data)
-    return response.data
+    success && success(response)
+    return response
   } else {
-    fail()
+    fail(response)
     return response
   }
 }
