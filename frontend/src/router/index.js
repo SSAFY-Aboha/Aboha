@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import MyPageView from '@/views/MyPageView.vue'
 import TripListView from '@/views/TripListView.vue'
 import AttractionMain from '@/components/Attractions/AttractionMain.vue'
 
@@ -24,9 +23,22 @@ const router = createRouter({
       meta: { hideLayout: true },
     },
     {
-      path: '/mypage',
+      path: '/mypage/:userId',
       name: 'mypage',
-      component: MyPageView,
+      component: () => import('@/views/mypage/MyPageView.vue'),
+      meta: { requireAuth: true, hideLayout: true, transition: false },
+      children: [
+        {
+          path: '',
+          name: 'mypage-main',
+          component: () => import('@/views/mypage/MyPageMain.vue'),
+        },
+        {
+          path: 'edit',
+          name: 'mypage-edit',
+          component: () => import('@/views/mypage/MyPageEdit.vue'),
+        },
+      ],
     },
     {
       path: '/trips',
@@ -77,8 +89,21 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
+  // 네비게이션 로그 출력
   console.log('Navigating from:', from.path, 'to:', to.path)
-  next()
+
+  // 인증 상태 가져오기
+  const isLoggedIn = true
+  // const isLoggedIn = store.isLoggedIn
+
+  // 로그인 상태 확인
+  if (to.meta.requireAuth && !isLoggedIn) {
+    // 로그인 되어있지 않는다면, 로그인 페이지로 이동
+    next({ name: 'login' })
+  } else {
+    // 로그인 되어있다면, 다음 단계로 이동
+    next()
+  }
 })
 
 export default router
