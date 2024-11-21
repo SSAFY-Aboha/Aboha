@@ -28,7 +28,7 @@ public class AttractionCustomRepositoryImpl implements AttractionCustomRepositor
     }
 
     @Override
-    public PaginatedResponse<AttractionInfo> findByFilters(Integer sidoCode, Integer gugunCode, Integer contentTypeId, String keyword, String sort, Pageable pageable) {
+    public PaginatedResponse<AttractionInfo> findAll(Integer sidoCode, Integer gugunCode, Integer contentTypeId, String keyword, String sort, Pageable pageable) {
         QAttraction qAttraction = QAttraction.attraction;
         QGugun qGugun = QGugun.gugun;
 
@@ -120,6 +120,41 @@ public class AttractionCustomRepositoryImpl implements AttractionCustomRepositor
                 .map(AttractionSummary::from)
                 .toList();
     }
+
+    @Override
+    public List<Attraction> findByFilters(Integer sidoCode, List<Integer> gugunCodes, Integer contentTypeId) {
+        QAttraction qAttraction = QAttraction.attraction;
+        QGugun qGugun = QGugun.gugun;
+
+        BooleanBuilder builder = new BooleanBuilder();
+
+        // 조건 추가
+        if (sidoCode != null) {
+            builder.and(qAttraction.sido.code.eq(sidoCode));
+            builder.and(qAttraction.gugun.sido.code.eq(sidoCode));
+        }
+        if (gugunCodes != null && !gugunCodes.isEmpty()) {
+            builder.and(qAttraction.gugun.code.in(gugunCodes));
+        }
+        if (contentTypeId != null) {
+            builder.and(qAttraction.contentType.id.eq(contentTypeId));
+        }
+
+        // 이미지가 존재하는 관광지만 필터링
+        builder.and(qAttraction.firstImage1.isNotNull())
+                .and(qAttraction.firstImage1.ne("")); // 이미지가 빈 문자열이 아닌 경우도 포함
+
+        // 전체 데이터 조회 - 중복 제거를 위한 데이터 로드
+        return queryFactory
+                .selectFrom(qAttraction)
+                .leftJoin(qAttraction.gugun, qGugun).fetchJoin()
+                .where(builder)
+                .fetch()
+                .stream()
+                .distinct()
+                .toList();
+    }
+
 
     private OrderSpecifier<?> getOrderSpecifier(String sort, QAttraction qAttraction) {
         return switch (sort) {

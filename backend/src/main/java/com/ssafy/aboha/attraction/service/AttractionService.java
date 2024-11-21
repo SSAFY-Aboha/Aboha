@@ -44,7 +44,7 @@ public class AttractionService {
         validateSidoGugun(sidoCode, gugunCode);
         validateContentTypeId(contentTypeId);
 
-        return attractionRepository.findByFilters(
+        return attractionRepository.findAll(
                 sidoCode,
                 gugunCode,
                 contentTypeId,
