@@ -12,11 +12,11 @@ CREATE TABLE IF NOT EXISTS `aboha`.`sidos` (
                                                `sido_code` INT NULL DEFAULT NULL,
                                                `sido_name` VARCHAR(20) NULL DEFAULT NULL,
     PRIMARY KEY (`no`),
-    UNIQUE INDEX `sido_code_UNIQUE` (`sido_code` ASC) VISIBLE)
-    ENGINE = InnoDB
-    AUTO_INCREMENT = 18
-    DEFAULT CHARACTER SET = utf8mb4
-    COLLATE = utf8mb4_0900_ai_ci;
+    UNIQUE INDEX `sido_code_UNIQUE` (`sido_code` ASC) VISIBLE
+    ) ENGINE=InnoDB
+    AUTO_INCREMENT=18
+    DEFAULT CHARACTER SET=utf8mb4
+    COLLATE=utf8mb4_0900_ai_ci;
 
 -- -----------------------------------------------------
 -- Table `aboha`.`guguns`
@@ -27,15 +27,20 @@ CREATE TABLE IF NOT EXISTS `aboha`.`guguns` (
                                                 `gugun_code` INT NULL DEFAULT NULL,
                                                 `gugun_name` VARCHAR(20) NULL DEFAULT NULL,
     PRIMARY KEY (`no`),
-    INDEX `guguns_sido_to_sidos_cdoe_fk_idx` (`sido_code` ASC) VISIBLE,
-    INDEX `gugun_code_idx` (`gugun_code` ASC) VISIBLE,
-    CONSTRAINT `guguns_sido_to_sidos_cdoe_fk`
+    INDEX `guguns_sido_to_sidos_code_fk_idx` (`sido_code` ASC) VISIBLE,
+    -- 기존의 전역 유니크 인덱스 제거
+    -- INDEX `gugun_code_idx` (`gugun_code` ASC) VISIBLE,
+    CONSTRAINT `guguns_sido_to_sidos_code_fk`
     FOREIGN KEY (`sido_code`)
-    REFERENCES `aboha`.`sidos` (`sido_code`))
-    ENGINE = InnoDB
-    AUTO_INCREMENT = 235
-    DEFAULT CHARACTER SET = utf8mb4
-    COLLATE = utf8mb4_0900_ai_ci;
+    REFERENCES `aboha`.`sidos` (`sido_code`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE,
+    -- (sido_code, gugun_code) 조합에 대한 유니크 제약 조건 추가
+    UNIQUE INDEX `idx_gugun_sido_code_gugun_code` (`sido_code`, `gugun_code`)
+    ) ENGINE=InnoDB
+    AUTO_INCREMENT=235
+    DEFAULT CHARACTER SET=utf8mb4
+    COLLATE=utf8mb4_0900_ai_ci;
 
 -- -----------------------------------------------------
 -- Table `aboha`.`contenttypes`
@@ -43,10 +48,10 @@ CREATE TABLE IF NOT EXISTS `aboha`.`guguns` (
 CREATE TABLE IF NOT EXISTS `aboha`.`contenttypes` (
                                                       `content_type_id` INT NOT NULL,
                                                       `content_type_name` VARCHAR(45) NULL DEFAULT NULL,
-    PRIMARY KEY (`content_type_id`))
-    ENGINE = InnoDB
-    DEFAULT CHARACTER SET = utf8mb4
-    COLLATE = utf8mb4_0900_ai_ci;
+    PRIMARY KEY (`content_type_id`)
+    ) ENGINE=InnoDB
+    DEFAULT CHARACTER SET=utf8mb4
+    COLLATE=utf8mb4_0900_ai_ci;
 
 -- -----------------------------------------------------
 -- Table `aboha`.`attractions`
@@ -75,20 +80,32 @@ CREATE TABLE IF NOT EXISTS `aboha`.`attractions` (
     PRIMARY KEY (`no`),
     INDEX `attractions_typeid_to_types_typeid_fk_idx` (`content_type_id` ASC) VISIBLE,
     INDEX `attractions_sido_to_sidos_code_fk_idx` (`area_code` ASC) VISIBLE,
-    INDEX `attractions_sigungu_to_guguns_gugun_fk_idx` (`si_gun_gu_code` ASC) VISIBLE,
+    -- 기존의 단일 외래 키 제약 조건 제거
+    -- INDEX `attractions_sigungu_to_guguns_gugun_fk_idx` (`si_gun_gu_code` ASC) VISIBLE,
+    -- 기존의 외래 키 제약 조건 제거
+    -- CONSTRAINT `attractions_sigungu_to_guguns_gugun_fk`
+    -- FOREIGN KEY (`si_gun_gu_code`)
+    -- REFERENCES `aboha`.`guguns` (`gugun_code`),
     CONSTRAINT `attractions_area_to_sidos_code_fk`
     FOREIGN KEY (`area_code`)
-    REFERENCES `aboha`.`sidos` (`sido_code`),
-    CONSTRAINT `attractions_sigungu_to_guguns_gugun_fk`
-    FOREIGN KEY (`si_gun_gu_code`)
-    REFERENCES `aboha`.`guguns` (`gugun_code`),
+    REFERENCES `aboha`.`sidos` (`sido_code`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE,
     CONSTRAINT `attractions_typeid_to_types_typeid_fk`
     FOREIGN KEY (`content_type_id`)
-    REFERENCES `aboha`.`contenttypes` (`content_type_id`))
-    ENGINE = InnoDB
-    AUTO_INCREMENT = 56650
-    DEFAULT CHARACTER SET = utf8mb4
-    COLLATE = utf8mb4_0900_ai_ci;
+    REFERENCES `aboha`.`contenttypes` (`content_type_id`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE,
+    -- 복합 외래 키 제약 조건 추가 (area_code, si_gun_gu_code) -> (sido_code, gugun_code)
+    CONSTRAINT `attractions_sido_gugun_fk`
+    FOREIGN KEY (`area_code`, `si_gun_gu_code`)
+    REFERENCES `aboha`.`guguns` (`sido_code`, `gugun_code`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE
+    ) ENGINE=InnoDB
+    AUTO_INCREMENT=56650
+    DEFAULT CHARACTER SET=utf8mb4
+    COLLATE=utf8mb4_0900_ai_ci;
 
 -- -----------------------------------------------------
 -- Table `aboha`.`users`
@@ -105,9 +122,9 @@ CREATE TABLE IF NOT EXISTS `aboha`.`users` (
     PRIMARY KEY (`id`),
     UNIQUE INDEX `email_UNIQUE` (`email` ASC),
     UNIQUE INDEX `nickname_UNIQUE` (`nickname` ASC)
-    ) ENGINE = InnoDB
-    DEFAULT CHARACTER SET = utf8mb4
-    COLLATE = utf8mb4_0900_ai_ci;
+    ) ENGINE=InnoDB
+    DEFAULT CHARACTER SET=utf8mb4
+    COLLATE=utf8mb4_0900_ai_ci;
 
 -- -----------------------------------------------------
 -- Table `aboha`.`attraction_likes`
@@ -121,13 +138,17 @@ CREATE TABLE IF NOT EXISTS `aboha`.`attraction_likes` (
     INDEX `attraction_likes_attraction_fk_idx` (`attraction_id` ASC),
     CONSTRAINT `attraction_likes_user_fk`
     FOREIGN KEY (`user_id`)
-    REFERENCES `aboha`.`users` (`id`),
+    REFERENCES `aboha`.`users` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
     CONSTRAINT `attraction_likes_attraction_fk`
     FOREIGN KEY (`attraction_id`)
     REFERENCES `aboha`.`attractions` (`no`)
-    ) ENGINE = InnoDB
-    DEFAULT CHARACTER SET = utf8mb4
-    COLLATE = utf8mb4_0900_ai_ci;
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+    ) ENGINE=InnoDB
+    DEFAULT CHARACTER SET=utf8mb4
+    COLLATE=utf8mb4_0900_ai_ci;
 
 -- -----------------------------------------------------
 -- Table `aboha`.`reviews`
@@ -146,13 +167,17 @@ CREATE TABLE IF NOT EXISTS `aboha`.`reviews` (
     INDEX `reviews_attraction_fk_idx` (`attraction_id` ASC),
     CONSTRAINT `reviews_user_fk`
     FOREIGN KEY (`user_id`)
-    REFERENCES `aboha`.`users` (`id`),
+    REFERENCES `aboha`.`users` (`id`)
+                                                              ON DELETE CASCADE
+                                                              ON UPDATE CASCADE,
     CONSTRAINT `reviews_attraction_fk`
     FOREIGN KEY (`attraction_id`)
     REFERENCES `aboha`.`attractions` (`no`)
-    ) ENGINE = InnoDB
-    DEFAULT CHARACTER SET = utf8mb4
-    COLLATE = utf8mb4_0900_ai_ci;
+                                                              ON DELETE CASCADE
+                                                              ON UPDATE CASCADE
+    ) ENGINE=InnoDB
+    DEFAULT CHARACTER SET=utf8mb4
+    COLLATE=utf8mb4_0900_ai_ci;
 
 -- -----------------------------------------------------
 -- Table `aboha`.`abogs`
@@ -173,13 +198,17 @@ CREATE TABLE IF NOT EXISTS `aboha`.`abogs` (
     INDEX `abogs_attraction_fk_idx` (`attraction_id` ASC),
     CONSTRAINT `abogs_user_fk`
     FOREIGN KEY (`user_id`)
-    REFERENCES `aboha`.`users` (`id`),
+    REFERENCES `aboha`.`users` (`id`)
+                                                              ON DELETE CASCADE
+                                                              ON UPDATE CASCADE,
     CONSTRAINT `abogs_attraction_fk`
     FOREIGN KEY (`attraction_id`)
     REFERENCES `aboha`.`attractions` (`no`)
-    ) ENGINE = InnoDB
-    DEFAULT CHARACTER SET = utf8mb4
-    COLLATE = utf8mb4_0900_ai_ci;
+                                                              ON DELETE SET NULL
+                                                              ON UPDATE CASCADE
+    ) ENGINE=InnoDB
+    DEFAULT CHARACTER SET=utf8mb4
+    COLLATE=utf8mb4_0900_ai_ci;
 
 -- -----------------------------------------------------
 -- Table `aboha`.`abog_images`
@@ -193,9 +222,11 @@ CREATE TABLE IF NOT EXISTS `aboha`.`abog_images` (
     CONSTRAINT `abog_images_abog_fk`
     FOREIGN KEY (`abog_id`)
     REFERENCES `aboha`.`abogs` (`id`)
-    ) ENGINE = InnoDB
-    DEFAULT CHARACTER SET = utf8mb4
-    COLLATE = utf8mb4_0900_ai_ci;
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+    ) ENGINE=InnoDB
+    DEFAULT CHARACTER SET=utf8mb4
+    COLLATE=utf8mb4_0900_ai_ci;
 
 -- -----------------------------------------------------
 -- Table `aboha`.`comments`
@@ -215,17 +246,22 @@ CREATE TABLE IF NOT EXISTS `aboha`.`comments` (
     INDEX `comments_parent_fk_idx` (`parent_id` ASC),
     CONSTRAINT `comments_user_fk`
     FOREIGN KEY (`user_id`)
-    REFERENCES `aboha`.`users` (`id`),
+    REFERENCES `aboha`.`users` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
     CONSTRAINT `comments_abog_fk`
     FOREIGN KEY (`abog_id`)
-    REFERENCES `aboha`.`abogs` (`id`),
+    REFERENCES `aboha`.`abogs` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
     CONSTRAINT `comments_parent_fk`
     FOREIGN KEY (`parent_id`)
     REFERENCES `aboha`.`comments` (`id`)
     ON DELETE CASCADE
-    ) ENGINE = InnoDB
-    DEFAULT CHARACTER SET = utf8mb4
-    COLLATE = utf8mb4_0900_ai_ci;
+    ON UPDATE CASCADE
+    ) ENGINE=InnoDB
+    DEFAULT CHARACTER SET=utf8mb4
+    COLLATE=utf8mb4_0900_ai_ci;
 
 -- -----------------------------------------------------
 -- Table `aboha`.`abog_likes`
@@ -239,10 +275,14 @@ CREATE TABLE IF NOT EXISTS `aboha`.`abog_likes` (
     INDEX `abog_likes_abog_fk_idx` (`abog_id` ASC),
     CONSTRAINT `abog_likes_user_fk`
     FOREIGN KEY (`user_id`)
-    REFERENCES `aboha`.`users` (`id`),
+    REFERENCES `aboha`.`users` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
     CONSTRAINT `abog_likes_abog_fk`
     FOREIGN KEY (`abog_id`)
     REFERENCES `aboha`.`abogs` (`id`)
-    ) ENGINE = InnoDB
-    DEFAULT CHARACTER SET = utf8mb4
-    COLLATE = utf8mb4_0900_ai_ci;
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+    ) ENGINE=InnoDB
+    DEFAULT CHARACTER SET=utf8mb4
+    COLLATE=utf8mb4_0900_ai_ci;
