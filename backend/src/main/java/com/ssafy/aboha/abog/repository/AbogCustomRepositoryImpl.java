@@ -5,10 +5,10 @@ import com.ssafy.aboha.abog.domain.Abog;
 import com.ssafy.aboha.abog.domain.QAbog;
 import com.ssafy.aboha.attraction.domain.QAttraction;
 import com.ssafy.aboha.attraction.domain.QGugun;
-import com.ssafy.aboha.attraction.domain.QSido;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -25,7 +25,6 @@ public class AbogCustomRepositoryImpl implements AbogCustomRepository {
         QAbog qAbog = QAbog.abog;
         QAttraction qAttraction = QAttraction.attraction;
         QGugun qGugun = QGugun.gugun;
-        QSido qSido = QSido.sido;
 
         return Optional.ofNullable(
                 queryFactory
@@ -33,9 +32,25 @@ public class AbogCustomRepositoryImpl implements AbogCustomRepository {
                         .from(qAbog)
                         .leftJoin(qAbog.attraction, qAttraction).fetchJoin()
                         .leftJoin(qAttraction.gugun, qGugun).fetchJoin()
-                        .leftJoin(qGugun.sido, qSido).fetchJoin() // Sido와 fetch join
                         .where(qAbog.id.eq(id))
                         .fetchOne()
         );
+    }
+
+    @Override
+    public List<Abog> findAll() {
+        QAbog qAbog = QAbog.abog;
+        QAttraction qAttraction = QAttraction.attraction;
+        QGugun qGugun = QGugun.gugun;
+
+       return queryFactory
+               .selectDistinct(qAbog)
+               .from(qAbog)
+               .leftJoin(qAbog.attraction, qAttraction).fetchJoin()
+               .leftJoin(qAttraction.gugun, qGugun).fetchJoin()
+               .fetch()
+               .stream()
+               .distinct()
+               .toList();
     }
 }
