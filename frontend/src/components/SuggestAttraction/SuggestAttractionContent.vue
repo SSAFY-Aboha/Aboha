@@ -65,7 +65,7 @@ const handleBackBtn = () => {
       >
       <Transition name="fade">
         <Button
-          v-if="step > 1 && isNextBtnVisible"
+          v-if="step >= 1 && isNextBtnVisible"
           @click="handleNextBtn"
           variant="outline"
           class="w-1/4 text-lg text-white bg-green-600 rounded-full"
