@@ -10,7 +10,7 @@ const props = defineProps({
   attraction: Object,
 })
 
-console.log(props.attraction)
+console.log('detail ', props.attraction)
 
 const mapData = computed(() => {
   return {
@@ -86,10 +86,7 @@ const mapData = computed(() => {
     <Separator />
     <!-- 리뷰 -->
     <div class="flex flex-col w-full gap-4 overflow-hidden">
-      <AttractionReview
-        :reviews="attraction.reviews"
-        :attraction-id="attraction.id"
-      />
+      <AttractionReview :reviews="attraction.reviews" />
     </div>
   </Main>
 </template>

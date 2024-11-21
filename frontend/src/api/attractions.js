@@ -88,10 +88,21 @@ const getSuggestAttraction = async (pickedData, success, fail) => {
   }
 }
 
+const getAttractionReview = async (attractionId, success, fail) => {
+  const response = await axios.get(`/api/v1/reviews/${attractionId}`)
+  if (response.status === 200) {
+    success && success(response.data)
+    return response.data
+  } else {
+    fail()
+    return response
+  }
+}
+
 // 관광지 후기 작성
 const postAttractionReview = async (reviewData, success, fail) => {
   const response = await axios.post(`/api/v1/reviews`, reviewData)
-  if (response.status === 200) {
+  if (response.status === 201) {
     success && success(response.data)
     return response.data
   } else {
@@ -125,4 +136,5 @@ export default {
   getSuggestAttraction,
   postAttractionReview,
   toggleAttractionLike,
+  getAttractionReview,
 }
