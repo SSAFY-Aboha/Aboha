@@ -1,12 +1,12 @@
 package com.ssafy.aboha.attraction.controller;
 
-import com.ssafy.aboha.attraction.dto.request.AttractionReadRequest;
+import com.ssafy.aboha.attraction.dto.request.AttractionReadPagedRequest;
 import com.ssafy.aboha.attraction.dto.request.AttractionSearchRequest;
 import com.ssafy.aboha.attraction.dto.response.AttractionInfo;
 import com.ssafy.aboha.attraction.dto.response.AttractionResponse;
 import com.ssafy.aboha.attraction.dto.response.AttractionSummary;
 import com.ssafy.aboha.attraction.service.AttractionService;
-import com.ssafy.aboha.common.dto.response.PaginatedResponse;
+import com.ssafy.aboha.common.dto.response.KeySetPaginatedResponse;
 import com.ssafy.aboha.common.exception.UnauthorizedException;
 import com.ssafy.aboha.like.dto.LikeResponse;
 import com.ssafy.aboha.like.service.LikeService;
@@ -35,12 +35,20 @@ public class AttractionController {
 
     // 관광지 목록 필터링 조회
     @GetMapping
-    public ResponseEntity<PaginatedResponse<AttractionInfo>> filterAttractions(
-            @ModelAttribute AttractionReadRequest request,
-            @PageableDefault(size = 12) Pageable pageable) {
-        PaginatedResponse<AttractionInfo> response = attractionService.getAttractionsByFilters(request, pageable);
+//    public ResponseEntity<PaginatedResponse<AttractionInfo>> filterAttractions(
+//            @ModelAttribute AttractionReadRequest request,
+//            @PageableDefault(size = 12) Pageable pageable) {
+//        PaginatedResponse<AttractionInfo> response = attractionService.getAttractionsByFilters(request, pageable);
+//        return ResponseEntity.ok().body(response);
+//    }
+    public ResponseEntity<KeySetPaginatedResponse<AttractionInfo>> getAttractions(
+        @ModelAttribute AttractionReadPagedRequest request,
+        @PageableDefault(size = 12) Pageable pageable) {
+        KeySetPaginatedResponse<AttractionInfo> response = attractionService.getAttractions(request, pageable);
         return ResponseEntity.ok().body(response);
     }
+
+
 
     // 관광지 상세 조회
     @GetMapping("/{id}")

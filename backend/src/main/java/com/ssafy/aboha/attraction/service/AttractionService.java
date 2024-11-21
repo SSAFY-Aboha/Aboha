@@ -4,23 +4,28 @@ import com.ssafy.aboha.attraction.domain.Attraction;
 import com.ssafy.aboha.attraction.domain.ContentType;
 import com.ssafy.aboha.attraction.domain.Gugun;
 import com.ssafy.aboha.attraction.domain.Sido;
+import com.ssafy.aboha.attraction.dto.request.AttractionReadPagedRequest;
 import com.ssafy.aboha.attraction.dto.request.AttractionReadRequest;
-import com.ssafy.aboha.attraction.dto.response.*;
+import com.ssafy.aboha.attraction.dto.response.AttractionInfo;
+import com.ssafy.aboha.attraction.dto.response.AttractionResponse;
+import com.ssafy.aboha.attraction.dto.response.AttractionSummary;
+import com.ssafy.aboha.attraction.dto.response.GugunInfo;
+import com.ssafy.aboha.attraction.dto.response.SidoInfo;
 import com.ssafy.aboha.attraction.repository.AttractionRepository;
 import com.ssafy.aboha.attraction.repository.ContentTypeRepository;
 import com.ssafy.aboha.attraction.repository.GugunRepository;
 import com.ssafy.aboha.attraction.repository.SidoRepository;
+import com.ssafy.aboha.common.dto.response.KeySetPaginatedResponse;
 import com.ssafy.aboha.common.dto.response.PaginatedResponse;
 import com.ssafy.aboha.common.exception.BadRequestException;
 import com.ssafy.aboha.common.exception.NotFoundException;
 import com.ssafy.aboha.review.dto.response.ReviewResponse;
 import com.ssafy.aboha.review.service.ReviewService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -51,6 +56,27 @@ public class AttractionService {
                 request.keyword(),
                 request.getSortOrDefault(),
                 pageable
+        );
+    }
+
+    public KeySetPaginatedResponse<AttractionInfo> getAttractions(
+        AttractionReadPagedRequest request, Pageable pageable) {
+        Integer sidoCode = request.sidoCode();
+        Integer gugunCode = request.gugunCode();
+        Integer contentTypeId = request.contentTypeId();
+
+        validateSidoGugun(sidoCode, gugunCode);
+        validateContentTypeId(contentTypeId);
+
+        return attractionRepository.findAlls(
+            sidoCode,
+            gugunCode,
+            contentTypeId,
+            request.keyword(),
+            request.getSortOrDefault(),
+            request.lastSortValue(),
+            request.lastId(),
+            pageable
         );
     }
 
