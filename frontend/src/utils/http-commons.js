@@ -13,7 +13,7 @@ const localAxios = () => {
       'Content-Type': 'application/json;charset=utf-8',
     },
     withCredentials: true,
-    timeout: 10000,
+    timeout: 100000,
   })
 
   // 요청 인터셉터 설정

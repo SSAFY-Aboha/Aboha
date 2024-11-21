@@ -91,7 +91,7 @@ onMounted(() => {
       <AttractionCard
         v-for="(data, index) in suggestData"
         :key="data.id"
-        :infoData="data"
+        :data="data"
         :style="{ animationDelay: `${index * 500}ms` }"
         class="card-item"
       />

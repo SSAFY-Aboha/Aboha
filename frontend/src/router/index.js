@@ -44,7 +44,7 @@ const router = createRouter({
           path: ':tripId',
           name: 'trips-detail',
           component: () =>
-            import('@/components/Attractions/AttractionDetail.vue'),
+            import('@/components/Attractions/AttractionDetailContainer.vue'),
           props: true,
         },
       ],

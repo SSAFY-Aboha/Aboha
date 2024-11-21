@@ -47,7 +47,7 @@ const handleCompleteBtn = () => {
 
 // 뒤로가기
 const handleBackBtn = () => {
-  step.value -= 1
+  step.value = step.value === 1 ? 1 : step.value - 1
 }
 </script>
 
@@ -65,7 +65,7 @@ const handleBackBtn = () => {
       >
       <Transition name="fade">
         <Button
-          v-if="isNextBtnVisible"
+          v-if="step >= 1 && isNextBtnVisible"
           @click="handleNextBtn"
           variant="outline"
           class="w-1/4 text-lg text-white bg-green-600 rounded-full"

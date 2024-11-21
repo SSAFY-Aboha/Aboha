@@ -9,7 +9,7 @@ const props = defineProps({
   },
   limit: {
     type: Number,
-    required: true,
+    required: false,
   },
 })
 
