@@ -20,4 +20,6 @@ public interface AttractionCustomRepository {
     // 관광지 이름 검색
     List<AttractionSummary> findByTitle(String title);
 
+    // 관광지 목록 필터링 조회
+    List<Attraction> findByFilters(Integer sidoCode, List<Integer> gugunCodes, Integer contentTypeId);
 }
