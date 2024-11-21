@@ -1,6 +1,7 @@
 package com.ssafy.aboha.comment.controller;
 
 import com.ssafy.aboha.comment.dto.request.CommentRequest;
+import com.ssafy.aboha.comment.dto.response.CommentResponse;
 import com.ssafy.aboha.comment.service.CommentService;
 import com.ssafy.aboha.common.dto.response.CreatedResponse;
 import com.ssafy.aboha.common.exception.UnauthorizedException;
@@ -9,10 +10,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/comments")
@@ -37,5 +35,14 @@ public class CommentController {
         Integer commentId = commentService.createComment(userResponse.id(), request);
 
         return ResponseEntity.created(null).body(CreatedResponse.of(true));
+    }
+
+    // 댓글 목록 조회 -> AbogController
+
+    // 댓글 상세 조회
+    @GetMapping("/{id}")
+    public ResponseEntity<CommentResponse> getComment(@PathVariable("id") Integer id) {
+        CommentResponse response = commentService.getComment(id);
+        return ResponseEntity.ok().body(response);
     }
 }
