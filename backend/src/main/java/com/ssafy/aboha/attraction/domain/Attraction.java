@@ -1,12 +1,20 @@
 package com.ssafy.aboha.attraction.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinColumns;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 @Entity
 @Table(name = "attractions")
@@ -22,12 +30,17 @@ public class Attraction {
     @Column(name = "content_id")
     private Integer contentId;
 
+    // Sido 관계 설정 (insertable=false, updatable=false)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "area_code", referencedColumnName = "sido_code")
+    @JoinColumn(name = "area_code", referencedColumnName = "sido_code", insertable = false, updatable = false)
     private Sido sido;
 
+    // Gugun 관계 설정 (복합 외래 키, insertable=false, updatable=false)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "si_gun_gu_code", referencedColumnName = "gugun_code")
+    @JoinColumns({
+        @JoinColumn(name = "area_code", referencedColumnName = "sido_code", insertable = false, updatable = false),
+        @JoinColumn(name = "si_gun_gu_code", referencedColumnName = "gugun_code", insertable = false, updatable = false)
+    })
     private Gugun gugun;
 
     @ManyToOne(fetch = FetchType.LAZY)
