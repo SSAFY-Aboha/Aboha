@@ -3,6 +3,8 @@ package com.ssafy.aboha.abog.controller;
 import com.ssafy.aboha.abog.dto.request.AbogRequest;
 import com.ssafy.aboha.abog.dto.response.AbogResponse;
 import com.ssafy.aboha.abog.service.AbogService;
+import com.ssafy.aboha.comment.dto.response.CommentResponse;
+import com.ssafy.aboha.comment.service.CommentService;
 import com.ssafy.aboha.common.dto.response.CreatedResponse;
 import com.ssafy.aboha.common.exception.UnauthorizedException;
 import com.ssafy.aboha.like.dto.LikeResponse;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/abogs")
@@ -24,6 +27,7 @@ public class AbogController {
 
     private final AbogService abogService;
     private final LikeService likeService;
+    private final CommentService commentService;
 
     // 아보그 생성
     @PostMapping
@@ -65,6 +69,15 @@ public class AbogController {
         }
 
         LikeResponse response = likeService.toggleAbogLike(userResponse.id(), abogId);
+        return ResponseEntity.ok().body(response);
+    }
+
+    // 댓글 목록 조회
+    @GetMapping("/{id}/comments")
+    public ResponseEntity<List<CommentResponse>> getAbogComments(
+            @PathVariable("id") Integer abogId
+    ) {
+        List<CommentResponse> response = commentService.getComments(abogId);
         return ResponseEntity.ok().body(response);
     }
 }
