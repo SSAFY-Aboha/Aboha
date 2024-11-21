@@ -3,13 +3,19 @@ import { RouterLink } from 'vue-router'
 import { Button } from '@/components/ui/button'
 import useUserStore from '@/stores/user'
 import { storeToRefs } from 'pinia'
+import { Avatar, AvatarImage } from '../ui/avatar'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const userStore = useUserStore()
 
-const { isLogin } = storeToRefs(userStore)
+const { isLogin, userInfo } = storeToRefs(userStore)
+
+console.log('userStore', userInfo.value.email)
 
 const handleLogout = () => {
   userStore.logout()
+  window.location.reload()
 }
 </script>
 
@@ -59,10 +65,14 @@ const handleLogout = () => {
         >
           로그아웃
         </button>
-        <RouterLink to="/mypage">
-          <Button class="bg-transparent rounded-full hover:bg-gray-100">
-            <i class="text-black pi pi-user"></i> </Button
-        ></RouterLink>
+        <RouterLink
+          :to="`/mypage/${userInfo.email}`"
+          class="flex items-center justify-center transition-transform bg-green-400 rounded-full cursor-pointer hover:scale-105 size-11"
+        >
+          <Avatar class="size-10">
+            <AvatarImage src="/src/assets/mainPage_image.jpg" alt="avatar" />
+          </Avatar>
+        </RouterLink>
       </template>
       <template v-else>
         <RouterLink class="" to="/signup">회원가입</RouterLink>
