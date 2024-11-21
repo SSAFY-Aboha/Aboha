@@ -1,9 +1,11 @@
 <script setup>
 import { ref } from 'vue'
-import AttractionCard from '../common/AttractionCard.vue'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../ui/tabs'
 import attractionApi from '@/api/attractions'
 import abogApi from '@/api/abog'
+import LikeAttractionTable from '@/components/Mypage/LikeAttractionTable.vue'
+import MyAbogTable from '@/components/Mypage/MyAbogTable.vue'
+import MyReviewTable from '@/components/Mypage/MyReviewTable.vue'
 
 const isEdit = defineModel('isEdit')
 
@@ -18,7 +20,28 @@ const likeAttractions = ref([
   },
 ])
 
-const myAbogs = ref([])
+const myAbogs = ref([
+  {
+    id: 1,
+    title: '해운대 해수욕장',
+    createdAt: '2024-01-01',
+    likeCount: 156,
+    commentCount: 10,
+  },
+])
+
+const myReviews = ref([
+  {
+    id: 1,
+    attraction: {
+      id: 1,
+      title: '해운대 해수욕장',
+    },
+    rating: 5,
+    comment: '해운대 해수욕장 좋아요',
+    createdAt: '2024-01-01',
+  },
+])
 
 const deleteAttraction = id => {
   // 1. 삭제 API 호출
@@ -28,7 +51,6 @@ const deleteAttraction = id => {
   likeAttractions.value = likeAttractions.value.filter(
     attraction => attraction.id !== id,
   )
-  console.log(likeAttractions.value)
 }
 
 const deleteAbog = id => {
@@ -37,51 +59,63 @@ const deleteAbog = id => {
 
   // 2. 현재 페이지 상태 업데이트
   myAbogs.value = myAbogs.value.filter(abog => abog.id !== id)
-  console.log(myAbogs.value)
+}
+
+const deleteReview = id => {
+  // 1. 삭제 API 호출
+  // attractionApi.deleteReview(id, null, null)
+
+  // 2. 현재 페이지 상태 업데이트
+  myReviews.value = myReviews.value.filter(review => review.id !== id)
 }
 </script>
 
 <template>
-  <Tabs default-value="my-place" class="w-full h-screen">
+  <Tabs default-value="my-place" class="flex flex-col w-full h-screen">
     <TabsList class="w-full">
       <TabsTrigger value="my-place" class="w-full font-bold text-md">
         좋아요 한 관광지
       </TabsTrigger>
-      <TabsTrigger value="my-aboge" class="w-full"> 나의 아보그 </TabsTrigger>
-      <TabsTrigger value="my-plan" class="w-full"> 나의 여행 계획 </TabsTrigger>
+      <TabsTrigger value="my-review" class="w-full font-bold text-md">
+        내가 작성한 리뷰
+      </TabsTrigger>
+      <TabsTrigger value="my-abog" class="w-full font-bold text-md">
+        나의 아보그
+      </TabsTrigger>
     </TabsList>
 
-    <TabsContent value="my-place" class="flex flex-col w-full px-1 gap-y-5">
-      <ul
-        class="grid grid-cols-2 gap-4 justify-items-center 2xl:grid-cols-5 xl:grid-cols-4 lg:grid-cols-3"
-      >
-        <AttractionCard
-          v-for="attraction in likeAttractions"
-          :data="attraction"
-          :key="attraction.id"
-          :is-edit="isEdit"
-          @delete-handler="deleteAttraction"
-        />
-      </ul>
+    <TabsContent
+      value="my-place"
+      class="w-full p-2 overflow-y-auto border border-gray-200 rounded-lg max-h-[30rem]"
+    >
+      <LikeAttractionTable
+        :title="'좋아요 한 관광지 목록'"
+        v-model:data="likeAttractions"
+        v-model:isEdit="isEdit"
+        @delete-handler="deleteAttraction"
+      />
     </TabsContent>
-    <TabsContent value="my-aboge">
-      <ul
-        class="grid grid-cols-2 gap-4 justify-items-center 2xl:grid-cols-5 xl:grid-cols-4 lg:grid-cols-3"
-      >
-        <!-- 아보그 카드로 변경 -->
-        <!-- <AttractionCard
-          v-for="abog in myAbogs"
-          :data="abog"
-          :key="abog.id"
-          :is-edit="isEdit"
-          @delete-handler="deleteAbog"
-        /> -->
-      </ul>
+    <TabsContent
+      value="my-review"
+      class="w-full p-2 overflow-y-auto border border-gray-200 rounded-lg max-h-[30rem]"
+    >
+      <MyReviewTable
+        :title="'내가 작성한 리뷰'"
+        v-model:data="myReviews"
+        v-model:isEdit="isEdit"
+        @delete-handler="deleteReview"
+      />
     </TabsContent>
-    <TabsContent value="my-plan">
-      <div class="flex items-center justify-center w-full h-full">
-        <h1 class="text-2xl font-bold">아직 준비중인 기능입니다.</h1>
-      </div>
+    <TabsContent
+      value="my-abog"
+      class="w-full p-2 overflow-y-auto border border-gray-200 rounded-lg max-h-[30rem]"
+    >
+      <MyAbogTable
+        :title="'내가 작성한 아보그'"
+        v-model:data="myAbogs"
+        v-model:isEdit="isEdit"
+        @delete-handler="deleteAbog"
+      />
     </TabsContent>
   </Tabs>
 </template>
