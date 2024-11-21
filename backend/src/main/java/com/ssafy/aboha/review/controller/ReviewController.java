@@ -7,6 +7,7 @@ import com.ssafy.aboha.review.dto.response.ReviewResponse;
 import com.ssafy.aboha.review.service.ReviewService;
 import com.ssafy.aboha.user.dto.response.UserResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,7 @@ public class ReviewController {
     // 리뷰 생성
     @PostMapping
     public ResponseEntity<CreatedResponse> createReview(
-        @RequestBody ReviewRequest request,
+        @Valid @RequestBody ReviewRequest request,
         HttpSession session
     ) {
         // 세션에서 인증된 사용자 정보 확인
