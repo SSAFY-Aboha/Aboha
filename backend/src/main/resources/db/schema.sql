@@ -70,6 +70,7 @@ CREATE TABLE IF NOT EXISTS `aboha`.`attractions` (
     `overview` VARCHAR(10000) NULL DEFAULT NULL,
     `view_count` BIGINT NOT NULL DEFAULT 0,
     `like_count` BIGINT NOT NULL DEFAULT 0,
+    `review_count` BIGINT NOT NULL DEFAULT 0,
     PRIMARY KEY (`no`),
     INDEX `attractions_typeid_to_types_typeid_fk_idx` (`content_type_id` ASC) VISIBLE,
     INDEX `attractions_sido_to_sidos_code_fk_idx` (`area_code` ASC) VISIBLE,
