@@ -1,9 +1,13 @@
 package com.ssafy.aboha.attraction.dto.response;
 
 import com.ssafy.aboha.attraction.domain.Attraction;
-import java.math.BigDecimal;
-import java.util.Optional;
+import com.ssafy.aboha.review.dto.response.ReviewListResponse;
+import com.ssafy.aboha.review.dto.response.ReviewResponse;
 import lombok.Builder;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
 
 @Builder
 public record AttractionResponse(
@@ -22,16 +26,17 @@ public record AttractionResponse(
     String description,
     Long likeCount,
     Long viewCount,
-    Long reviewCount
-    // TODO: description -> Spring AI 적용 + 리뷰 적용 전
+    ReviewListResponse reviews
 ) {
 
-    public static AttractionResponse of(Attraction attraction, String description) {
+    public static AttractionResponse of(Attraction attraction, List<ReviewResponse> reviewData) {
         String image = Optional.ofNullable(attraction.getFirstImage1())
             .map(String::trim)
             .filter(s -> !s.isEmpty())
             .orElse(null);
         String address = attraction.getAddr1() + attraction.getAddr2();
+
+        ReviewListResponse reviews = ReviewListResponse.of(reviewData, attraction.getReviewCount(), attraction.calculateAverageRating());
 
         return AttractionResponse.builder()
             .id(attraction.getId())
@@ -46,10 +51,10 @@ public record AttractionResponse(
             .address(address)
             .latitude(attraction.getLatitude())
             .longitude(attraction.getLongitude())
-            .description(description)
+            .description(attraction.getOverview())
             .likeCount(attraction.getLikeCount())
             .viewCount(attraction.getViewCount())
-            .reviewCount(attraction.getReviewCount())
+            .reviews(reviews)
             .build();
     }
 
