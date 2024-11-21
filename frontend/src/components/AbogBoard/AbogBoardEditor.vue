@@ -9,8 +9,21 @@ import {
   TagsInputItemText,
 } from '@/components/ui/tags-input'
 import { Textarea } from '@/components/ui/textarea'
+import { useDropZone } from '@vueuse/core'
 
 import { ref } from 'vue'
+
+const dropzoneRef = ref(null)
+
+const onDropFile = files => {
+  console.log(files)
+}
+
+const { isOverDropZone } = useDropZone(dropzoneRef, {
+  dataTypes: ['image/png', 'image/jpeg'],
+  onDrop: onDropFile,
+  multiple: true,
+})
 
 const inputVal = ref({
   title: '',
@@ -77,30 +90,36 @@ const handleSubmit = () => {
             />
           </div>
         </div>
-        <!-- 사진 입력 -->
-        <div class="flex flex-col gap-1">
-          <label for="image" class="text-lg font-bold">사진 선택</label>
-          <Input
-            type="file"
-            id="image"
-            multiple
-            class="w-full"
-            @change="handleFileChange"
-          />
-          <ul class="flex items-center gap-3 px-2">
-            <li
-              class="flex items-center gap-2"
-              v-for="file in inputVal.imageFiles"
-              :key="file.name"
-            >
-              <span>{{ file.name }}</span>
-              <i
-                class="text-xs text-red-500 cursor-pointer pi pi-times hover:font-bold"
-                @click="handleFileDelete(file)"
-              ></i>
-            </li>
-          </ul>
-        </div>
+        <!-- 드로그앤 드롭 -->
+        <section class="flex items-center justify-center gap-3">
+          <div
+            @dragover.prevent="isOverDropZone = true"
+            @dragleave.prevent="isOverDropZone = false"
+            @drop.prevent="onDropFile"
+            ref="dropzoneRef"
+            class="flex flex-col gap-1"
+          >
+            <label for="image" class="text-lg font-bold">사진 선택</label>
+            <div class="border-2 border-dashed rounded-md size-56">
+              <div
+                :class="`${isOverDropZone ? 'bg-gray-200' : ''} flex flex-col items-center justify-center gap-2 size-full`"
+              >
+                <span class="text-sm">이미지를 추가해주세요.</span>
+                <i class="text-2xl pi pi-plus"></i>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center justify-center flex-1 gap-3">
+            <ul class="flex items-end w-full h-full gap-3 px-2 overflow-x-auto">
+              <li
+                v-for="n in 2"
+                :key="n"
+                class="flex-shrink-0 bg-gray-200 border rounded-md size-56 aspect-square"
+              ></li>
+            </ul>
+          </div>
+        </section>
+
         <!-- 제목 입력 -->
         <div class="flex flex-col gap-1">
           <label for="title" class="text-lg font-bold">제목</label>
