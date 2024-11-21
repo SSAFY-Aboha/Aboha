@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface AttractionCustomRepository {
 
     // 관광지 목록 조회
-    PaginatedResponse<AttractionInfo> findByFilters(Integer sidoCode, Integer gugunCode, Integer contentTypeId, String keyword, String sort, Pageable pageable);
+    PaginatedResponse<AttractionInfo> findAll(Integer sidoCode, Integer gugunCode, Integer contentTypeId, String keyword, String sort, Pageable pageable);
 
     // 관광지 상세 조회
     Optional<Attraction> findByAttractionId(Integer id);
