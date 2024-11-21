@@ -9,10 +9,12 @@ import com.ssafy.aboha.review.dto.response.ReviewResponse;
 import com.ssafy.aboha.review.repository.ReviewRepository;
 import com.ssafy.aboha.user.domain.User;
 import com.ssafy.aboha.user.repository.UserRepository;
-import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -51,6 +53,16 @@ public class ReviewService {
         attractionRepository.save(attraction);
 
         return review.getId();
+    }
+
+    /**
+     * 리뷰 목록 조회
+     */
+    public List<ReviewResponse> getReviews(Attraction attraction) {
+        List<Review> reviews = reviewRepository.findByAttraction(attraction);
+        return reviews.stream()
+                .map(ReviewResponse::from)
+                .toList();
     }
 
     /**
