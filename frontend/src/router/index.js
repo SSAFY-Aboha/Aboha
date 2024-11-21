@@ -67,6 +67,12 @@ const router = createRouter({
         },
       ],
     },
+    {
+      path: '/suggest',
+      name: 'suggest',
+      component: () => import('@/views/SuggestAttractionView.vue'),
+      meta: { hideLayout: true },
+    },
   ],
 })
 

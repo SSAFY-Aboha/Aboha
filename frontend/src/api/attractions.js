@@ -17,8 +17,8 @@ const getAttractions = async (searchData, success, fail) => {
       success && success(response.data)
       return response.data
     } else {
-      fail && fail(response.data)
-      return response.data
+      fail && fail(response)
+      return response
     }
   } catch (error) {
     fail && fail(error)
@@ -74,10 +74,24 @@ const getContentType = async (success, fail) => {
   }
 }
 
+const getSuggestAttraction = async (pickedData, success, fail) => {
+  const response = await axios.get(`/api/v1/attractions/suggest`, {
+    params: pickedData,
+  })
+  if (response.status === 200) {
+    success && success(response.data)
+    return response.data
+  } else {
+    fail()
+    return response
+  }
+}
+
 export default {
   getContentType,
   getSido,
   getGugun,
   getAttractions,
   getAttractionDetail,
+  getSuggestAttraction,
 }

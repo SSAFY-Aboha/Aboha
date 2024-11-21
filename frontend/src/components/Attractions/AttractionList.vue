@@ -26,13 +26,13 @@ const handleGetAttraction = async () => {
     const data = await attractionAPI.getAttractions(
       { ...searchParams.value, page: pageNo.value },
       () => console.log('성공'),
-      () => console.log('조회 실패'),
+      res => console.log('조회 실패', res),
     )
     const { content, hasNext, pageNumber, totalElements } = data
 
     console.log(totalElements)
 
-    if (content.length > 0) {
+    if (content && content.length > 0) {
       attractionList.value = [...attractionList.value, ...content]
     } else {
       hasMore.value = false
