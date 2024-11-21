@@ -12,8 +12,8 @@ onMounted(() => {
   attractionsAPI.getContentType(data => (contentTypeList.value = data))
 })
 
-const handleContentTypeChange = contentType => {
-  pickedData.value.contentType = contentType
+const handleContentTypeChange = contentTypeId => {
+  pickedData.value.contentTypeId = +contentTypeId
 }
 </script>
 

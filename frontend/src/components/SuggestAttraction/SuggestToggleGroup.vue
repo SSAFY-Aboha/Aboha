@@ -31,7 +31,9 @@ const handleToggleGroupChange = value => {
         variant="outline"
         v-for="each in infoData"
         :key="each.code ?? each.id"
-        :value="(each.code ?? each.id).toString()"
+        :value="
+          type == 'multiple' ? each.name : (each.code ?? each.id).toString()
+        "
         :aria-label="each.name"
         >{{ each.name }}</ToggleGroupItem
       >
