@@ -2,6 +2,7 @@ package com.ssafy.aboha.review.service;
 
 import com.ssafy.aboha.attraction.domain.Attraction;
 import com.ssafy.aboha.attraction.repository.AttractionRepository;
+import com.ssafy.aboha.common.exception.ForbiddenException;
 import com.ssafy.aboha.common.exception.NotFoundException;
 import com.ssafy.aboha.review.domain.Review;
 import com.ssafy.aboha.review.dto.request.ReviewRequest;
@@ -74,6 +75,23 @@ public class ReviewService {
             .orElseThrow(() -> new NotFoundException("리뷰가 존재하지 않습니다."));
 
         return ReviewResponse.from(review);
+    }
+
+    /**
+     * 리뷰 삭제
+     */
+    @Transactional
+    public void deleteReview(Integer userId, Integer id) {
+        // 리뷰 조회
+        Review review = reviewRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("리뷰를 찾을 수 없습니다."));
+
+        // 작성자 확인
+        if(!review.getUser().getId().equals(userId)) {
+            throw new ForbiddenException("리뷰 삭제 권한이 없습니다.");
+        }
+
+        review.delete();
     }
 
 }
