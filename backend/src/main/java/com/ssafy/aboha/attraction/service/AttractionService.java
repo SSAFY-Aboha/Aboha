@@ -13,6 +13,8 @@ import com.ssafy.aboha.attraction.repository.SidoRepository;
 import com.ssafy.aboha.common.dto.response.PaginatedResponse;
 import com.ssafy.aboha.common.exception.BadRequestException;
 import com.ssafy.aboha.common.exception.NotFoundException;
+import com.ssafy.aboha.review.dto.response.ReviewResponse;
+import com.ssafy.aboha.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,7 +31,7 @@ public class AttractionService {
     private final SidoRepository sidoRepository;
     private final GugunRepository gugunRepository;
     private final ContentTypeRepository contentTypeRepository;
-    private final AttractionDescriptionService attractionDescriptionService;
+    private final ReviewService reviewService;
 
     /**
      * 관광지 목록 조회
@@ -63,13 +65,10 @@ public class AttractionService {
         // 조회수 증가
         attraction.increaseViewCount();
 
-        // Spring AI 활용한 설명 생성
-        String description = attractionDescriptionService.generateDescription(
-            attraction.getTitle(),
-            attraction.getAddr1() + attraction.getAddr2()
-        );
+        // 리뷰 목록 조회
+        List<ReviewResponse> reviews = reviewService.getReviews(attraction);
 
-        return AttractionResponse.of(attraction, description);
+        return AttractionResponse.of(attraction, reviews);
     }
 
     /**

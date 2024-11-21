@@ -28,4 +28,10 @@ public class BaseEntity {
     @Column(name = "is_deleted")
     private boolean isDeleted = DEFAULT_IS_DELETED;
 
+    // soft delete
+    public void delete() {
+        if(!isDeleted) {
+            isDeleted = true;
+        }
+    }
 }

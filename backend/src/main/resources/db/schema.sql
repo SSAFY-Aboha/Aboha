@@ -71,6 +71,7 @@ CREATE TABLE IF NOT EXISTS `aboha`.`attractions` (
     `view_count` BIGINT NOT NULL DEFAULT 0,
     `like_count` BIGINT NOT NULL DEFAULT 0,
     `review_count` BIGINT NOT NULL DEFAULT 0,
+    `rating_sum` DECIMAL(5,1) NOT NULL DEFAULT 0.0, -- 평점 합계 (소수점 첫째자리 포함)
     PRIMARY KEY (`no`),
     INDEX `attractions_typeid_to_types_typeid_fk_idx` (`content_type_id` ASC) VISIBLE,
     INDEX `attractions_sido_to_sidos_code_fk_idx` (`area_code` ASC) VISIBLE,
@@ -135,7 +136,7 @@ CREATE TABLE IF NOT EXISTS `aboha`.`reviews` (
                                                  `id` INT NOT NULL AUTO_INCREMENT,
                                                  `user_id` INT NOT NULL,
                                                  `attraction_id` INT NOT NULL,
-                                                 `rating` DECIMAL(3,2) NOT NULL DEFAULT 0.0,
+                                                 `rating` INT NOT NULL CHECK (`rating` BETWEEN 1 AND 5), -- 1~5 점 제한
     `content` TEXT NULL,
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

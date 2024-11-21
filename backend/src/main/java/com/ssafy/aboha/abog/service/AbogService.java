@@ -12,11 +12,12 @@ import com.ssafy.aboha.common.exception.NotFoundException;
 import com.ssafy.aboha.user.domain.User;
 import com.ssafy.aboha.user.dto.response.UserResponse;
 import com.ssafy.aboha.user.repository.UserRepository;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +30,7 @@ public class AbogService {
     private final AbogImageService abogImageService;
 
     @Transactional
-    public AbogResponse createAbog(UserResponse userResponse, AbogRequest request) {
+    public Integer createAbog(UserResponse userResponse, AbogRequest request) {
         // 사용자 확인
         User user = userRepository.findById(userResponse.id())
                 .orElseThrow(() -> new NotFoundException("로그인한 사용자가 존재하지 않습니다."));
@@ -52,7 +53,7 @@ public class AbogService {
         List<MultipartFile> images = request.images();
         abogImageService.uploadImages(abog, images);
 
-        return getAbogById(abog.getId()); // 생성 후 상세 조회
+        return abog.getId();
     }
 
     /**

@@ -13,13 +13,17 @@ import com.ssafy.aboha.like.service.LikeService;
 import com.ssafy.aboha.user.dto.response.UserResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/attractions")
@@ -52,6 +56,9 @@ public class AttractionController {
         return ResponseEntity.ok().body(response);
     }
 
+    /**
+     * Like
+     */
     // 관광지 좋아요
     @PostMapping("/{id}/like")
     public ResponseEntity<LikeResponse> toggleAttractionLike(
@@ -67,4 +74,5 @@ public class AttractionController {
         LikeResponse response = likeService.toggleAttractionLike(userResponse.id(), attractionId);
         return ResponseEntity.ok().body(response);
     }
+
 }
