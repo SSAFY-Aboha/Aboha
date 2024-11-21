@@ -38,3 +38,15 @@ SELECT
 FROM
     `ssafytrip`.`attractions`;
 
+
+-- -----------------------------------------------------
+-- Table `aboha`에서 `attractions` overview null인 데이터 제거
+-- -----------------------------------------------------
+SET SQL_SAFE_UPDATES = 0;
+delete from `aboha`.`attractions` where overview is null;
+SET SQL_SAFE_UPDATES = 1;
+
+
+
+-- ✨ 제발 commit 해주세요! ✨
+commit;
