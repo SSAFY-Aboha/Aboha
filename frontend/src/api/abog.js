@@ -7,7 +7,7 @@ const getAbog = async (success, fail) => {
   const response = await axios.get('/api/v1/abogs')
   if (response.status === 200) {
     success(response.data)
-    return response
+    return response.data
   } else {
     fail(response)
     return response
@@ -77,8 +77,9 @@ const toggleAbogLike = async (abogId, success, fail) => {
 // 아보그 댓글 조회
 const getAbogComments = async (abogId, success, fail) => {
   const response = await axios.get(`/api/v1/abogs/${abogId}/comments`)
+
   if (response.status === 200) {
-    success(response.data)
+    success && success(response.data)
     return response.data
   } else {
     fail()

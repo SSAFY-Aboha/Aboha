@@ -5,7 +5,7 @@ import { CardFooter, CardHeader } from '@/components/ui/card'
 import Card from '@/components/ui/card/Card.vue'
 import CardContent from '@/components/ui/card/CardContent.vue'
 import { Input } from '@/components/ui/input'
-defineProps({
+const props = defineProps({
   commentList: {
     type: Array,
     required: true,

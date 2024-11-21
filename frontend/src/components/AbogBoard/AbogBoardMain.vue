@@ -3,6 +3,7 @@ import AbogBoardList from '@/components/AbogBoard/AbogBoardList.vue'
 import { ref, watch } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import { Button } from '../ui/button'
+import abog from '@/api/abog'
 
 const route = useRoute()
 
@@ -13,23 +14,11 @@ watch(
   },
 )
 
-const boardList = ref([
-  {
-    id: 1,
-    nickname: 'nickname',
-    title: '여기 다녀왔어요!',
-    date: '2021. 10. 10',
-    content:
-      '어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구어쩌구 저쩌구',
-    createdAt: '2021-10-10',
-    updatedAt: '2021-10-10',
-    tags: ['tag1', 'tag2', 'tag3'],
-    image: '/src/assets/mainPage_image.jpg',
-    like: 10,
-    comment: 10,
-    view: 10,
-  },
-])
+/**
+ * @data {Array} boardList
+ * { abog: {}, attraction: {}, user: {} }
+ */
+const boardList = ref([])
 </script>
 
 <template>

@@ -9,132 +9,46 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import abogApi from '@/api/abog'
 
 const props = defineProps({
   data: Object,
 })
 
+const abogData = computed(() => props.data.abog)
+const attractionData = computed(() => props.data.attraction)
+const userData = computed(() => props.data.user)
+
 const isOpenComment = ref(false)
-const commentList = ref([
-  {
-    id: 1,
-    profileImage: '/src/assets/mainPage_image.jpg',
-    nickname: '닉네임',
-    content: '댓글 내용',
-    date: '2024-01-01',
-  },
-  {
-    id: 1,
-    profileImage: '/src/assets/mainPage_image.jpg',
-    nickname: '닉네임',
-    content: '댓글 내용',
-    date: '2024-01-01',
-  },
-  {
-    id: 1,
-    profileImage: '/src/assets/mainPage_image.jpg',
-    nickname: '닉네임',
-    content: '댓글 내용',
-    date: '2024-01-01',
-  },
-  {
-    id: 1,
-    profileImage: '/src/assets/mainPage_image.jpg',
-    nickname: '닉네임',
-    content: '댓글 내용',
-    date: '2024-01-01',
-  },
-  {
-    id: 1,
-    profileImage: '/src/assets/mainPage_image.jpg',
-    nickname: '닉네임',
-    content: '댓글 내용',
-    date: '2024-01-01',
-  },
-  {
-    id: 1,
-    profileImage: '/src/assets/mainPage_image.jpg',
-    nickname: '닉네임',
-    content: '댓글 내용',
-    date: '2024-01-01',
-  },
-  {
-    id: 1,
-    profileImage: '/src/assets/mainPage_image.jpg',
-    nickname: '닉네임',
-    content: '댓글 내용',
-    date: '2024-01-01',
-  },
-  {
-    id: 1,
-    profileImage: '/src/assets/mainPage_image.jpg',
-    nickname: '닉네임',
-    content: '댓글 내용',
-    date: '2024-01-01',
-  },
-  {
-    id: 1,
-    profileImage: '/src/assets/mainPage_image.jpg',
-    nickname: '닉네임',
-    content: '댓글 내용',
-    date: '2024-01-01',
-  },
-  {
-    id: 1,
-    profileImage: '/src/assets/mainPage_image.jpg',
-    nickname: '닉네임',
-    content: '댓글 내용',
-    date: '2024-01-01',
-  },
-  {
-    id: 1,
-    profileImage: '/src/assets/mainPage_image.jpg',
-    nickname: '닉네임',
-    content: '댓글 내용',
-    date: '2024-01-01',
-  },
-  {
-    id: 1,
-    profileImage: '/src/assets/mainPage_image.jpg',
-    nickname: '닉네임',
-    content: '댓글 내용',
-    date: '2024-01-01',
-  },
-  {
-    id: 1,
-    profileImage: '/src/assets/mainPage_image.jpg',
-    nickname: '닉네임',
-    content: '댓글 내용',
-    date: '2024-01-01',
-  },
-  {
-    id: 1,
-    profileImage: '/src/assets/mainPage_image.jpg',
-    nickname: '닉네임',
-    content: '댓글 내용',
-    date: '2024-01-01',
-  },
-  {
-    id: 1,
-    profileImage: '/src/assets/mainPage_image.jpg',
-    nickname: '닉네임',
-    content: '댓글 내용',
-    date: '2024-01-01',
-  },
-])
+const commentList = ref([])
 
 onMounted(async () => {
-  const res = await abogApi.getAbogComments(props.data.id)
-  commentList.value = res.data
+  try {
+    const data = await abogApi.getAbogComments(abogData.value.id)
+    commentList.value = data
+  } catch (error) {
+    console.log('댓글 ', error)
+  }
 })
 
 const handleOpenComment = () => {
   isOpenComment.value = !isOpenComment.value
 }
 
-const { id, nickname, title, content, date, tags, image, like } = props.data
+const {
+  id,
+  title: abogTitle,
+  content,
+  likeCount,
+  commentCount,
+  createdAt,
+  images,
+} = abogData.value
+
+const { id: userId, nickname, profileImageUrl } = userData.value
+
+const { id: attractionId, title: attractionTitle } = attractionData.value
 </script>
 
 <template>
@@ -147,7 +61,10 @@ const { id, nickname, title, content, date, tags, image, like } = props.data
         <div class="relative flex items-center justify-between gap-2 px-2">
           <!-- user 정보 -->
           <Avatar class="size-8">
-            <AvatarImage src="/src/assets/mainPage_image.jpg" alt="avatar" />
+            <AvatarImage
+              :src="profileImageUrl || `/src/assets/mainPage_image.jpg`"
+              alt="avatar"
+            />
           </Avatar>
           <div class="flex items-center justify-start w-full gap-5">
             <div class="flex items-center justify-between flex-1">
@@ -156,7 +73,9 @@ const { id, nickname, title, content, date, tags, image, like } = props.data
                 <!-- 장소 마크 -->
                 <div class="flex items-center gap-3">
                   <i class="text-xs text-gray-500 pi pi-map-marker"></i>
-                  <span class="text-xs text-gray-600">장소</span>
+                  <span class="text-xs text-gray-600">{{
+                    attractionTitle
+                  }}</span>
                 </div>
               </div>
               <span class="text-sm text-gray-500 text-end basis-1/3">{{
@@ -167,7 +86,7 @@ const { id, nickname, title, content, date, tags, image, like } = props.data
         </div>
 
         <!-- 제목 -->
-        <h1 class="px-2 text-xl font-bold">{{ title }}</h1>
+        <h1 class="px-2 text-xl font-bold">{{ abogTitle }}</h1>
 
         <!-- 이미지 -->
         <div
@@ -175,7 +94,7 @@ const { id, nickname, title, content, date, tags, image, like } = props.data
         >
           <Carousel v-slot="{ canScrollNext, canScrollPrev }" class="w-full">
             <CarouselContent>
-              <CarouselItem v-for="(_, index) in 3" :key="index">
+              <CarouselItem v-for="image in images" :key="image">
                 <div class="p-1">
                   <Card class="">
                     <CardContent
@@ -183,7 +102,7 @@ const { id, nickname, title, content, date, tags, image, like } = props.data
                     >
                       <img
                         class="object-cover w-full h-full col-start-1 col-end-3 row-start-1 row-end-3"
-                        :src="image || '../../assets/default_image.png'"
+                        :src="image || '/src/assets/default_image.png'"
                         alt=""
                       />
                     </CardContent>
@@ -204,7 +123,7 @@ const { id, nickname, title, content, date, tags, image, like } = props.data
                 <i
                   class="text-2xl text-gray-500 cursor-pointer hover:text-red-500 pi pi-heart"
                 ></i>
-                <span class="text-lg text-gray-600">{{ like }}</span>
+                <span class="text-lg text-gray-600">{{ likeCount }}</span>
               </div>
             </div>
             <ul class="flex items-center justify-end w-full gap-2">

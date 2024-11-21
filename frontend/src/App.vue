@@ -20,7 +20,12 @@ onMounted(() => {
     <BaseHeader v-if="!$route.meta.hideLayout" />
     <main class="flex-1 w-full will-change-auto">
       <RouterView v-slot="{ Component }">
-        <Transition name="fade" mode="out-in" appear>
+        <Transition
+          name="fade"
+          mode="out-in"
+          appear
+          v-if="!$route.meta.transition"
+        >
           <KeepAlive v-if="$route.meta.keepAlive">
             <component :is="Component" :key="$route.path" />
           </KeepAlive>
