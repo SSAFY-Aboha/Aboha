@@ -16,16 +16,17 @@ const handleGetAbog = async () => {
   isLoading.value = true
 
   try {
-    await abogAPI.getAbog(
-      data => {
-        if (data.content.length > 0) {
-          boardList.value = [...boardList.value, ...data.content]
-        } else {
-          hasMore.value = false // 더 이상 로드할 데이터가 없는 경우
-        }
-      },
-      () => console.log('아보그 조회 실패'),
+    const data = await abogAPI.getAbog(console.log, () =>
+      console.log('아보그 조회 실패'),
     )
+
+    console.log('아보그 조회', data)
+
+    if (data.length > 0) {
+      boardList.value = [...boardList.value, ...data]
+    } else {
+      hasMore.value = false // 더 이상 로드할 데이터가 없는 경우
+    }
   } finally {
     isLoading.value = false
   }
@@ -33,15 +34,18 @@ const handleGetAbog = async () => {
 
 // 무한 스크롤
 useInfiniteScroll(observerTarget, () => {
-  console.log(observerTarget.value)
-  handleGetAbog()
+  hasMore.value && handleGetAbog()
 })
 </script>
 
 <template>
   <div class="flex flex-col w-full h-full gap-4">
-    <ul class="flex flex-col gap-6">
-      <AbogBoardItem v-for="each in boardList" :data="each" :key="each.id" />
+    <ul v-if="!isLoading && boardList" class="flex flex-col gap-6">
+      <AbogBoardItem
+        v-for="each in boardList"
+        :data="each"
+        :key="each.abog.id"
+      />
     </ul>
 
     <!-- 스켈레톤 및 관찰 대상 요소, isLoading 상태일 때 로드 중 표시 -->

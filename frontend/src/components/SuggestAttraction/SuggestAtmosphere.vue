@@ -15,35 +15,75 @@ const atmosphereList = ref([
   },
   {
     code: 3,
-    name: '활기찬',
-  },
-  {
-    code: 4,
     name: '모험',
   },
   {
+    code: 4,
+    name: '힐링',
+  },
+  {
     code: 5,
-    name: '평화로운',
+    name: '문화예술',
   },
   {
     code: 6,
-    name: '고즈넉한',
+    name: '자연친화',
   },
   {
     code: 7,
-    name: '신나는',
+    name: '역사탐방',
   },
   {
     code: 8,
-    name: '자연친화적',
+    name: '활기찬',
   },
   {
     code: 9,
-    name: '전통적',
+    name: '고요한',
   },
   {
     code: 10,
+    name: '이국적',
+  },
+  {
+    code: 11,
+    name: '전통적',
+  },
+  {
+    code: 12,
     name: '현대적',
+  },
+  {
+    code: 13,
+    name: '럭셔리',
+  },
+  {
+    code: 14,
+    name: '서정적',
+  },
+  {
+    code: 15,
+    name: '신비로운',
+  },
+  {
+    code: 16,
+    name: '즐거운',
+  },
+  {
+    code: 17,
+    name: '평화로운',
+  },
+  {
+    code: 18,
+    name: '모던한',
+  },
+  {
+    code: 19,
+    name: '감성적',
+  },
+  {
+    code: 20,
+    name: '액티브',
   },
 ])
 

@@ -6,7 +6,12 @@ const useUserStore = defineStore('user', () => {
   // ? state
   // 로그인 상태
   const isLogin = ref(false)
-  const userInfo = ref({})
+  const userInfo = ref({
+    nickname: '',
+    email: '',
+    save: false,
+    profileImageUrl: null,
+  })
 
   // ? computed
 
@@ -26,18 +31,28 @@ const useUserStore = defineStore('user', () => {
   const login = async (user, success, fail) => {
     const response = await userAPI.login(
       user,
-      () => {
+      data => {
         // 세션 저장
         isLogin.value = true
+        userInfo.value = data
         success()
       },
       fail,
     )
-    console.log('in store', response)
+    return response
   }
 
   // 로그아웃
-  const logout = async () => {}
+  const logout = async (success, fail) => {
+    await userAPI.logout(
+      {},
+      () => {
+        isLogin.value = false
+        success()
+      },
+      fail,
+    )
+  }
 
   // 회원가입
   const signup = async () => {}
@@ -57,6 +72,7 @@ const useUserStore = defineStore('user', () => {
 
   return {
     initializeAuth,
+    userInfo,
     isLogin,
     login,
     logout,

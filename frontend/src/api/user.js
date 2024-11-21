@@ -24,10 +24,10 @@ const login = async (user, success, fail) => {
   const response = await axios.post('/api/v1/auth/login', user)
 
   if (response.status === 200) {
-    success && success()
+    success && success(response.data)
     return response.data
   } else {
-    fail && fail()
+    fail && fail(response)
     return response
   }
 }

@@ -20,7 +20,7 @@ watch(
 )
 
 watch(
-  () => pickedData.value.contentType,
+  () => pickedData.value.contentTypeId,
   () => {
     isNextBtnVisible.value = true
   },

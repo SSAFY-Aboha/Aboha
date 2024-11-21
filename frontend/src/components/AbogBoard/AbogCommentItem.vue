@@ -1,30 +1,28 @@
 <script setup>
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
 
-defineProps({
+const props = defineProps({
   data: {
     type: Object,
     required: true,
   },
 })
 
-// {
-//     id: 1,
-//     profileImage: '/src/assets/mainPage_image.jpg',
-//     nickname: '닉네임',
-//     content: '댓글 내용',
-//     date: '2024-01-01',
-//   },
+const { id, nickname, profileImageUrl } = props.data.user
+const { content, createdAt } = props.data.comment
 </script>
 
 <template>
   <div class="flex items-center gap-3 pb-3 border-b">
     <Avatar class="size-8">
-      <AvatarImage src="/src/assets/mainPage_image.jpg" alt="avatar" />
+      <AvatarImage
+        :src="profileImageUrl || '/src/assets/default_profile.png'"
+        alt="avatar"
+      />
     </Avatar>
     <div>
-      <span class="pr-2 font-bold">{{ data.nickname }}</span>
-      <span>{{ data.content }}</span>
+      <span class="pr-2 font-bold">{{ nickname }}</span>
+      <span>{{ content }}</span>
     </div>
   </div>
 </template>
