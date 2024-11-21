@@ -20,12 +20,14 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // OPTIONS 요청 허용
                         .requestMatchers("/users/signup", "/users/check-nickname", "/users/check-email").permitAll()
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/attractions/**", "/sidos", "/guguns/**", "/contenttypes").permitAll()
                         .requestMatchers(HttpMethod.GET, "/abogs/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "reviews/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/comments/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/recommendations").permitAll()
 
                         .anyRequest().authenticated()
                 )
