@@ -13,8 +13,8 @@ const { isLogin, userInfo } = storeToRefs(userStore)
 
 console.log('userStore', userInfo.value.email)
 
-const handleLogout = () => {
-  userStore.logout()
+const handleLogout = async () => {
+  await userStore.logout()
   window.location.reload()
 }
 </script>

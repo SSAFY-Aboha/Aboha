@@ -2,6 +2,11 @@
 import SignupInput from '@/components/Signup/SignupInput.vue'
 import Button from '@/components/ui/button/Button.vue'
 import { ref, watch } from 'vue'
+import useUserStore from '@/stores/user'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+const userStore = useUserStore()
 
 const metaData = ref([
   {
@@ -11,7 +16,7 @@ const metaData = ref([
     errorMsg: '이미 존재하는 닉네임 입니다.',
     isValidate: false,
     validator: value => {
-      return value.length >= 2 && value.length <= 10
+      return value.length >= 2
     },
     customErrorMsg: '닉네임은 2-10자 사이여야 합니다.',
   },
@@ -21,9 +26,14 @@ const metaData = ref([
     type: 'text',
     errorMsg: '이미 존재하는 이메일 입니다.',
     isValidate: false,
-    validator: value => {
+    validator: async value => {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      return emailRegex.test(value)
+
+      if (emailRegex.test(value)) {
+        const { isAvailable } = await userStore.checkEmail(value)
+        return isAvailable
+      }
+      return false
     },
     customErrorMsg: '올바른 이메일 형식이 아닙니다.',
   },
@@ -33,8 +43,12 @@ const metaData = ref([
     type: 'password',
     errorMsg: '비밀번호가 일치하지 않습니다.',
     isValidate: false,
-    validator: value => {
-      return value.length >= 8 && /[A-Za-z]/.test(value) && /[0-9]/.test(value)
+    validator: async value => {
+      if (value.length >= 8 && /[A-Za-z]/.test(value) && /[0-9]/.test(value)) {
+        const { isAvailable } = await userStore.checkNickname(value)
+        return isAvailable
+      }
+      return false
     },
     customErrorMsg: '비밀번호는 8자 이상, 영문과 숫자를 포함해야 합니다.',
   },
@@ -94,10 +108,13 @@ watch(
   { deep: true },
 )
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
   if (validateForm()) {
     console.log('Form is valid:', inputValue.value)
+
+    // 회원가입 성공 시 로그인 페이지로 이동
     // API 호출 등 추가 로직
+    await userStore.signup(inputValue.value)
   } else {
     console.log('Form is invalid:', errors.value)
   }
