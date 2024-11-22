@@ -323,15 +323,15 @@ public class AttractionCustomRepositoryImpl implements AttractionCustomRepositor
 
         // 7. 마지막 정렬 값과 마지막 ID 추출
         AttractionInfo lastRecord = pagedResults.get(pagedResults.size() - 1);
-        Long newLastSortValue = Long.valueOf(lastRecord.id()); // 정렬 기준에 따라 변경 가능
         Integer newLastId = lastRecord.id().intValue();
+
         // 8. `KeySetPaginatedResponse` 반환
         return KeySetPaginatedResponse.<AttractionInfo>builder()
                 .content(pagedResults)
                 .hasNext(hasNext)
-                .lastSortValue(newLastSortValue)
+                .lastSortValue(0L)  // 사용 안 함
                 .lastId(newLastId)
-                .totalElements(0)
+                .totalElements(0)   // 사용 안 함
                 .build();
     }
 
