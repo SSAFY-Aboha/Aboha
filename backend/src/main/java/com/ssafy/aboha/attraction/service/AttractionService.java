@@ -6,11 +6,7 @@ import com.ssafy.aboha.attraction.domain.Gugun;
 import com.ssafy.aboha.attraction.domain.Sido;
 import com.ssafy.aboha.attraction.dto.request.AttractionReadPagedRequest;
 import com.ssafy.aboha.attraction.dto.request.AttractionReadRequest;
-import com.ssafy.aboha.attraction.dto.response.AttractionInfo;
-import com.ssafy.aboha.attraction.dto.response.AttractionResponse;
-import com.ssafy.aboha.attraction.dto.response.AttractionSummary;
-import com.ssafy.aboha.attraction.dto.response.GugunInfo;
-import com.ssafy.aboha.attraction.dto.response.SidoInfo;
+import com.ssafy.aboha.attraction.dto.response.*;
 import com.ssafy.aboha.attraction.repository.AttractionRepository;
 import com.ssafy.aboha.attraction.repository.ContentTypeRepository;
 import com.ssafy.aboha.attraction.repository.GugunRepository;
@@ -21,12 +17,16 @@ import com.ssafy.aboha.common.exception.BadRequestException;
 import com.ssafy.aboha.common.exception.NotFoundException;
 import com.ssafy.aboha.review.dto.response.ReviewResponse;
 import com.ssafy.aboha.review.service.ReviewService;
-import java.util.List;
+import com.ssafy.aboha.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -37,6 +37,7 @@ public class AttractionService {
     private final GugunRepository gugunRepository;
     private final ContentTypeRepository contentTypeRepository;
     private final ReviewService reviewService;
+    private final UserRepository userRepository;
 
     /**
      * 관광지 목록 조회
@@ -59,6 +60,7 @@ public class AttractionService {
         );
     }
 
+    // v2. 키셋 페이징 적용
     public KeySetPaginatedResponse<AttractionInfo> getAttractions(
         AttractionReadPagedRequest request, Pageable pageable) {
         Integer sidoCode = request.sidoCode();
@@ -134,6 +136,38 @@ public class AttractionService {
      */
     public List<AttractionSummary> getAttractionsByTitle(String keyword) {
         return attractionRepository.findByTitle(keyword);
+    }
+
+    /**
+     * 사용자가 좋아요한 관광지 목록 조회
+     */
+    public KeySetPaginatedResponse<MyLikedAttractionResponse> getUserLikedAttractions(Integer userId, Pageable pageable) {
+        log.info("로그인한 사용자 id: " + userId);
+
+        // 1. 사용자 존재 여부 확인
+        boolean exists = userRepository.existsById(userId);
+        if (!exists) {
+            throw new NotFoundException("로그인한 사용자가 존재하지 않습니다.");
+        }
+
+        // 2. Repository를 통해 좋아요한 관광지 목록 조회
+        return attractionRepository.findByUserLiked(userId, pageable);
+    }
+
+    /**
+     * 사용자가 리뷰 남긴 관광지 목록 조회
+     */
+    public KeySetPaginatedResponse<MyReviewedAttractionResponse> getUserReviewedAttractions(Integer userId, Pageable pageable) {
+        log.info("로그인한 사용자 id: " + userId);
+
+        // 1. 사용자 존재 여부 확인
+        boolean exists = userRepository.existsById(userId);
+        if (!exists) {
+            throw new NotFoundException("로그인한 사용자가 존재하지 않습니다.");
+        }
+
+        // 2. Repository를 통해 좋아요한 관광지 목록 조회
+        return attractionRepository.findByUserReviewed(userId, pageable);
     }
 
     private void validateSidoGugun(Integer sidoCode, Integer gugunCode) {
