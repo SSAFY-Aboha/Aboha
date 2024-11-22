@@ -319,7 +319,7 @@ public class AttractionCustomRepositoryImpl implements AttractionCustomRepositor
 
         // 7. 마지막 정렬 값과 마지막 ID 추출
         MyLikedAttractionResponse lastRecord = pagedResults.get(pagedResults.size() - 1);
-        Integer newLastId = lastRecord.attractionId().intValue();
+        Integer newLastId = lastRecord.attractionId();
 
         // 8. `KeySetPaginatedResponse` 반환
         return KeySetPaginatedResponse.<MyLikedAttractionResponse>builder()
@@ -365,7 +365,7 @@ public class AttractionCustomRepositoryImpl implements AttractionCustomRepositor
 
         // 7. 마지막 정렬 값과 마지막 ID 추출
         MyReviewedAttractionResponse lastRecord = pagedResults.get(pagedResults.size() - 1);
-        Integer newLastId = lastRecord.attractionId().intValue();
+        Integer newLastId = lastRecord.attractionId();
 
         // 8. `KeySetPaginatedResponse` 반환
         return KeySetPaginatedResponse.<MyReviewedAttractionResponse>builder()
