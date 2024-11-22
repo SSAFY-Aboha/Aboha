@@ -35,7 +35,7 @@ const {
       >
         <img
           class="object-cover w-full h-full"
-          :src="image ?? defaultImage"
+          :src="image || defaultImage"
           loading="lazy"
           alt=""
         />

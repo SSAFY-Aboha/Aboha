@@ -20,6 +20,8 @@ const searchParams = ref({
   contentTypeId: '',
   keyword: '',
   sort: 'NEW',
+  lastId: 0,
+  lastSortValue: 0,
 })
 
 // 정렬 변경 시 검색
@@ -47,10 +49,19 @@ const handleSearch = async searchData => {
   try {
     const data = await attractionAPI.getAttractions(searchData)
     console.log('검색 결과', data)
-    const { content, hasNext, pageNumber, totalElements: total } = data
+    const {
+      content,
+      hasNext,
+      pageNumber,
+      totalElements: total,
+      lastId,
+      lastSortValue,
+    } = data
     content.length > 0 && (attractionList.value = content)
 
     totalElements.value = total
+    searchParams.value.lastId = lastId
+    searchParams.value.lastSortValue = lastSortValue
 
     hasNext && (pageNo.value = pageNumber + 1) // 다음 페이지 존재 시 페이지 번호 업데이트
     hasMore.value = hasNext // 더 가져올 데이터 존재 여부 업데이트
