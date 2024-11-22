@@ -26,16 +26,16 @@ from `ssafytrip`.`contenttypes`;
 -- -----------------------------------------------------
 -- Table `ssafytrip`에서 `aboha`로 `attractions` 데이터 복사
 -- -----------------------------------------------------
-INSERT INTO `aboha`.`attractions` (
+insert into `aboha`.`attractions` (
     `no`, `content_id`, `title`, `content_type_id`, `area_code`, `si_gun_gu_code`,
     `first_image1`, `first_image2`, `map_level`, `latitude`, `longitude`,
     `tel`, `addr1`, `addr2`, `homepage`, `overview`
 )
-SELECT
+select
     `no`, `content_id`, `title`, `content_type_id`, `area_code`, `si_gun_gu_code`,
     `first_image1`, `first_image2`, `map_level`, `latitude`, `longitude`,
     `tel`, `addr1`, `addr2`, `homepage`, `overview`
-FROM
+from
     `ssafytrip`.`attractions`;
 
 
@@ -46,6 +46,15 @@ SET SQL_SAFE_UPDATES = 0;
 delete from `aboha`.`attractions` where overview is null;
 SET SQL_SAFE_UPDATES = 1;
 
+
+-- -----------------------------------------------------
+-- Table `aboha`에서 `attractions` si_gun_gu_code null인 데이터 제거
+-- -----------------------------------------------------
+select * from attractions where si_gun_gu_code is null;  -- null인 데이터 확인
+
+SET SQL_SAFE_UPDATES = 0;
+delete from attractions where si_gun_gu_code is null;
+SET SQL_SAFE_UPDATES = 1;
 
 
 -- ✨ 제발 commit 해주세요! ✨

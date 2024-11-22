@@ -2,7 +2,6 @@
 import SuggestAttractionContent from '@/components/SuggestAttraction/SuggestAttractionContent.vue'
 import SuggestCompletePage from '@/components/SuggestAttraction/SuggestCompletePage.vue'
 import { Progress } from '@/components/ui/progress'
-import { Icon } from 'lucide-vue-next'
 import { computed, ref } from 'vue'
 
 const step = ref(1)
@@ -13,7 +12,7 @@ const isLoading = ref(false)
 const pickedData = ref({
   sidoCode: null,
   gugunCode: null,
-  contentType: null,
+  contentTypeId: 0,
   atmosphere: [],
 })
 </script>

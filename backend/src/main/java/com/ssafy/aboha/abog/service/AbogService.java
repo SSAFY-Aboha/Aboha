@@ -5,14 +5,17 @@ import com.ssafy.aboha.abog.domain.Abog;
 import com.ssafy.aboha.abog.domain.AbogImage;
 import com.ssafy.aboha.abog.dto.request.AbogRequest;
 import com.ssafy.aboha.abog.dto.response.AbogResponse;
+import com.ssafy.aboha.abog.dto.response.MyAbogResponse;
 import com.ssafy.aboha.abog.repository.AbogRepository;
 import com.ssafy.aboha.attraction.domain.Attraction;
 import com.ssafy.aboha.attraction.repository.AttractionRepository;
+import com.ssafy.aboha.common.dto.response.KeySetPaginatedResponse;
 import com.ssafy.aboha.common.exception.NotFoundException;
 import com.ssafy.aboha.user.domain.User;
 import com.ssafy.aboha.user.dto.response.UserResponse;
 import com.ssafy.aboha.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -91,6 +94,20 @@ public class AbogService {
             .toList();
 
         return AbogResponse.from(abog, imageUrls);
+    }
+
+    /**
+     * 사용자의 아보그 목록 조회
+     */
+    public KeySetPaginatedResponse<MyAbogResponse> getUserAbogs(Integer userId, Pageable pageable) {
+        // 1. 사용자 존재 여부 확인
+        boolean exists = userRepository.existsById(userId);
+        if (!exists) {
+            throw new NotFoundException("로그인한 사용자가 존재하지 않습니다.");
+        }
+
+        // 2. Repository를 통해 좋아요한 관광지 목록 조회
+        return abogRepository.findByUserAbog(userId, pageable);
     }
 
 }

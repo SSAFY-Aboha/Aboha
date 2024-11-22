@@ -76,14 +76,13 @@ const getContentType = async (success, fail) => {
 
 // 관광지 추천 조회
 const getSuggestAttraction = async (pickedData, success, fail) => {
-  const response = await axios.get(`/api/v1/attractions/suggest`, {
-    params: pickedData,
-  })
+  const response = await axios.post(`/api/v1/recommendations`, pickedData)
+
   if (response.status === 200) {
     success && success(response.data)
     return response.data
   } else {
-    fail()
+    fail(response)
     return response
   }
 }
