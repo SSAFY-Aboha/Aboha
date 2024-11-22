@@ -12,13 +12,15 @@ import com.ssafy.aboha.attraction.dto.response.AttractionInfo;
 import com.ssafy.aboha.attraction.dto.response.AttractionSummary;
 import com.ssafy.aboha.common.dto.response.KeySetPaginatedResponse;
 import com.ssafy.aboha.common.dto.response.PaginatedResponse;
+import com.ssafy.aboha.like.domain.QAttractionLike;
 import jakarta.persistence.EntityManager;
-import java.util.List;
-import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class AttractionCustomRepositoryImpl implements AttractionCustomRepository {
@@ -210,7 +212,6 @@ public class AttractionCustomRepositoryImpl implements AttractionCustomRepositor
             .hasNext(hasNext)
             .lastSortValue(newLastSortValue)
             .lastId(newLastId)
-            .pageSize(pageable.getPageSize())
             .totalElements(totalElements)
             .build();
     }
@@ -283,6 +284,56 @@ public class AttractionCustomRepositoryImpl implements AttractionCustomRepositor
                 .toList();
     }
 
+    @Override
+    public KeySetPaginatedResponse<AttractionInfo> findByUserLiked(Integer userId, Pageable pageable) {
+        QAttraction qAttraction = QAttraction.attraction;
+        QAttractionLike qAttractionLike = QAttractionLike.attractionLike;
+        QSido qSido = QSido.sido;
+        QGugun qGugun = QGugun.gugun;
+
+        // 3. 프로젝션을 사용하여 AttractionInfo DTO로 데이터 매핑
+        List<AttractionInfo> pagedResults = queryFactory
+                .select(Projections.constructor(AttractionInfo.class,
+                        qAttraction.id,
+                        qAttraction.title,
+                        qSido.code,
+                        qSido.name,
+                        qGugun.code,
+                        qGugun.name,
+                        qAttraction.firstImage1,
+                        qAttraction.likeCount,
+                        qAttraction.viewCount,
+                        qAttraction.reviewCount
+                ))
+                .from(qAttractionLike)
+                .join(qAttractionLike.attraction, qAttraction)
+                .leftJoin(qAttraction.sido, qSido)
+                .leftJoin(qAttraction.gugun, qGugun)
+                .where(qAttractionLike.user.id.eq(userId))
+                .limit(pageable.getPageSize() + 1) // 다음 페이지 존재 여부 확인
+                .fetch();
+
+
+        // 6. 다음 페이지 존재 여부 판단
+        boolean hasNext = pagedResults.size() > pageable.getPageSize();
+
+        if (hasNext) {
+            pagedResults.remove(pagedResults.size() - 1); // 실제 데이터는 pageSize만큼 유지
+        }
+
+        // 7. 마지막 정렬 값과 마지막 ID 추출
+        AttractionInfo lastRecord = pagedResults.get(pagedResults.size() - 1);
+        Long newLastSortValue = Long.valueOf(lastRecord.id()); // 정렬 기준에 따라 변경 가능
+        Integer newLastId = lastRecord.id().intValue();
+        // 8. `KeySetPaginatedResponse` 반환
+        return KeySetPaginatedResponse.<AttractionInfo>builder()
+                .content(pagedResults)
+                .hasNext(hasNext)
+                .lastSortValue(newLastSortValue)
+                .lastId(newLastId)
+                .totalElements(0)
+                .build();
+    }
 
     private OrderSpecifier<?> getOrderSpecifier(String sort, QAttraction qAttraction) {
         return switch (sort) {
