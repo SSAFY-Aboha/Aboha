@@ -11,9 +11,11 @@ import com.ssafy.aboha.attraction.domain.QSido;
 import com.ssafy.aboha.attraction.dto.response.AttractionInfo;
 import com.ssafy.aboha.attraction.dto.response.AttractionSummary;
 import com.ssafy.aboha.attraction.dto.response.MyLikedAttractionResponse;
+import com.ssafy.aboha.attraction.dto.response.MyReviewedAttractionResponse;
 import com.ssafy.aboha.common.dto.response.KeySetPaginatedResponse;
 import com.ssafy.aboha.common.dto.response.PaginatedResponse;
 import com.ssafy.aboha.like.domain.QAttractionLike;
+import com.ssafy.aboha.review.domain.QReview;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -321,6 +323,51 @@ public class AttractionCustomRepositoryImpl implements AttractionCustomRepositor
 
         // 8. `KeySetPaginatedResponse` 반환
         return KeySetPaginatedResponse.<MyLikedAttractionResponse>builder()
+                .content(pagedResults)
+                .hasNext(hasNext)
+                .lastSortValue(0L)  // 사용 안 함
+                .lastId(newLastId)
+                .totalElements(0)   // 사용 안 함
+                .build();
+    }
+
+    @Override
+    public KeySetPaginatedResponse<MyReviewedAttractionResponse> findByUserReviewed(Integer userId, Pageable pageable) {
+        QAttraction qAttraction = QAttraction.attraction;
+        QReview qReview = QReview.review;
+        QSido qSido = QSido.sido;
+        QGugun qGugun = QGugun.gugun;
+
+        // 3. 프로젝션을 사용하여 MyLikedAttractionResponse DTO로 데이터 매핑
+        List<MyReviewedAttractionResponse> pagedResults = queryFactory
+                .select(Projections.constructor(MyReviewedAttractionResponse.class,
+                        qAttraction.id,
+                        qAttraction.title,
+                        qReview.id,
+                        qReview.content,
+                        qReview.rating))
+                .from(qReview)
+                .join(qReview.attraction, qAttraction)
+                .leftJoin(qAttraction.sido, qSido)
+                .leftJoin(qAttraction.gugun, qGugun)
+                .where(qReview.user.id.eq(userId))
+                .limit(pageable.getPageSize() + 1) // 다음 페이지 존재 여부 확인
+                .fetch();
+
+
+        // 6. 다음 페이지 존재 여부 판단
+        boolean hasNext = pagedResults.size() > pageable.getPageSize();
+
+        if (hasNext) {
+            pagedResults.remove(pagedResults.size() - 1); // 실제 데이터는 pageSize만큼 유지
+        }
+
+        // 7. 마지막 정렬 값과 마지막 ID 추출
+        MyReviewedAttractionResponse lastRecord = pagedResults.get(pagedResults.size() - 1);
+        Integer newLastId = lastRecord.attractionId().intValue();
+
+        // 8. `KeySetPaginatedResponse` 반환
+        return KeySetPaginatedResponse.<MyReviewedAttractionResponse>builder()
                 .content(pagedResults)
                 .hasNext(hasNext)
                 .lastSortValue(0L)  // 사용 안 함
