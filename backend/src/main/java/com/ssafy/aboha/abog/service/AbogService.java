@@ -60,6 +60,27 @@ public class AbogService {
     }
 
     /**
+     * 아보그 목록 조회
+     */
+    public List<AbogResponse> getAbogs() {
+        // 모든 아보그 데이터 조회
+        List<Abog> abogs = abogRepository.findAll();
+
+        // 아보그 데이터를 응답 형태로 변환
+        return abogs.stream()
+                .map(abog -> {
+                    // 각 아보그의 이미지 URL 리스트 조회
+                    List<String> imageUrls = abogImageService.getAbogImages(abog.getId())
+                            .stream()
+                            .map(AbogImage::getImageUrl)
+                            .toList();
+                    // 아보그 데이터를 AbogResponse로 변환
+                    return AbogResponse.from(abog, imageUrls);
+                })
+                .toList();
+    }
+
+    /**
      * 아보그 생세 조회
      */
     public AbogResponse getAbogById(Integer id) {

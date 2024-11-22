@@ -49,11 +49,18 @@ public class AbogController {
         return ResponseEntity.created(uri).body(CreatedResponse.of(true));
     }
 
+    // 아보그 목록 조회
+    @GetMapping
+    public ResponseEntity<List<AbogResponse>> getAbogs() {
+        List<AbogResponse> response = abogService.getAbogs();
+        return ResponseEntity.ok().body(response);
+    }
+
     // 아보그 상세 조회
     @GetMapping("/{id}")
     public ResponseEntity<AbogResponse> getAbogById(@PathVariable(value = "id") Integer id) {
-        AbogResponse abogResponse = abogService.getAbogById(id);
-        return ResponseEntity.ok(abogResponse);
+        AbogResponse response = abogService.getAbogById(id);
+        return ResponseEntity.ok(response);
     }
 
     // 아보그 좋아요
