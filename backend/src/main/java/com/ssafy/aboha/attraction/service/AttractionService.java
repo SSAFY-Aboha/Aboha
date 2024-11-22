@@ -141,7 +141,7 @@ public class AttractionService {
     /**
      * 사용자가 좋아요한 관광지 목록 조회
      */
-    public KeySetPaginatedResponse<AttractionInfo> getUserLikedAttractions(Integer userId, Pageable pageable) {
+    public KeySetPaginatedResponse<MyLikedAttractionResponse> getUserLikedAttractions(Integer userId, Pageable pageable) {
         log.info("로그인한 사용자 id: " + userId);
 
         // 1. 사용자 존재 여부 확인

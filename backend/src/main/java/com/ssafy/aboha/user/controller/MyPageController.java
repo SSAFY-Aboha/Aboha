@@ -1,6 +1,6 @@
 package com.ssafy.aboha.user.controller;
 
-import com.ssafy.aboha.attraction.dto.response.AttractionInfo;
+import com.ssafy.aboha.attraction.dto.response.MyLikedAttractionResponse;
 import com.ssafy.aboha.attraction.service.AttractionService;
 import com.ssafy.aboha.common.dto.response.KeySetPaginatedResponse;
 import com.ssafy.aboha.common.exception.UnauthorizedException;
@@ -23,7 +23,7 @@ public class MyPageController {
 
     // 사용자가 좋아요한 관광지 목록 조회
     @GetMapping("/likes")
-    public ResponseEntity<KeySetPaginatedResponse<AttractionInfo>> getUserLikedAttractions(
+    public ResponseEntity<KeySetPaginatedResponse<MyLikedAttractionResponse>> getUserLikedAttractions(
             HttpSession session,
             @PageableDefault(size = 12) Pageable pageable
     ) {
@@ -33,7 +33,7 @@ public class MyPageController {
             throw new UnauthorizedException("로그인이 필요합니다."); // 인증 실패
         }
 
-        KeySetPaginatedResponse<AttractionInfo> response = attractionService.getUserLikedAttractions(userResponse.id(), pageable);
+        KeySetPaginatedResponse<MyLikedAttractionResponse> response = attractionService.getUserLikedAttractions(userResponse.id(), pageable);
         return ResponseEntity.ok().body(response);
     }
 }

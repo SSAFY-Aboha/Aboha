@@ -10,6 +10,7 @@ import com.ssafy.aboha.attraction.domain.QGugun;
 import com.ssafy.aboha.attraction.domain.QSido;
 import com.ssafy.aboha.attraction.dto.response.AttractionInfo;
 import com.ssafy.aboha.attraction.dto.response.AttractionSummary;
+import com.ssafy.aboha.attraction.dto.response.MyLikedAttractionResponse;
 import com.ssafy.aboha.common.dto.response.KeySetPaginatedResponse;
 import com.ssafy.aboha.common.dto.response.PaginatedResponse;
 import com.ssafy.aboha.like.domain.QAttractionLike;
@@ -285,26 +286,18 @@ public class AttractionCustomRepositoryImpl implements AttractionCustomRepositor
     }
 
     @Override
-    public KeySetPaginatedResponse<AttractionInfo> findByUserLiked(Integer userId, Pageable pageable) {
+    public KeySetPaginatedResponse<MyLikedAttractionResponse> findByUserLiked(Integer userId, Pageable pageable) {
         QAttraction qAttraction = QAttraction.attraction;
         QAttractionLike qAttractionLike = QAttractionLike.attractionLike;
         QSido qSido = QSido.sido;
         QGugun qGugun = QGugun.gugun;
 
-        // 3. 프로젝션을 사용하여 AttractionInfo DTO로 데이터 매핑
-        List<AttractionInfo> pagedResults = queryFactory
-                .select(Projections.constructor(AttractionInfo.class,
+        // 3. 프로젝션을 사용하여 MyLikedAttractionResponse DTO로 데이터 매핑
+        List<MyLikedAttractionResponse> pagedResults = queryFactory
+                .select(Projections.constructor(MyLikedAttractionResponse.class,
                         qAttraction.id,
                         qAttraction.title,
-                        qSido.code,
-                        qSido.name,
-                        qGugun.code,
-                        qGugun.name,
-                        qAttraction.firstImage1,
-                        qAttraction.likeCount,
-                        qAttraction.viewCount,
-                        qAttraction.reviewCount
-                ))
+                        qSido.name.concat(" ").concat(qGugun.name).as("address")))
                 .from(qAttractionLike)
                 .join(qAttractionLike.attraction, qAttraction)
                 .leftJoin(qAttraction.sido, qSido)
@@ -322,11 +315,11 @@ public class AttractionCustomRepositoryImpl implements AttractionCustomRepositor
         }
 
         // 7. 마지막 정렬 값과 마지막 ID 추출
-        AttractionInfo lastRecord = pagedResults.get(pagedResults.size() - 1);
+        MyLikedAttractionResponse lastRecord = pagedResults.get(pagedResults.size() - 1);
         Integer newLastId = lastRecord.id().intValue();
 
         // 8. `KeySetPaginatedResponse` 반환
-        return KeySetPaginatedResponse.<AttractionInfo>builder()
+        return KeySetPaginatedResponse.<MyLikedAttractionResponse>builder()
                 .content(pagedResults)
                 .hasNext(hasNext)
                 .lastSortValue(0L)  // 사용 안 함

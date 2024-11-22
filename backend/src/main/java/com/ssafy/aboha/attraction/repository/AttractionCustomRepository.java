@@ -3,6 +3,7 @@ package com.ssafy.aboha.attraction.repository;
 import com.ssafy.aboha.attraction.domain.Attraction;
 import com.ssafy.aboha.attraction.dto.response.AttractionInfo;
 import com.ssafy.aboha.attraction.dto.response.AttractionSummary;
+import com.ssafy.aboha.attraction.dto.response.MyLikedAttractionResponse;
 import com.ssafy.aboha.common.dto.response.KeySetPaginatedResponse;
 import com.ssafy.aboha.common.dto.response.PaginatedResponse;
 import org.springframework.data.domain.Pageable;
@@ -26,5 +27,5 @@ public interface AttractionCustomRepository {
     List<Attraction> findByFilters(Integer sidoCode, List<Integer> gugunCodes, Integer contentTypeId);
 
     // 사용자가 좋아요한 관광지 목록 조회
-    KeySetPaginatedResponse<AttractionInfo> findByUserLiked(Integer userId, Pageable pageable);
+    KeySetPaginatedResponse<MyLikedAttractionResponse> findByUserLiked(Integer userId, Pageable pageable);
 }
