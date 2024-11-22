@@ -338,12 +338,13 @@ public class AttractionCustomRepositoryImpl implements AttractionCustomRepositor
         QSido qSido = QSido.sido;
         QGugun qGugun = QGugun.gugun;
 
-        // 3. 프로젝션을 사용하여 MyLikedAttractionResponse DTO로 데이터 매핑
+        // 3. 프로젝션을 사용하여 MyReviewedAttractionResponse DTO로 데이터 매핑
         List<MyReviewedAttractionResponse> pagedResults = queryFactory
                 .select(Projections.constructor(MyReviewedAttractionResponse.class,
                         qAttraction.id,
                         qAttraction.title,
                         qReview.id,
+                        qReview.createdAt,
                         qReview.content,
                         qReview.rating))
                 .from(qReview)
