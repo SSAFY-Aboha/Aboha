@@ -295,6 +295,7 @@ public class AttractionCustomRepositoryImpl implements AttractionCustomRepositor
         // 3. 프로젝션을 사용하여 MyLikedAttractionResponse DTO로 데이터 매핑
         List<MyLikedAttractionResponse> pagedResults = queryFactory
                 .select(Projections.constructor(MyLikedAttractionResponse.class,
+                        qAttractionLike.id,
                         qAttraction.id,
                         qAttraction.title,
                         qSido.name.concat(" ").concat(qGugun.name).as("address")))
@@ -316,7 +317,7 @@ public class AttractionCustomRepositoryImpl implements AttractionCustomRepositor
 
         // 7. 마지막 정렬 값과 마지막 ID 추출
         MyLikedAttractionResponse lastRecord = pagedResults.get(pagedResults.size() - 1);
-        Integer newLastId = lastRecord.id().intValue();
+        Integer newLastId = lastRecord.attractionId().intValue();
 
         // 8. `KeySetPaginatedResponse` 반환
         return KeySetPaginatedResponse.<MyLikedAttractionResponse>builder()
