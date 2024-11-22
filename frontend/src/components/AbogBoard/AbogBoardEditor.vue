@@ -136,8 +136,6 @@ const handleSubmit = async () => {
     :width="100"
     loader="dots"
   />
-
-  >
   <div class="w-full h-full">
     <div class="py-5 border-b">
       <!-- 제목 -->

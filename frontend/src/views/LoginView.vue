@@ -8,10 +8,17 @@ import { Separator } from '@/components/ui/separator'
 <template>
   <section class="flex items-center justify-center h-full">
     <div
+      @click="$router.push('/')"
+      class="absolute text-sm text-left text-gray-500 cursor-pointer top-20 left-20 pb-7 hover:text-black"
+    >
+      <i class="pi pi-home"></i>
+      <span class="ml-2">홈으로 돌아가기</span>
+    </div>
+    <div
       class="px-10 py-12 border shadow bg-gradient min-w-[28rem] md:max-h-3/6 lg:max-h-4/6 rounded-xl"
     >
       <div
-        class="flex flex-col items-center justify-center w-full h-full gap-5"
+        class="flex flex-col items-center justify-center w-full h-full gap-7"
       >
         <!-- 로그인 헤더 -->
         <LoginHeader />

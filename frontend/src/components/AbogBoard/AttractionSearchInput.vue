@@ -2,7 +2,7 @@
 import { Input } from '@/components/ui/input'
 import { Search } from 'lucide-vue-next'
 
-const emit = defineEmits(['update:model-value'])
+const emit = defineEmits(['update:model-value', 'focusout'])
 
 const handleKeywordChange = value => {
   emit('update:model-value', value)
@@ -16,6 +16,7 @@ const handleKeywordChange = value => {
     placeholder="키워드 입력 후 Enter..."
     class="pl-10"
     @update:model-value="handleKeywordChange"
+    @focusout="emit('focusout')"
   />
   <span
     class="absolute inset-y-0 flex items-center justify-center px-2 start-0"
