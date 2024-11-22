@@ -157,6 +157,18 @@ public class AttractionService {
     /**
      * 사용자가 리뷰 남긴 관광지 목록 조회
      */
+    public KeySetPaginatedResponse<MyReviewedAttractionResponse> getUserReviewedAttractions(Integer userId, Pageable pageable) {
+        log.info("로그인한 사용자 id: " + userId);
+
+        // 1. 사용자 존재 여부 확인
+        boolean exists = userRepository.existsById(userId);
+        if (!exists) {
+            throw new NotFoundException("로그인한 사용자가 존재하지 않습니다.");
+        }
+
+        // 2. Repository를 통해 좋아요한 관광지 목록 조회
+        return attractionRepository.findByUserReviewed(userId, pageable);
+    }
 
     private void validateSidoGugun(Integer sidoCode, Integer gugunCode) {
         if(sidoCode == null && gugunCode == null) {
