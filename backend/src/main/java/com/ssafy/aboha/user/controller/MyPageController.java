@@ -1,5 +1,7 @@
 package com.ssafy.aboha.user.controller;
 
+import com.ssafy.aboha.abog.dto.response.MyAbogResponse;
+import com.ssafy.aboha.abog.service.AbogService;
 import com.ssafy.aboha.attraction.dto.response.MyLikedAttractionResponse;
 import com.ssafy.aboha.attraction.dto.response.MyReviewedAttractionResponse;
 import com.ssafy.aboha.attraction.service.AttractionService;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class MyPageController {
 
     private final AttractionService attractionService;
+    private final AbogService abogService;
 
     // 사용자가 좋아요한 관광지 목록 조회
     @GetMapping("/likes")
@@ -53,4 +56,21 @@ public class MyPageController {
         KeySetPaginatedResponse<MyReviewedAttractionResponse> response = attractionService.getUserReviewedAttractions(userResponse.id(), pageable);
         return ResponseEntity.ok().body(response);
     }
+
+    // 사용자의 아보그 목록 조회
+    @GetMapping("/abogs")
+    public ResponseEntity<KeySetPaginatedResponse<MyAbogResponse>> getUserAbogs(
+            HttpSession session,
+            @PageableDefault(size = 12) Pageable pageable
+    ) {
+        // 세션에서 인증된 사용자 정보 확인
+        UserResponse userResponse = (UserResponse) session.getAttribute("user");
+        if (userResponse == null) {
+            throw new UnauthorizedException("로그인이 필요합니다."); // 인증 실패
+        }
+
+        KeySetPaginatedResponse<MyAbogResponse> response = abogService.getUserAbogs(userResponse.id(), pageable);
+        return ResponseEntity.ok().body(response);
+    }
+
 }
