@@ -1,14 +1,15 @@
 import axios from 'axios'
 import { useRouter } from 'vue-router'
-const router = useRouter()
 
 // const { VITE_API_BASE_URL } = import.meta.env
 
 // local vue api axios instance
 const localAxios = () => {
+  const router = useRouter()
+
   const instance = axios.create({
     // baseURL: url,
-    baseURL: 'http://70.12.60.184:8080',
+    baseURL: 'http://localhost:8080',
     headers: {
       'Content-Type': 'application/json;charset=utf-8',
     },

@@ -17,29 +17,32 @@ const attraction = ref(null)
 
 onMounted(async () => {
   isLoading.value = true
-  try {
-    const data = await attractionAPI.getAttractionDetail(props.tripId)
+  const { status, data, error } = await attractionAPI.getAttractionDetail(
+    props.tripId,
+  )
+  if (status === 200) {
     attraction.value = data
-  } catch (err) {
-    console.error('Error loading trip data:', err)
-  } finally {
-    isLoading.value = false
   }
+  if (error) {
+    console.error('Error loading trip data:', error)
+  }
+  isLoading.value = false
 })
 
 // 컴포넌트가 업데이트될 때도 데이터를 다시 가져오도록
 watch(
   () => props.tripId,
   async newId => {
-    try {
-      isLoading.value = true
-      const data = await attractionAPI.getAttractionDetail(newId)
+    isLoading.value = true
+    const { status, data, error } =
+      await attractionAPI.getAttractionDetail(newId)
+    if (status === 200) {
       attraction.value = data
-    } catch (err) {
-      console.error('Error loading trip data:', err)
-    } finally {
-      isLoading.value = false
     }
+    if (error) {
+      console.error('Error loading trip data:', error)
+    }
+    isLoading.value = false
   },
 )
 </script>
@@ -66,6 +69,7 @@ watch(
     <AttractionDetail
       v-if="!isLoading && attraction"
       :attraction="attraction"
+      v-model:likeCount="attraction.likeCount"
     />
     <!-- 추가 정보 -->
     <!-- <div class="flex flex-col w-full max-w-4xl gap-4 py-4">

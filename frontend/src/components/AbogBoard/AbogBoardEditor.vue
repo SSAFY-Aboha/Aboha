@@ -24,6 +24,9 @@ import {
 import { Card, CardContent } from '../ui/card'
 import Dropzone from '../common/Dropzone.vue'
 import AttractionSearchBox from './AttractionSearchBox.vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const dropzoneRef = ref(null)
 const isLoading = ref(false)
@@ -126,6 +129,22 @@ const handleSubmit = async () => {
     isLoading.value = false
   }
 }
+
+const handleReset = () => {
+  if (confirm('정말 취소하시겠습니까?')) {
+    inputVal.value = {
+      title: '',
+      attraction: '',
+      content: '',
+      tags: [],
+      imageFiles: [],
+    }
+    imageURLs.value = []
+
+    alert('취소되었습니다. 이전 페이지로 이동합니다.')
+    router.back()
+  }
+}
 </script>
 
 <template>
@@ -148,7 +167,11 @@ const handleSubmit = async () => {
     </div>
     <!-- Form -->
     <div class="max-w-4xl py-3 mx-auto">
-      <form @submit.prevent="handleSubmit" class="flex flex-col w-full gap-4">
+      <form
+        @submit.prevent="handleSubmit"
+        @reset="handleReset"
+        class="flex flex-col w-full gap-4"
+      >
         <!-- 입력 input -->
         <!-- 태그 선택 -->
         <div class="flex items-center justify-between w-full gap-4">
@@ -245,7 +268,7 @@ const handleSubmit = async () => {
         <!-- 버튼 Box -->
         <div class="flex gap-3">
           <Button type="submit" class="btn btn-primary">저장</Button>
-          <Button type="button" class="btn btn-secondary">취소</Button>
+          <Button type="reset" class="btn btn-secondary">취소</Button>
         </div>
       </form>
     </div>

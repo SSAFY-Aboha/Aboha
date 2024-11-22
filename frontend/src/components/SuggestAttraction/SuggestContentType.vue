@@ -7,9 +7,12 @@ const contentTypeList = ref([])
 
 const pickedData = defineModel('pickedData')
 
-onMounted(() => {
+onMounted(async () => {
   // 시도 조회
-  attractionsAPI.getContentType(data => (contentTypeList.value = data))
+  const { status, data, error } = await attractionsAPI.getContentType()
+  if (status === 200) {
+    contentTypeList.value = data
+  }
 })
 
 const handleContentTypeChange = contentTypeId => {

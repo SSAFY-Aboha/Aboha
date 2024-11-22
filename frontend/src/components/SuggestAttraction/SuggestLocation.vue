@@ -9,19 +9,27 @@ const pickedData = defineModel('pickedData')
 const sidoList = ref([]) // 시도 목록
 const gugunList = ref([]) // 구군 목록
 
-onMounted(() => {
+onMounted(async () => {
   // 시도 조회
-  attractionsAPI.getSido(data => (sidoList.value = data))
+  const { status, data, error } = await attractionsAPI.getSido()
+
+  if (status === 200) {
+    sidoList.value = data
+  }
 })
 
-const handleSidoChange = sidoCode => {
+const handleSidoChange = async sidoCode => {
   if (pickedData.value.sidoCode === sidoCode) return // 이미 선택한 시도라면 중단
 
   pickedData.value.sidoCode = sidoCode
   pickedData.value.gugunCode = null
   gugunList.value = []
   // 구군 조회
-  attractionsAPI.getGugun(sidoCode, data => (gugunList.value = data))
+  const { status, data, error } = await attractionsAPI.getGugun(sidoCode)
+
+  if (status === 200) {
+    gugunList.value = data
+  }
 }
 
 // 구군 변경 시 이름 저장

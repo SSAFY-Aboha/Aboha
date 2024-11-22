@@ -4,13 +4,21 @@ import Map from '../common/Map.vue'
 import AttractionReview from './AttractionReview/AttractionReview.vue'
 import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import attractionAPI from '@/api/attractions'
 const props = defineProps({
   attraction: Object,
 })
 
+const likeCount = defineModel('likeCount')
+
 console.log('detail ', props.attraction)
+
+// const isLiked = computed(() => {
+//   return props.attraction.isLiked
+// })
+
+const isLiked = ref(false)
 
 const mapData = computed(() => {
   return {
@@ -19,12 +27,19 @@ const mapData = computed(() => {
   }
 })
 
+// const likeCount = computed(() => {
+//   return props.attraction.likeCount
+// })
+
 const handleLike = async () => {
   console.log('like')
   try {
     await attractionAPI.toggleAttractionLike(
       props.attraction.id,
-      console.log,
+      ({ isLiked: isLikedServer }) => {
+        isLiked.value = isLikedServer
+        likeCount.value += isLikedServer ? 1 : -1
+      },
       console.log,
     )
   } catch (error) {
@@ -34,7 +49,7 @@ const handleLike = async () => {
 </script>
 
 <template>
-  <Main class="flex flex-col w-full max-w-4xl gap-8 pb-6">
+  <main class="flex flex-col w-full max-w-4xl gap-8 pb-6">
     <div class="flex flex-col gap-4">
       <div class="flex items-baseline justify-between gap-3">
         <div class="flex gap-4">
@@ -56,10 +71,10 @@ const handleLike = async () => {
           <div class="flex items-center justify-end gap-2">
             <i
               @click="handleLike"
-              class="overflow-hidden text-red-500 cursor-pointer pi pi-heart hover:font-bold"
+              :class="`overflow-hidden text-red-500 cursor-pointer pi ${isLiked ? 'pi-heart-fill' : 'pi-heart'} hover:font-bold`"
             >
             </i>
-            <span>{{ attraction.likeCount }}</span>
+            <span>{{ likeCount }}</span>
           </div>
         </div>
         <!-- 좋아요 -->
@@ -102,7 +117,7 @@ const handleLike = async () => {
     <div class="flex flex-col w-full gap-4 overflow-hidden">
       <AttractionReview :reviews="attraction.reviews" />
     </div>
-  </Main>
+  </main>
 </template>
 
 <style scoped></style>

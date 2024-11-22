@@ -1,143 +1,57 @@
-import { localAxios } from '@/utils/http-commons.js'
-
-const axios = localAxios()
-
+import { fetchApi } from '@/utils/api-util'
 // 관광지 조회
 /**
  * @param {Object} searchData - 검색 조건
  * @param {Function} success - 성공 콜백 함수
  * @param {Function} fail - 실패 콜백 함수
  */
-const getAttractions = async (searchData, success, fail) => {
-  try {
-    const response = await axios.get(`/api/v1/attractions`, {
-      params: searchData,
-    })
-    if (response.status === 200) {
-      success && success(response.data)
-      return response.data
-    } else {
-      fail && fail(response)
-      return response
-    }
-  } catch (error) {
-    fail && fail(error)
-    return error
-  }
+const getAttractions = searchData => {
+  return fetchApi('get', '/api/v1/attractions', { params: searchData })
 }
 
 // 관광지 이름 조회
-const getAttractionName = async (keyword, success, fail) => {
-  const response = await axios.get(`/api/v1/attractions/search`, {
-    params: keyword,
-  })
-
-  if (response.status === 200) {
-    success && success(response.data)
-    return response.data
-  } else {
-    fail && fail(response)
-    return response
-  }
+const getAttractionName = keyword => {
+  return fetchApi('get', '/api/v1/attractions/search', { params: keyword })
 }
 
 // 관광지 상세 조회
-const getAttractionDetail = async (attractionId, success, fail) => {
-  const response = await axios.get(`/api/v1/attractions/${attractionId}`)
-  if (response.status === 200) {
-    success && success(response.data)
-    return response.data
-  } else {
-    fail && fail(response.data)
-    return response.data
-  }
+const getAttractionDetail = attractionId => {
+  return fetchApi('get', `/api/v1/attractions/${attractionId}`)
 }
 
 // 시도 조회
-const getSido = async (success, fail) => {
-  const response = await axios.get(`/api/v1/sidos`)
-  if (response.status === 200) {
-    success && success(response.data)
-    return response.data
-  } else {
-    fail()
-    return response
-  }
+const getSido = () => {
+  return fetchApi('get', '/api/v1/sidos')
 }
 
 // 구군 조회
-const getGugun = async (sidoCode, success, fail) => {
-  const response = await axios.get(`/api/v1/guguns`, { params: { sidoCode } })
-  if (response.status === 200) {
-    success && success(response.data)
-    return response.data
-  } else {
-    fail()
-    return response
-  }
+const getGugun = sidoCode => {
+  return fetchApi('get', '/api/v1/guguns', { params: { sidoCode } })
 }
 
 // 관광지 카테고리 조회
-const getContentType = async (success, fail) => {
-  const response = await axios.get(`/api/v1/contenttypes`)
-  if (response.status === 200) {
-    success && success(response.data)
-    return response.data
-  } else {
-    fail()
-    return response
-  }
+const getContentType = () => {
+  return fetchApi('get', '/api/v1/contenttypes')
 }
 
 // 관광지 추천 조회
-const getSuggestAttraction = async (pickedData, success, fail) => {
-  const response = await axios.post(`/api/v1/recommendations`, pickedData)
-
-  if (response.status === 200) {
-    success && success(response.data)
-    return response.data
-  } else {
-    fail(response)
-    return response
-  }
+const getSuggestAttraction = pickedData => {
+  return fetchApi('post', '/api/v1/recommendations', pickedData)
 }
 
-const getAttractionReview = async (attractionId, success, fail) => {
-  const response = await axios.get(`/api/v1/reviews/${attractionId}`)
-  if (response.status === 200) {
-    success && success(response.data)
-    return response.data
-  } else {
-    fail()
-    return response
-  }
+// 관광지 후기 조회
+const getAttractionReview = attractionId => {
+  return fetchApi('get', `/api/v1/reviews/${attractionId}`)
 }
 
 // 관광지 후기 작성
-const postAttractionReview = async (reviewData, success, fail) => {
-  const response = await axios.post(`/api/v1/reviews`, reviewData)
-  if (response.status === 201) {
-    success && success(response.data)
-    return response.data
-  } else {
-    fail()
-    return response
-  }
+const postAttractionReview = reviewData => {
+  return fetchApi('post', '/api/v1/reviews', reviewData)
 }
 
 // 관광지 좋아요 토글
-const toggleAttractionLike = async (attractionId, success, fail) => {
-  const response = await axios.post(
-    `/api/v1/attractions/${attractionId}/like`,
-    null,
-  )
-  if (response.status === 200) {
-    success && success(response)
-    return response
-  } else {
-    fail(response)
-    return response
-  }
+const toggleAttractionLike = attractionId => {
+  return fetchApi('post', `/api/v1/attractions/${attractionId}/like`, null)
 }
 
 export default {
