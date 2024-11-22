@@ -17,21 +17,19 @@ const { userInfo } = storeToRefs(userStore)
 
 <template>
   <Transition name="fade" mode="out-in" appear>
-    <div class="flex flex-col w-full h-full gap-y-10">
+    <div class="flex flex-col w-full h-full max-w-6xl mx-auto min-w-[900px]">
       <!-- header -->
-      <header
-        class="flex flex-col items-start justify-center py-5 bg-green-50 gap-y-8"
-      >
+      <header class="flex flex-col items-start justify-center py-5 gap-y-8">
         <div class="w-full px-8">
           <h1 class="text-3xl font-bold font-Namum">
             안녕하세요. {{ userInfo.nickname }}님
           </h1>
         </div>
-        <div class="grid w-full grid-cols-3 px-8 gap-x-4">
+        <div class="flex justify-around w-full gap-x-4">
           <Card
             v-for="item in 3"
             :key="item"
-            class="text-xl font-bold text-center bg-gray-50 font-Namum"
+            class="w-full text-xl font-bold text-center bg-gray-50 font-Namum max-w-52"
           >
             <CardHeader>좋아요한 관광지 수</CardHeader>
             <CardContent>0</CardContent>
@@ -40,7 +38,7 @@ const { userInfo } = storeToRefs(userStore)
       </header>
       <!-- 관광지, 아보그 활동 내역 -->
       <main
-        class="flex flex-col items-center justify-start flex-1 px-8 py-5 overflow-y-auto gap-y-10 scrollbar-hide"
+        class="flex flex-col items-center justify-start flex-1 px-8 py-5 gap-y-10"
       >
         <div class="flex items-center justify-between w-full">
           <h1 class="text-2xl font-bold basis-3/4 font-Namum">
@@ -59,13 +57,6 @@ const { userInfo } = storeToRefs(userStore)
           </div>
         </div>
         <MypageContentTabs v-model:isEdit="isEdit" />
-
-        <!-- 나의 관광지 -->
-        <!-- <MypageContentCard title="나의 관광지" /> -->
-        <!-- 나의 아보그 -->
-        <!-- <MypageContentCard title="나의 아보그" /> -->
-        <!-- 나의 여행 계획 -->
-        <!-- <MypageContentCard title="나의 여행 계획" /> -->
       </main>
     </div>
   </Transition>

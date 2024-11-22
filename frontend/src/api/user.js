@@ -98,7 +98,38 @@ const checkEmail = async (email, success, fail) => {
 // 회원 정보 조회
 
 // 회원 정보 수정
+/**
+ *
+ * @body { email: String, nickname: String, password: String, profileImageUrl: String }
+ */
+const updateUserInfo = async (userId, formData, success, fail) => {
+  try {
+    const response = await axios.put(`/api/v1/users/${userId}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+    // 성공 :200
+    if (response.status === 200) {
+      success && success(response.data)
+      return response.data
+    } else {
+      fail && fail(response.data)
+      return response.data
+    }
+  } catch (error) {
+    return error
+  }
+}
 
 // 회원 탈퇴
 
-export default { checkLogin, login, signup, logout, checkNickname, checkEmail }
+export default {
+  checkLogin,
+  login,
+  signup,
+  logout,
+  checkNickname,
+  checkEmail,
+  updateUserInfo,
+}

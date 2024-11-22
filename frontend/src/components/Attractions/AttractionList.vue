@@ -28,9 +28,15 @@ const handleGetAttraction = async () => {
       () => console.log('성공'),
       res => console.log('조회 실패', res),
     )
-    const { content, hasNext, pageNumber, totalElements } = data
-
-    console.log(totalElements)
+    console.log(data)
+    const {
+      content,
+      hasNext,
+      pageNumber,
+      totalElements,
+      lastId,
+      lastSortValue,
+    } = data
 
     if (content && content.length > 0) {
       attractionList.value = [...attractionList.value, ...content]
@@ -39,6 +45,8 @@ const handleGetAttraction = async () => {
     }
 
     total.value = totalElements
+    searchParams.value.lastId = lastId
+    searchParams.value.lastSortValue = lastSortValue
 
     hasNext && (pageNo.value = pageNumber + 1) // 다음 페이지 존재 시 페이지 번호 업데이트
     !hasNext && (hasMore.value = false) // 다음 페이지 없을 시 더 가져올 데이터 없음 처리

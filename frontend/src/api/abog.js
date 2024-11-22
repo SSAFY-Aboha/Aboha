@@ -27,14 +27,18 @@ const getAbogDetail = async (abogId, success, fail) => {
 }
 
 // 아보그 추가
-const addAbog = async (abog, success, fail) => {
-  const response = await axios.post('/api/v1/abogs', abog)
+const createAbog = async (abog, success, fail) => {
+  const response = await axios.post('/api/v1/abogs', abog, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
   if (response.status === 200) {
-    success()
-    return response
+    success(response.data)
+    return response.data
   } else {
-    fail()
-    return response
+    fail(response.data)
+    return response.data
   }
 }
 
@@ -42,10 +46,10 @@ const addAbog = async (abog, success, fail) => {
 const updateAbog = async (abog, success, fail) => {
   const response = await axios.put('/api/v1/abogs', abog)
   if (response.status === 200) {
-    success()
-    return response
+    success(response.data)
+    return response.data
   } else {
-    fail()
+    fail(response.data)
     return response
   }
 }
@@ -116,7 +120,7 @@ const deleteAbogComment = async (abogId, commentId, success, fail) => {
 export default {
   getAbogComments,
   getAbog,
-  addAbog,
+  createAbog,
   updateAbog,
   deleteAbog,
   getAbogDetail,

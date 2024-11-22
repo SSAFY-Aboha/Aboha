@@ -26,6 +26,21 @@ const getAttractions = async (searchData, success, fail) => {
   }
 }
 
+// 관광지 이름 조회
+const getAttractionName = async (keyword, success, fail) => {
+  const response = await axios.get(`/api/v1/attractions/search`, {
+    params: keyword,
+  })
+
+  if (response.status === 200) {
+    success && success(response.data)
+    return response.data
+  } else {
+    fail && fail(response)
+    return response
+  }
+}
+
 // 관광지 상세 조회
 const getAttractionDetail = async (attractionId, success, fail) => {
   const response = await axios.get(`/api/v1/attractions/${attractionId}`)
@@ -135,4 +150,5 @@ export default {
   postAttractionReview,
   toggleAttractionLike,
   getAttractionReview,
+  getAttractionName,
 }
