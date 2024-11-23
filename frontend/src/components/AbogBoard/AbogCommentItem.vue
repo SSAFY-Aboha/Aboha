@@ -1,6 +1,8 @@
 <script setup>
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
 
+const BASE_URL = import.meta.env.VITE_API_BASE_URL
+
 const props = defineProps({
   data: {
     type: Object,
@@ -16,7 +18,9 @@ const { content, createdAt } = props.data.comment
   <div class="flex items-center gap-3 pb-3 border-b">
     <Avatar class="size-8">
       <AvatarImage
-        :src="profileImageUrl || '/src/assets/default_profile.png'"
+        :src="
+          `${BASE_URL}${profileImageUrl}` || '/src/assets/default_profile.png'
+        "
         alt="avatar"
       />
     </Avatar>

@@ -18,7 +18,6 @@ watch(
  * @data {Array} boardList
  * { abog: {}, attraction: {}, user: {} }
  */
-const boardList = ref([])
 </script>
 
 <template>
@@ -33,7 +32,7 @@ const boardList = ref([])
     </div>
 
     <div class="mx-auto my-0 mb-3 max-w-7xl md:px-8">
-      <AbogBoardList v-model:boardList="boardList" />
+      <AbogBoardList />
     </div>
     <div class="w-full bg-[#eee] h-52"></div>
   </main>

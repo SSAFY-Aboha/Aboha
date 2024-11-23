@@ -30,10 +30,10 @@ const { id, image, likeCount, title, sidoName, gugunName } = props.data
     >
       <div class="flex flex-col items-center justify-center gap-2">
         <div class="flex flex-col gap-2 bg-gradient rounded-xl">
-          <div>
+          <div class="flex items-center justify-center w-[19rem] h-[13rem]">
             <img
-              class="min-w-[16rem] max-h-[16rem] rounded-md"
-              :src="image"
+              class="object-cover w-full h-full rounded-md"
+              :src="image || '/src/assets/default_image.png'"
               :alt="id"
             />
           </div>

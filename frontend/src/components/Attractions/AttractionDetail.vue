@@ -12,8 +12,7 @@ const props = defineProps({
 
 const likeCount = defineModel('likeCount')
 
-// const isLiked = ref(props.attraction.isLiked)
-const isLiked = ref(false)
+const isLiked = ref(props.attraction.isLiked)
 
 const mapData = computed(() => {
   return {
