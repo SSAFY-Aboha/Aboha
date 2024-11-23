@@ -52,8 +52,15 @@ public class AttractionController {
 
     // 관광지 상세 조회
     @GetMapping("/{id}")
-    public ResponseEntity<AttractionResponse> getAttractionById(@PathVariable("id") Integer id) {
-        AttractionResponse response = attractionService.getAttraction(id);
+    public ResponseEntity<AttractionResponse> getAttractionById(
+        @PathVariable("id") Integer id,
+        HttpSession session
+    ) {
+        // 세션에서 인증된 사용자 정보 확인 (null 안전 처리)
+        UserResponse userResponse = (UserResponse) session.getAttribute("user");
+        Integer loginId = (userResponse != null) ? userResponse.id() : null;
+
+        AttractionResponse response = attractionService.getAttraction(id, loginId);
         return ResponseEntity.ok().body(response);
     }
 

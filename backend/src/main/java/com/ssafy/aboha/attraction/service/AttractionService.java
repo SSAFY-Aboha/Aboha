@@ -6,7 +6,13 @@ import com.ssafy.aboha.attraction.domain.Gugun;
 import com.ssafy.aboha.attraction.domain.Sido;
 import com.ssafy.aboha.attraction.dto.request.AttractionReadPagedRequest;
 import com.ssafy.aboha.attraction.dto.request.AttractionReadRequest;
-import com.ssafy.aboha.attraction.dto.response.*;
+import com.ssafy.aboha.attraction.dto.response.AttractionInfo;
+import com.ssafy.aboha.attraction.dto.response.AttractionResponse;
+import com.ssafy.aboha.attraction.dto.response.AttractionSummary;
+import com.ssafy.aboha.attraction.dto.response.GugunInfo;
+import com.ssafy.aboha.attraction.dto.response.MyLikedAttractionResponse;
+import com.ssafy.aboha.attraction.dto.response.MyReviewedAttractionResponse;
+import com.ssafy.aboha.attraction.dto.response.SidoInfo;
 import com.ssafy.aboha.attraction.repository.AttractionRepository;
 import com.ssafy.aboha.attraction.repository.ContentTypeRepository;
 import com.ssafy.aboha.attraction.repository.GugunRepository;
@@ -15,16 +21,16 @@ import com.ssafy.aboha.common.dto.response.KeySetPaginatedResponse;
 import com.ssafy.aboha.common.dto.response.PaginatedResponse;
 import com.ssafy.aboha.common.exception.BadRequestException;
 import com.ssafy.aboha.common.exception.NotFoundException;
+import com.ssafy.aboha.like.repository.AttractionLikeRepository;
 import com.ssafy.aboha.review.dto.response.ReviewResponse;
 import com.ssafy.aboha.review.service.ReviewService;
 import com.ssafy.aboha.user.repository.UserRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Slf4j
 @Service
@@ -38,6 +44,7 @@ public class AttractionService {
     private final ContentTypeRepository contentTypeRepository;
     private final ReviewService reviewService;
     private final UserRepository userRepository;
+    private final AttractionLikeRepository attractionLikeRepository;
 
     /**
      * 관광지 목록 조회
@@ -86,17 +93,23 @@ public class AttractionService {
      * 관광지 상세 조회
      */
     @Transactional
-    public AttractionResponse getAttraction(Integer id) {
+    public AttractionResponse getAttraction(Integer id, Integer loginId) {
         Attraction attraction = attractionRepository.findByAttractionId(id)
             .orElseThrow(() -> new NotFoundException("관광지가 존재하지 않습니다."));
 
         // 조회수 증가
         attraction.increaseViewCount();
 
+        // 로그인 여부 판단 후 좋아요 여부 확인
+        boolean isLiked = false;
+        if(loginId != null) {
+            isLiked = attractionLikeRepository.existsByUserIdAndAttractionId(loginId, id);
+        }
+
         // 리뷰 목록 조회
         List<ReviewResponse> reviews = reviewService.getReviews(attraction);
 
-        return AttractionResponse.of(attraction, reviews);
+        return AttractionResponse.of(attraction, reviews, isLiked);
     }
 
     /**

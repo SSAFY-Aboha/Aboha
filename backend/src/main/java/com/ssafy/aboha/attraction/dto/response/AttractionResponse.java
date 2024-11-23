@@ -3,11 +3,10 @@ package com.ssafy.aboha.attraction.dto.response;
 import com.ssafy.aboha.attraction.domain.Attraction;
 import com.ssafy.aboha.review.dto.response.ReviewListResponse;
 import com.ssafy.aboha.review.dto.response.ReviewResponse;
-import lombok.Builder;
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import lombok.Builder;
 
 @Builder
 public record AttractionResponse(
@@ -26,10 +25,11 @@ public record AttractionResponse(
     String description,
     Long likeCount,
     Long viewCount,
+    Boolean isLiked,
     ReviewListResponse reviews
 ) {
 
-    public static AttractionResponse of(Attraction attraction, List<ReviewResponse> reviewData) {
+    public static AttractionResponse of(Attraction attraction, List<ReviewResponse> reviewData, Boolean isLiked) {
         String image = Optional.ofNullable(attraction.getFirstImage1())
             .map(String::trim)
             .filter(s -> !s.isEmpty())
@@ -54,6 +54,7 @@ public record AttractionResponse(
             .description(attraction.getOverview())
             .likeCount(attraction.getLikeCount())
             .viewCount(attraction.getViewCount())
+            .isLiked(isLiked)
             .reviews(reviews)
             .build();
     }
