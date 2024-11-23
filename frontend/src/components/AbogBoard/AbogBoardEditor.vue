@@ -118,16 +118,18 @@ const handleSubmit = async () => {
   })
 
   // api 호출
-  try {
-    isLoading.value = true
-    const res = await abogApi.createAbog(formData)
-    alert('아보하 로그가 저장되었습니다.')
-  } catch (error) {
-    console.error(error)
-    alert('아보하 로그 저장에 실패하였습니다.', error.response)
-  } finally {
-    isLoading.value = false
+  isLoading.value = true
+  const { status, error } = await abogApi.createAbog(formData)
+
+  if (error) {
+    alert(error)
+    return
   }
+
+  alert('아보하 로그가 저장되었습니다.')
+  router.back()
+
+  isLoading.value = false
 }
 
 const handleReset = () => {

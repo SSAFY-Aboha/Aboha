@@ -6,7 +6,7 @@ import DataHasMore from '@/components/common/DataHasMore.vue'
 import { ref } from 'vue'
 import abogAPI from '@/api/abog'
 
-const boardList = defineModel('boardList', { type: Array })
+const boardList = ref([])
 const observerTarget = ref(null)
 
 const hasMore = ref(true) // 더 이상 로드할 데이터 여부
@@ -15,21 +15,21 @@ const isLoading = ref(false) // 로딩 중 상태
 const handleGetAbog = async () => {
   isLoading.value = true
 
-  try {
-    const data = await abogAPI.getAbog(console.log, () =>
-      console.log('아보그 조회 실패'),
-    )
+  const { data, status, error } = await abogAPI.getAbog(console.log, () =>
+    console.log('아보그 조회 실패'),
+  )
 
-    console.log('아보그 조회', data)
-
-    if (data.length > 0) {
-      boardList.value = [...boardList.value, ...data]
-    } else {
-      hasMore.value = false // 더 이상 로드할 데이터가 없는 경우
-    }
-  } finally {
-    isLoading.value = false
+  if (error) {
+    console.error(error)
+    return
   }
+
+  if (data.length > 0) {
+    boardList.value = [...boardList.value, ...data]
+  } else {
+    hasMore.value = false // 더 이상 로드할 데이터가 없는 경우
+  }
+  isLoading.value = false
 }
 
 // 무한 스크롤

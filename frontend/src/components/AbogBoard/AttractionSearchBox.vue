@@ -20,14 +20,17 @@ const handleKeywordChange = async value => {
     return
   }
 
-  try {
-    const data = await attractionAPI.getAttractionName({ keyword: value })
-    attractionList.value = data
-    isOpen.value = true
-  } catch (error) {
+  const { data, status, error } = await attractionAPI.getAttractionName({
+    keyword: value,
+  })
+
+  if (error) {
     console.error(error)
     attractionList.value = []
   }
+
+  attractionList.value = data
+  isOpen.value = true
 }
 
 const handleSelectAttraction = (id, title) => {

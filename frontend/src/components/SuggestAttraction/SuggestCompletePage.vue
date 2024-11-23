@@ -35,28 +35,32 @@ onMounted(async () => {
     loader="dots"
   />
   <!-- 로딩 완료시 -->
-  <div
-    v-if="!isLoading && suggestData.length > 0"
-    class="w-full h-full bg-white"
-  >
-    <transition-group
-      tag="ul"
-      name="card-animation"
-      class="grid items-center justify-center w-full grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3"
-    >
-      <AttractionCard
-        v-for="(data, index) in suggestData"
-        :key="data.id"
-        :data="data"
-        :style="{ animationDelay: `${index * 500}ms` }"
-        class="card-item"
-      />
-    </transition-group>
+  <div v-if="!isLoading">
+    <div v-if="suggestData?.length > 0" class="w-full h-full bg-white">
+      <transition-group
+        tag="ul"
+        name="card-animation"
+        class="grid items-center justify-center w-full grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3"
+      >
+        <AttractionCard
+          v-for="(data, index) in suggestData"
+          :key="data.id"
+          :data="data"
+          :style="{ animationDelay: `${index * 500}ms` }"
+          class="card-item"
+        />
+      </transition-group>
+    </div>
+    <div v-else>
+      <h1 class="text-2xl font-bold text-center animate-typo">
+        추천 관광지가 없습니다...😅
+      </h1>
+    </div>
     <div class="flex items-center justify-center w-full bg-white pt-28">
       <Button
         @click="$router.push('/trips')"
         variant="outline"
-        class="w-1/4 mx-auto text-lg text-white bg-green-600 rounded-full"
+        class="mx-auto text-lg text-white bg-green-600 rounded-full"
         >더 많은 여행지 보러가기</Button
       >
     </div>

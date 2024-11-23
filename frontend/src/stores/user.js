@@ -3,6 +3,8 @@ import userAPI from '@/api/user'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
+const BASE_URL = import.meta.env.VITE_BASE_URL
+
 const useUserStore = defineStore('user', () => {
   const router = useRouter()
 
@@ -30,6 +32,7 @@ const useUserStore = defineStore('user', () => {
 
     isAuthenticated.value = true
     userInfo.value = data
+    userInfo.value.profileImageUrl = `${BASE_URL}/${userInfo.value.profileImageUrl}`
   }
 
   // 로그인
@@ -41,6 +44,7 @@ const useUserStore = defineStore('user', () => {
     } else if (status === 200) {
       isAuthenticated.value = true
       userInfo.value = data
+      userInfo.value.profileImageUrl = `${BASE_URL}/${userInfo.value.profileImageUrl}`
       return { status, data }
     }
   }

@@ -75,7 +75,7 @@ const handleLogout = async () => {
           class="flex items-center justify-center transition-transform bg-green-400 rounded-full cursor-pointer hover:scale-105 size-11"
         >
           <Avatar class="size-10">
-            <AvatarImage src="/src/assets/mainPage_image.jpg" alt="avatar" />
+            <AvatarImage :src="userInfo?.profileImageUrl" alt="avatar" />
           </Avatar>
         </RouterLink>
       </template>
