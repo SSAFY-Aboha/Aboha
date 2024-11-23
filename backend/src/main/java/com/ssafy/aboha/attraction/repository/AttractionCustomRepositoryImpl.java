@@ -17,13 +17,12 @@ import com.ssafy.aboha.common.dto.response.PaginatedResponse;
 import com.ssafy.aboha.like.domain.QAttractionLike;
 import com.ssafy.aboha.review.domain.QReview;
 import jakarta.persistence.EntityManager;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class AttractionCustomRepositoryImpl implements AttractionCustomRepository {
@@ -238,19 +237,20 @@ public class AttractionCustomRepositoryImpl implements AttractionCustomRepositor
     public List<AttractionSummary> findByTitle(String title) {
         QAttraction qAttraction = QAttraction.attraction;
         QGugun qGugun = QGugun.gugun;
+        QSido qSido = QSido.sido;
 
-        List<Attraction> results = queryFactory
-                .selectFrom(qAttraction)
-                .leftJoin(qAttraction.gugun, qGugun).fetchJoin()
-                .where(qAttraction.title.containsIgnoreCase(title))
-                .fetch()
-                .stream()
-                .distinct()
-                .toList();
-
-        return results.stream()
-                .map(AttractionSummary::from)
-                .toList();
+        return queryFactory
+            .select(Projections.constructor(
+                AttractionSummary.class,
+                qAttraction.id,
+                qAttraction.title
+            ))
+            .from(qAttraction)
+            .leftJoin(qAttraction.sido, qSido)
+            .leftJoin(qAttraction.gugun, qGugun)
+            .where(qAttraction.title.containsIgnoreCase(title))
+            .distinct()
+            .fetch();
     }
 
     @Override
