@@ -12,13 +12,17 @@ import com.ssafy.aboha.like.service.LikeService;
 import com.ssafy.aboha.user.dto.response.UserResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import java.net.URI;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping("/abogs")
@@ -51,15 +55,26 @@ public class AbogController {
 
     // 아보그 목록 조회
     @GetMapping
-    public ResponseEntity<List<AbogResponse>> getAbogs() {
-        List<AbogResponse> response = abogService.getAbogs();
+    public ResponseEntity<List<AbogResponse>> getAbogs(HttpSession session) {
+        // 세션에서 인증된 사용자 정보 확인 (null 안전 처리)
+        UserResponse userResponse = (UserResponse) session.getAttribute("user");
+        Integer loginId = (userResponse != null) ? userResponse.id() : null;
+
+        List<AbogResponse> response = abogService.getAbogs(loginId);
         return ResponseEntity.ok().body(response);
     }
 
     // 아보그 상세 조회
     @GetMapping("/{id}")
-    public ResponseEntity<AbogResponse> getAbogById(@PathVariable(value = "id") Integer id) {
-        AbogResponse response = abogService.getAbogById(id);
+    public ResponseEntity<AbogResponse> getAbogById(
+        @PathVariable(value = "id") Integer id,
+        HttpSession session
+    ) {
+        // 세션에서 인증된 사용자 정보 확인 (null 안전 처리)
+        UserResponse userResponse = (UserResponse) session.getAttribute("user");
+        Integer loginId = (userResponse != null) ? userResponse.id() : null;
+
+        AbogResponse response = abogService.getAbogById(id, loginId);
         return ResponseEntity.ok(response);
     }
 
