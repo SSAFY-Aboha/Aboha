@@ -2,7 +2,7 @@ package com.ssafy.aboha.attraction.controller;
 
 import com.ssafy.aboha.attraction.dto.request.AttractionReadPagedRequest;
 import com.ssafy.aboha.attraction.dto.request.AttractionSearchRequest;
-import com.ssafy.aboha.attraction.dto.response.AttractionInfo;
+import com.ssafy.aboha.attraction.dto.response.AttractionInfoWithLiked;
 import com.ssafy.aboha.attraction.dto.response.AttractionResponse;
 import com.ssafy.aboha.attraction.dto.response.AttractionSummary;
 import com.ssafy.aboha.attraction.service.AttractionService;
@@ -41,10 +41,16 @@ public class AttractionController {
 //        PaginatedResponse<AttractionInfo> response = attractionService.getAttractionsByFilters(request, pageable);
 //        return ResponseEntity.ok().body(response);
 //    }
-    public ResponseEntity<KeySetPaginatedResponse<AttractionInfo>> getAttractions(
+    public ResponseEntity<KeySetPaginatedResponse<AttractionInfoWithLiked>> getAttractions(
         @ModelAttribute AttractionReadPagedRequest request,
-        @PageableDefault(size = 12) Pageable pageable) {
-        KeySetPaginatedResponse<AttractionInfo> response = attractionService.getAttractions(request, pageable);
+        @PageableDefault(size = 12) Pageable pageable,
+        HttpSession session
+    ) {
+        // 세션에서 인증된 사용자 정보 확인 (null 안전 처리)
+        UserResponse userResponse = (UserResponse) session.getAttribute("user");
+        Integer loginId = (userResponse != null) ? userResponse.id() : null;
+
+        KeySetPaginatedResponse<AttractionInfoWithLiked> response = attractionService.getAttractions(request, pageable, loginId);
         return ResponseEntity.ok().body(response);
     }
 
