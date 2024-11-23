@@ -19,6 +19,10 @@ spring:
     openai:
       api-key: ${OPENAI_API_KEY}
 
+  web:
+    resources:
+      static-locations: classpath:/uploads/
+
 server:
   servlet:
     context-path: /api/v1
