@@ -13,10 +13,12 @@ public record AbogResponse(
         // 관광지
         AttractionSummary attraction,
         // 아보그
-        AbogSummary abog
+        AbogSummary abog,
+        // 좋아요 여부
+        Boolean isLiked
 ) {
 
-    public static AbogResponse from(Abog abog, List<String> imageUrls) {
+    public static AbogResponse of(Abog abog, List<String> imageUrls, Boolean isLiked) {
         UserSummary userSummary = UserSummary.from(abog.getUser());
         AttractionSummary attractionSummary = AttractionSummary.from(abog.getAttraction());
         AbogSummary abogSummary = AbogSummary.of(abog, imageUrls);
@@ -25,6 +27,7 @@ public record AbogResponse(
             .user(userSummary)
             .attraction(attractionSummary)
             .abog(abogSummary)
+            .isLiked(isLiked)
             .build();
     }
 
