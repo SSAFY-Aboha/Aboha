@@ -35,12 +35,20 @@ const handleSelectAttraction = (id, title) => {
   selectedData.value = title
   isOpen.value = false
 }
+
+const handleFocusout = () => {
+  isOpen.value = false
+}
+
+const handleOpen = () => {
+  isOpen.value = !isOpen.value
+}
 </script>
 
 <template>
   <div class="relative w-full">
     <Button
-      @click.prevent="isOpen = !isOpen"
+      @click.prevent="handleOpen"
       class="flex items-center justify-start w-full gap-2"
       variant="outline"
     >
@@ -49,8 +57,13 @@ const handleSelectAttraction = (id, title) => {
     </Button>
     <div v-show="isOpen" class="absolute top-0 w-full">
       <div class="relative">
-        <AttractionSearchInput @update:model-value="handleKeywordChange" />
-        <div class="absolute w-full h-56 p-2 rounded-md shadow-md top-11">
+        <AttractionSearchInput
+          @update:model-value="handleKeywordChange"
+          @focusout="handleFocusout"
+        />
+        <div
+          class="absolute z-50 w-full h-56 p-2 bg-white rounded-md shadow-md top-11"
+        >
           <ul class="flex flex-col h-full gap-4 overflow-auto scrollbar-hide">
             <p class="text-center" v-if="attractionList.length === 0">
               검색 결과가 없습니다.

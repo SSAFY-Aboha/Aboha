@@ -1,23 +1,24 @@
 <script setup>
-import { ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import AttractionCard from './common/AttractionCard.vue'
+import attractionAPI from '@/api/attractions'
 
 // 여기서 데이터 검색해서 가져오기
-const attractions = ref([
-  {
-    id: 1,
-    image: 'https://www.royalpalace.go.kr/images/sub/gbg.jpg',
-    likeCount: 1234,
-    title: '경복궁',
-    sidoName: '서울특별시',
-    gugunName: '종로구 ',
-  },
-])
+const attractions = ref([])
 
-// onMounted(async () => {
-//   const data = await attractionAPI.getAttractionList()
-//   attractions.value = data
-// })
+const sliceAttractions = computed(() => attractions.value.slice(0, 10))
+
+onMounted(async () => {
+  const { status, data, error } = await attractionAPI.getAttractions({
+    sort: 'POPULAR',
+  })
+  if (status === 200) {
+    attractions.value = data.content
+  }
+  if (error) {
+    console.error(error)
+  }
+})
 </script>
 
 <template>
@@ -30,7 +31,7 @@ const attractions = ref([
         class="flex items-center justify-around gap-5 px-10 carousel shrink-0"
       >
         <AttractionCard
-          v-for="each in attractions"
+          v-for="each in sliceAttractions"
           :key="each.id"
           :data="each"
         />

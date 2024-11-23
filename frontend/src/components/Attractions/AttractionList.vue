@@ -22,13 +22,12 @@ const observerTarget = ref(null) // 무한 스크롤 타겟
 const handleGetAttraction = async () => {
   // 로딩 시작
   isLoading.value = true
-  try {
-    const data = await attractionAPI.getAttractions(
-      { ...searchParams.value, page: pageNo.value },
-      () => console.log('성공'),
-      res => console.log('조회 실패', res),
-    )
-    console.log(data)
+  const { status, data, error } = await attractionAPI.getAttractions(
+    { ...searchParams.value, page: pageNo.value },
+    () => console.log('성공'),
+    res => console.log('조회 실패', res),
+  )
+  if (status === 200) {
     const {
       content,
       hasNext,
@@ -50,10 +49,9 @@ const handleGetAttraction = async () => {
 
     hasNext && (pageNo.value = pageNumber + 1) // 다음 페이지 존재 시 페이지 번호 업데이트
     !hasNext && (hasMore.value = false) // 다음 페이지 없을 시 더 가져올 데이터 없음 처리
-  } finally {
-    // 로딩 완료
-    isLoading.value = false
   }
+  // 로딩 완료
+  isLoading.value = false
 }
 
 // 무한 스크롤

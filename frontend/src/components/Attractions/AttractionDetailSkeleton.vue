@@ -4,7 +4,7 @@ import { Skeleton } from '../ui/skeleton'
 
 <template>
   <!-- content -->
-  <Main class="flex flex-col w-full max-w-4xl gap-8 pb-6">
+  <main class="flex flex-col w-full max-w-4xl gap-8 pb-6">
     <div class="flex flex-col gap-4">
       <div class="flex items-baseline justify-between gap-3">
         <Skeleton class="w-2/4 h-10" />
@@ -24,7 +24,7 @@ import { Skeleton } from '../ui/skeleton'
     <Skeleton class="w-full h-96" />
     <!-- 리뷰 -->
     <Skeleton class="w-full h-80" />
-  </Main>
+  </main>
 </template>
 
 <style scoped></style>

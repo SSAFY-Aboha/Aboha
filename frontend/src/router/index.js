@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import TripListView from '@/views/TripListView.vue'
 import AttractionMain from '@/components/Attractions/AttractionMain.vue'
+import useUserStore from '@/stores/user'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -92,18 +93,24 @@ router.beforeEach((to, from, next) => {
   // 네비게이션 로그 출력
   console.log('Navigating from:', from.path, 'to:', to.path)
 
+  const userStore = useUserStore()
   // 인증 상태 가져오기
-  const isLoggedIn = true
-  // const isLoggedIn = store.isLoggedIn
+  const isLoggedIn = userStore.isLogin
 
-  // 로그인 상태 확인
-  if (to.meta.requireAuth && !isLoggedIn) {
-    // 로그인 되어있지 않는다면, 로그인 페이지로 이동
-    next({ name: 'login' })
-  } else {
-    // 로그인 되어있다면, 다음 단계로 이동
-    next()
+  // requireAuth가 true인 라우트에 대해서만 로그인 체크
+  if (to.meta.requireAuth) {
+    console.log('router isLoggedIn', isLoggedIn)
+
+    if (!isLoggedIn) {
+      alert('로그인 후 이용해주세요.')
+      next({ name: 'login' })
+      console.log('router beforeEach', '로그인 되어있지 않습니다.')
+      return
+    }
   }
+
+  // requireAuth가 없거나, 로그인이 되어있는 경우 정상적으로 라우팅
+  next()
 })
 
 export default router

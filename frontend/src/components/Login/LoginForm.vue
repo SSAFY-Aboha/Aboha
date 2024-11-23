@@ -11,33 +11,20 @@ const router = useRouter()
 const inputValue = ref({ email: '', password: '', save: false })
 
 const handleLogin = async () => {
-  try {
-    await userStore.login(
-      inputValue.value,
-      data => {
-        console.log('로그인 성공')
-        console.log(data)
-        router.push('/')
-      },
-      res => {
-        console.log('로그인 실패', res)
-        // alert('아이디 및 비밀번호를 확인해주세요.')
-      },
-    )
-  } catch (error) {
-    if (error.response.status === 401) {
-      alert('아이디 및 비밀번호를 확인해주세요.')
-    } else if (error.response.status === 500) {
-      alert('서버 오류가 발생했습니다.')
-    } else if (error.response.status == 400) {
-      alert('이메일 형식을 확인해주세요.')
-    }
+  const { status, data } = await userStore.login(inputValue.value)
+
+  if (status === 200) {
+    router.push('/')
+  } else if (status === 401) {
+    alert('아이디 및 비밀번호를 확인해주세요.')
+  } else if (status === 400) {
+    alert('이메일 형식을 확인해주세요.')
   }
 }
 </script>
 <template>
   <form class="w-full" @submit.prevent="handleLogin">
-    <div class="flex flex-col flex-1 gap-2">
+    <div class="flex flex-col flex-1 gap-4">
       <div class="flex flex-col gap-4">
         <Input
           class="bg-gray-100"

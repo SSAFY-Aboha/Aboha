@@ -4,6 +4,8 @@ import attractionAPI from '@/api/attractions'
 import { Button } from '../ui/button'
 import AttractionDetailSkeleton from './AttractionDetailSkeleton.vue'
 import AttractionDetail from '@/components/Attractions/AttractionDetail.vue'
+import { getSummarizeAIResponse } from '@/services/summarizeAIService'
+import { getTagAIResponse } from '@/services/getTagAIService'
 
 const props = defineProps({
   tripId: {
@@ -17,29 +19,43 @@ const attraction = ref(null)
 
 onMounted(async () => {
   isLoading.value = true
-  try {
-    const data = await attractionAPI.getAttractionDetail(props.tripId)
-    attraction.value = data
-  } catch (err) {
-    console.error('Error loading trip data:', err)
-  } finally {
-    isLoading.value = false
+  const { status, data, error } = await attractionAPI.getAttractionDetail(
+    props.tripId,
+  )
+  if (status === 200) {
+    const { title, address, description } = data
+
+    const message = `여행지 이름: ${title}\n여행지 주소: ${address}\n여행지 소개글: ${description}`
+    // const tagString = await getTagAIResponse(message)
+    // const tags = tagString.split(',').map(tag => tag.trim())
+    // const summarize = await getSummarizeAIResponse(message)
+    // console.log(tags)
+
+    // attraction.value = { ...data, tags }
+    // attraction.value = { ...data, description: summarize, tags }
+
+    attraction.value = { ...data }
   }
+  if (error) {
+    console.error('Error loading trip data:', error)
+  }
+  isLoading.value = false
 })
 
 // 컴포넌트가 업데이트될 때도 데이터를 다시 가져오도록
 watch(
   () => props.tripId,
   async newId => {
-    try {
-      isLoading.value = true
-      const data = await attractionAPI.getAttractionDetail(newId)
+    isLoading.value = true
+    const { status, data, error } =
+      await attractionAPI.getAttractionDetail(newId)
+    if (status === 200) {
       attraction.value = data
-    } catch (err) {
-      console.error('Error loading trip data:', err)
-    } finally {
-      isLoading.value = false
     }
+    if (error) {
+      console.error('Error loading trip data:', error)
+    }
+    isLoading.value = false
   },
 )
 </script>
@@ -66,6 +82,7 @@ watch(
     <AttractionDetail
       v-if="!isLoading && attraction"
       :attraction="attraction"
+      v-model:likeCount="attraction.likeCount"
     />
     <!-- 추가 정보 -->
     <!-- <div class="flex flex-col w-full max-w-4xl gap-4 py-4">

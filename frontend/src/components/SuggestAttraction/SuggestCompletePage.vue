@@ -14,16 +14,15 @@ const suggestData = ref([])
 onMounted(async () => {
   // 로딩 시작
   isLoading.value = true
-  try {
-    const res = await attractionsAPI.getSuggestAttraction(pickedData.value)
-    console.log('추천 관광지 데이터', res)
-    suggestData.value = res
-  } catch (error) {
-    console.error(error)
-  } finally {
-    // 로딩 완료
-    isLoading.value = false
-  }
+
+  const { status, data, error } = await attractionsAPI.getSuggestAttraction(
+    pickedData.value,
+  )
+  console.log('추천 관광지 데이터', data)
+  suggestData.value = data
+
+  // 로딩 완료
+  isLoading.value = false
 })
 </script>
 

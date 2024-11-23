@@ -46,9 +46,13 @@ const handleSearch = async searchData => {
 
   pageNo.value = 0 // 페이지 초기화
   //관광지 조회
-  try {
-    const data = await attractionAPI.getAttractions(searchData)
-    console.log('검색 결과', data)
+  const { status, data, error } = await attractionAPI.getAttractions(searchData)
+
+  if (error) {
+    console.error(error)
+    return
+  }
+  if (status === 200) {
     const {
       content,
       hasNext,
@@ -65,9 +69,8 @@ const handleSearch = async searchData => {
 
     hasNext && (pageNo.value = pageNumber + 1) // 다음 페이지 존재 시 페이지 번호 업데이트
     hasMore.value = hasNext // 더 가져올 데이터 존재 여부 업데이트
-  } finally {
-    isLoading.value = false // 로딩 종료
   }
+  isLoading.value = false // 로딩 종료
 }
 
 provide('handleSearch', handleSearch)

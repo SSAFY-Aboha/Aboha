@@ -1,35 +1,16 @@
-import { localAxios } from '@/utils/http-commons'
-
-const axios = localAxios()
+import { fetchApi } from '@/utils/api-util'
 
 // 로그인 상태 확인
-const checkLogin = async (success, fail) => {
-  try {
-    const response = await axios.get('/api/v1/auth/check-status')
-    if (response.status === 200) {
-      success && success()
-      return response
-    }
-  } catch (error) {
-    fail && fail()
-    return error
-  }
+const checkLogin = () => {
+  return fetchApi('get', '/api/v1/auth/check')
 }
 
 // 로그인
 /**
  * @param { email : string, password : string } user
  * */
-const login = async (user, success, fail) => {
-  const response = await axios.post('/api/v1/auth/login', user)
-
-  if (response.status === 200) {
-    success && success(response.data)
-    return response.data
-  } else {
-    fail && fail(response)
-    return response
-  }
+const login = user => {
+  return fetchApi('post', '/api/v1/auth/login', user)
 }
 
 // 로그아웃
@@ -37,16 +18,8 @@ const login = async (user, success, fail) => {
  * @param { email : string, password : string } user
  * @header { Authorization : Bearer token }
  * */
-const logout = async (user, success, fail) => {
-  const response = await axios.post('/api/v1/auth/logout', user)
-
-  if (response.status === 200) {
-    success && success()
-    return response
-  } else {
-    fail && fail()
-    return response
-  }
+const logout = user => {
+  return fetchApi('post', '/api/v1/auth/logout', user)
 }
 
 // 회원가입
@@ -58,71 +31,44 @@ const logout = async (user, success, fail) => {
  * ❗8자 이상 20자 이하 ❗
  * ❗영문자, 숫자, 특수문자 조합 ❗
  */
-const signup = async (user, success, fail) => {
-  const response = await axios.post('/api/v1/users/signup', user)
-  if (response.status === 200) {
-    success && success()
-    return response
-  } else {
-    fail && fail()
-    return response
-  }
+const signup = async user => {
+  return fetchApi('post', '/api/v1/users/signup', user)
 }
 
 // 닉네임 중복 확인
-const checkNickname = async (nickname, success, fail) => {
-  const response = await axios.get('/api/v1/users/check-nickname', nickname)
-
-  if (response.status === 200) {
-    success && success()
-    return response
-  } else {
-    fail && fail()
-    return response
-  }
+const checkNickname = nickname => {
+  return fetchApi('get', `/api/v1/users/check-nickname`, {
+    params: { nickname },
+  })
 }
 
 // 이메일 중복 확인
-const checkEmail = async (email, success, fail) => {
-  const response = await axios.get('/api/v1/users/check-email', email)
-
-  if (response.status === 200) {
-    success && success()
-    return response
-  } else {
-    fail && fail()
-    return response
-  }
+const checkEmail = email => {
+  return fetchApi('get', '/api/v1/users/check-email', { params: email })
 }
 
 // 회원 정보 조회
+const getUserInfo = userId => {
+  return fetchApi('get', `/api/v1/users/${userId}`)
+}
 
 // 회원 정보 수정
 /**
  *
  * @body { email: String, nickname: String, password: String, profileImageUrl: String }
  */
-const updateUserInfo = async (userId, formData, success, fail) => {
-  try {
-    const response = await axios.put(`/api/v1/users/${userId}`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    })
-    // 성공 :200
-    if (response.status === 200) {
-      success && success(response.data)
-      return response.data
-    } else {
-      fail && fail(response.data)
-      return response.data
-    }
-  } catch (error) {
-    return error
-  }
+const updateUserInfo = async (userId, formData) => {
+  return fetchApi('put', `/api/v1/users/${userId}`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
 }
 
 // 회원 탈퇴
+const deleteUser = userId => {
+  return fetchApi('delete', `/api/v1/users/${userId}`)
+}
 
 export default {
   checkLogin,
@@ -132,4 +78,6 @@ export default {
   checkNickname,
   checkEmail,
   updateUserInfo,
+  getUserInfo,
+  deleteUser,
 }

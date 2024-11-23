@@ -1,8 +1,11 @@
 import { defineStore } from 'pinia'
 import userAPI from '@/api/user'
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 const useUserStore = defineStore('user', () => {
+  const router = useRouter()
+
   // ? state
   // 로그인 상태
   const isLogin = ref(false)
@@ -17,54 +20,75 @@ const useUserStore = defineStore('user', () => {
 
   // ? action
   // 초기화 함수 - 쿠키에서 JSESSIONID 확인
-  const initializeAuth = () => {
-    userAPI.checkLogin().then(response => {
-      if (response.status === 200) {
-        console.log('in store', response)
-        isLogin.value = true
-        userInfo.value = response.data
-      }
-    })
+  const initializeAuth = async () => {
+    const { status, data, error } = await userAPI.checkLogin()
+
+    if (error) {
+      alert(error)
+    } else if (status === 200) {
+      console.log('in store', data)
+      isLogin.value = true
+      userInfo.value = data
+    }
   }
 
   // 로그인
-  const login = async (user, success, fail) => {
-    const response = await userAPI.login(
-      user,
-      data => {
-        // 세션 저장
-        isLogin.value = true
-        userInfo.value = data
-        success()
-      },
-      fail,
-    )
-    return response
+  const login = async user => {
+    const { status, data, error } = await userAPI.login(user)
+
+    if (error) {
+      alert(error)
+    } else if (status === 200) {
+      isLogin.value = true
+      userInfo.value = data
+      return { status, data }
+    }
   }
 
   // 로그아웃
-  const logout = async (success, fail) => {
-    await userAPI.logout(
-      {},
-      () => {
-        isLogin.value = false
-        success()
-      },
-      fail,
-    )
+  const logout = async () => {
+    const { status, error } = await userAPI.logout()
+
+    if (error) {
+      alert(error)
+    } else if (status === 200) {
+      isLogin.value = false
+    }
   }
 
   // 회원가입
-  const signup = async () => {}
+  const signup = async user => {
+    const { status, data, error } = await userAPI.signup(user)
+
+    if (error) {
+      alert(error)
+    } else if (status === 200) {
+      alert('회원가입 성공! 로그인을 진행해주세요.')
+      router.push('/login')
+    }
+  }
 
   // 닉네임 중복확인
-  const checkNickname = async (nickname, success, fail) => {
-    const response = await userAPI.checkNickname(nickname, success, fail)
-    console.log('in store', response)
+  const checkNickname = async nickname => {
+    const { status, data, error } = await userAPI.checkNickname(nickname)
+
+    if (error) {
+      alert(error)
+    } else if (status === 200) {
+      return data
+    }
   }
 
   // 이메일 중복확인
-  const checkEmail = async () => {}
+  const checkEmail = async email => {
+    const { status, data, error } = await userAPI.checkEmail(email)
+
+    if (error) {
+      alert(error)
+    } else if (status === 200) {
+      return data
+    }
+  }
 
   // 회원정보 조회
   // 회원정보 수정

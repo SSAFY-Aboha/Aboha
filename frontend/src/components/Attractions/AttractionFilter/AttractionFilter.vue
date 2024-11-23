@@ -41,7 +41,7 @@ const handleSearchBtn = () => {
         </DialogDescription>
       </DialogHeader>
       <!-- 메인 내용 -->
-      <main class="flex flex-col gap-6">
+      <div class="flex flex-col gap-6">
         <section class="flex flex-col gap-3">
           <!-- ! 지역 필터 -->
           <AttractionFilterSelector
@@ -56,7 +56,7 @@ const handleSearchBtn = () => {
             v-model:contentTypeId="searchParams.contentTypeId"
           />
         </section>
-      </main>
+      </div>
       <DialogFooter>
         <Button type="submit" @click="handleSearchBtn"> 검색하기 </Button>
       </DialogFooter>
