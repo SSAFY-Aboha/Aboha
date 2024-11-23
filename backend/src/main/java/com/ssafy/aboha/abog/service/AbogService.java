@@ -11,6 +11,7 @@ import com.ssafy.aboha.attraction.domain.Attraction;
 import com.ssafy.aboha.attraction.repository.AttractionRepository;
 import com.ssafy.aboha.common.dto.response.KeySetPaginatedResponse;
 import com.ssafy.aboha.common.exception.NotFoundException;
+import com.ssafy.aboha.like.repository.AbogLikeRepository;
 import com.ssafy.aboha.user.domain.User;
 import com.ssafy.aboha.user.dto.response.UserResponse;
 import com.ssafy.aboha.user.repository.UserRepository;
@@ -30,6 +31,7 @@ public class AbogService {
     private final UserRepository userRepository;
     private final AttractionRepository attractionRepository;
     private final AbogImageService abogImageService;
+    private final AbogLikeRepository likeRepository;
 
     @Transactional
     public Integer createAbog(UserResponse userResponse, AbogRequest request) {
@@ -61,9 +63,14 @@ public class AbogService {
     /**
      * 아보그 목록 조회
      */
-    public List<AbogResponse> getAbogs() {
+    public List<AbogResponse> getAbogs(Integer loginId) {
         // 모든 아보그 데이터 조회
         List<Abog> abogs = abogRepository.findAll();
+
+        // 로그인한 사용자가 좋아요한 아보그 ID 리스트 조회
+        List<Integer> likedAbogIds = (loginId != null)
+            ? likeRepository.findAbogIdByUserId(loginId)
+            : List.of();
 
         // 아보그 데이터를 응답 형태로 변환
         return abogs.stream()
@@ -73,8 +80,12 @@ public class AbogService {
                     .stream()
                     .map(AbogImage::getImageUrl)
                     .toList();
+
+                // 좋아요 여부 판단
+                boolean isLiked = likedAbogIds.contains(abog.getId());
+
                 // 아보그 데이터를 AbogResponse로 변환
-                return AbogResponse.from(abog, imageUrls);
+                return AbogResponse.of(abog, imageUrls, isLiked);
             })
             .toList();
     }
@@ -82,7 +93,7 @@ public class AbogService {
     /**
      * 아보그 생세 조회
      */
-    public AbogResponse getAbogById(Integer id) {
+    public AbogResponse getAbogById(Integer id, Integer loginId) {
         Abog abog = abogRepository.findByAbogId(id)
             .orElseThrow(() -> new NotFoundException("해당 아보그가 존재하지 않습니다."));
 
@@ -92,7 +103,10 @@ public class AbogService {
             .map(AbogImage::getImageUrl)
             .toList();
 
-        return AbogResponse.from(abog, imageUrls);
+        // 좋아요 여부 확인
+        boolean isLiked = (loginId != null) && likeRepository.existsByUserIdAndAbogId(loginId, id);
+
+        return AbogResponse.of(abog, imageUrls, isLiked);
     }
 
     /**
