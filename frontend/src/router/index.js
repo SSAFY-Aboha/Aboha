@@ -67,6 +67,7 @@ const router = createRouter({
       name: 'abog',
       component: () => import('@/views/AbogBoardView.vue'),
       redirect: { name: 'abog-main' },
+      meta: { requireAuth: true },
       children: [
         {
           path: '',
@@ -77,6 +78,7 @@ const router = createRouter({
           path: 'edit',
           name: 'abog-edit',
           component: () => import('@/components/AbogBoard/AbogBoardEditor.vue'),
+          meta: { requireAuth: true },
         },
       ],
     },
@@ -89,26 +91,24 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   // 네비게이션 로그 출력
   console.log('Navigating from:', from.path, 'to:', to.path)
 
   const userStore = useUserStore()
   // 인증 상태 가져오기
-  const isLoggedIn = userStore.isLogin
 
   // requireAuth가 true인 라우트에 대해서만 로그인 체크
   if (to.meta.requireAuth) {
-    console.log('router isLoggedIn', isLoggedIn)
+    await userStore.initializeAuth()
 
-    if (!isLoggedIn) {
+    console.log('현재 인증 상태', userStore.isAuthenticated)
+    if (!userStore.isAuthenticated) {
       alert('로그인 후 이용해주세요.')
       next({ name: 'login' })
-      console.log('router beforeEach', '로그인 되어있지 않습니다.')
       return
     }
   }
-
   // requireAuth가 없거나, 로그인이 되어있는 경우 정상적으로 라우팅
   next()
 })

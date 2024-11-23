@@ -2,7 +2,7 @@ import { fetchApi } from '@/utils/api-util'
 
 // 로그인 상태 확인
 const checkLogin = () => {
-  return fetchApi('get', '/api/v1/auth/check')
+  return fetchApi('get', '/api/v1/auth/check-status')
 }
 
 // 로그인

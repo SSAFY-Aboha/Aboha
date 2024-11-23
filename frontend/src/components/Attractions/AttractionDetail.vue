@@ -12,8 +12,6 @@ const props = defineProps({
 
 const likeCount = defineModel('likeCount')
 
-console.log('detail ', props.attraction)
-
 // const isLiked = ref(props.attraction.isLiked)
 const isLiked = ref(false)
 
@@ -29,11 +27,16 @@ const mapData = computed(() => {
 // })
 
 const handleLike = async () => {
-  isLiked.value = !isLiked.value
-  const { data, status } = await attractionAPI.toggleAttractionLike(
+  const { data, status, error } = await attractionAPI.toggleAttractionLike(
     props.attraction.id,
   )
-  // isLiked.value = data.isLiked
+
+  if (error) {
+    alert(error)
+    return
+  }
+  isLiked.value = !isLiked.value
+  isLiked.value = data.isLiked
   likeCount.value += data.isLiked ? 1 : -1
 }
 </script>

@@ -4,14 +4,19 @@ import { Button } from '@/components/ui/button'
 import useUserStore from '@/stores/user'
 import { storeToRefs } from 'pinia'
 import { Avatar, AvatarImage } from '../ui/avatar'
-import { useRouter } from 'vue-router'
+import { onMounted, ref } from 'vue'
 
-const router = useRouter()
 const userStore = useUserStore()
+const isLoading = ref(true)
 
-const { isLogin, userInfo } = storeToRefs(userStore)
+const { isAuthenticated, userInfo } = storeToRefs(userStore)
 
-console.log('userStore', userInfo.value.email)
+// 로그인 상태 확인
+onMounted(async () => {
+  isLoading.value = true
+  await userStore.initializeAuth()
+  isLoading.value = false
+})
 
 const handleLogout = async () => {
   await userStore.logout()
@@ -49,7 +54,7 @@ const handleLogout = async () => {
       </Button>
     </nav>
 
-    <div class="flex items-center gap-4">
+    <div v-if="!isLoading" class="flex items-center gap-4">
       <!-- 클릭시 SurveyModal 띄우기 -->
       <Button
         label="당신의 특별하루를 만들어 보세요."
@@ -58,7 +63,7 @@ const handleLogout = async () => {
       />
 
       <!-- 로그인 상태라면 로그아웃 버튼 표시 -->
-      <template v-if="isLogin">
+      <template v-if="isAuthenticated">
         <button
           class="px-3 py-2 rounded-xl hover:bg-gray-100"
           @click="handleLogout"
@@ -66,7 +71,7 @@ const handleLogout = async () => {
           로그아웃
         </button>
         <RouterLink
-          :to="`/mypage/${userInfo.email}`"
+          :to="`/mypage/${userInfo?.email}`"
           class="flex items-center justify-center transition-transform bg-green-400 rounded-full cursor-pointer hover:scale-105 size-11"
         >
           <Avatar class="size-10">
