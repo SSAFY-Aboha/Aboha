@@ -55,6 +55,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "reviews/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/comments/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/recommendations").permitAll()
+                .requestMatchers("/uploads/**").permitAll()
 
                 .anyRequest().authenticated()
             );
