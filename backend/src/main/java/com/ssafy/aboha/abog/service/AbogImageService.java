@@ -20,7 +20,9 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional(readOnly = true)
 public class AbogImageService {
 
-    private static final int MAX_IMAGES = 5;    // 최대 이미지 개수
+    private static final int MAX_IMAGES = 5; // 최대 이미지 개수
+    private static final String UPLOAD_DIR = "src/main/resources/uploads/abog/"; // 저장 경로
+    private static final String BASE_URL = "/uploads/abog/"; // 반환할 URL 경로 prefix
 
     private final AbogImageRepository abogImageRepository;
 
@@ -32,13 +34,10 @@ public class AbogImageService {
             // 이미지 유효성 검사
             validateImage(images);
 
-            // 이미지 파일 저장을 위한 경로 설정
-            String uploadsDir = "src/main/resources/uploads/images/";
-
             // 각 이미지 파일에 대해 업로드 및 DB 저장 수행
-            for(MultipartFile image : images) {
+            for (MultipartFile image : images) {
                 // 이미지 파일 경로 저장
-                String dbFilePath = saveImage(image, uploadsDir);
+                String dbFilePath = saveImage(image);
 
                 // 엔티티 생성 및 저장
                 AbogImage abogImage = AbogImage.builder()
@@ -49,27 +48,28 @@ public class AbogImageService {
                 abogImageRepository.save(abogImage);
             }
         } catch (IOException e) {
-            // 파일 저장 중 오류가 발생한 경우 처리
-            e.printStackTrace();
-            throw new RuntimeException("이미지 업로드 중 오류가 발생했습니다.");
+            throw new RuntimeException("이미지 업로드 중 오류가 발생했습니다: " + e.getMessage(), e);
         }
-
     }
 
-    // 이미지 파일을 저장
-    private String saveImage(MultipartFile image, String uploadsDir) throws IOException {
-        // 파일 이름 생성
+    /**
+     * 이미지 파일 저장 및 URL 반환
+     */
+    private String saveImage(MultipartFile image) throws IOException {
+        // UUID 기반 고유 파일명 생성
         String fileName = UUID.randomUUID().toString().replace("-", "") + "_" + image.getOriginalFilename();
-        // 실제 파일이 저장될 경로
-        String filePath = uploadsDir + fileName;
-        // DB에 저장할 경로 문자열
-        String dbFilePath = "/uploads/abog/" + fileName;
 
-        Path path = Paths.get(filePath); // Path 객체 생성
-        Files.createDirectories(path.getParent()); // 디렉토리 생성
-        Files.write(path, image.getBytes()); // 디렉토리에 파일 저장
+        // 실제 파일 저장 경로
+        Path savePath = Paths.get(UPLOAD_DIR, fileName);
 
-        return dbFilePath;
+        // 디렉토리 생성 (없으면 생성)
+        Files.createDirectories(savePath.getParent());
+
+        // 파일 저장
+        Files.write(savePath, image.getBytes());
+
+        // 반환할 URL 경로 (DB에 저장할 경로)
+        return BASE_URL + fileName;
     }
 
     /**
