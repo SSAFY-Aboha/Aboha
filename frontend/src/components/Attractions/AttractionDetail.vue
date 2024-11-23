@@ -14,10 +14,7 @@ const likeCount = defineModel('likeCount')
 
 console.log('detail ', props.attraction)
 
-// const isLiked = computed(() => {
-//   return props.attraction.isLiked
-// })
-
+// const isLiked = ref(props.attraction.isLiked)
 const isLiked = ref(false)
 
 const mapData = computed(() => {
@@ -32,19 +29,12 @@ const mapData = computed(() => {
 // })
 
 const handleLike = async () => {
-  console.log('like')
-  try {
-    await attractionAPI.toggleAttractionLike(
-      props.attraction.id,
-      ({ isLiked: isLikedServer }) => {
-        isLiked.value = isLikedServer
-        likeCount.value += isLikedServer ? 1 : -1
-      },
-      console.log,
-    )
-  } catch (error) {
-    console.error('handleLike error', error)
-  }
+  isLiked.value = !isLiked.value
+  const { data, status } = await attractionAPI.toggleAttractionLike(
+    props.attraction.id,
+  )
+  // isLiked.value = data.isLiked
+  likeCount.value += data.isLiked ? 1 : -1
 }
 </script>
 
@@ -98,10 +88,14 @@ const handleLike = async () => {
       <!-- 관련 태그 -->
       <div class="flex flex-col items-start w-full gap-3">
         <span class="text-2xl font-bold">관련 태그</span>
-        <Badge
-          class="px-4 py-2 text-black bg-gray-200 text-md hover:bg-gray-300"
-          >{{ `# ${attraction.tag}` }}</Badge
-        >
+        <div class="flex items-center justify-start gap-4">
+          <Badge
+            v-for="tag in attraction.tags"
+            :key="tag"
+            class="px-4 py-2 text-black bg-gray-200 text-md hover:bg-gray-300"
+            >{{ `# ${tag}` }}</Badge
+          >
+        </div>
       </div>
     </div>
     <Separator />

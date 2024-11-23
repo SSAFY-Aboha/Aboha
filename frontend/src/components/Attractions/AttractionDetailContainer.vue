@@ -4,6 +4,8 @@ import attractionAPI from '@/api/attractions'
 import { Button } from '../ui/button'
 import AttractionDetailSkeleton from './AttractionDetailSkeleton.vue'
 import AttractionDetail from '@/components/Attractions/AttractionDetail.vue'
+import { getSummarizeAIResponse } from '@/services/summarizeAIService'
+import { getTagAIResponse } from '@/services/getTagAIService'
 
 const props = defineProps({
   tripId: {
@@ -21,7 +23,18 @@ onMounted(async () => {
     props.tripId,
   )
   if (status === 200) {
-    attraction.value = data
+    const { title, address, description } = data
+
+    const message = `여행지 이름: ${title}\n여행지 주소: ${address}\n여행지 소개글: ${description}`
+    // const tagString = await getTagAIResponse(message)
+    // const tags = tagString.split(',').map(tag => tag.trim())
+    // const summarize = await getSummarizeAIResponse(message)
+    // console.log(tags)
+
+    // attraction.value = { ...data, tags }
+    // attraction.value = { ...data, description: summarize, tags }
+
+    attraction.value = { ...data }
   }
   if (error) {
     console.error('Error loading trip data:', error)

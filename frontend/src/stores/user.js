@@ -41,6 +41,7 @@ const useUserStore = defineStore('user', () => {
     } else if (status === 200) {
       isLogin.value = true
       userInfo.value = data
+      return { status, data }
     }
   }
 

@@ -37,7 +37,9 @@ const signup = async user => {
 
 // 닉네임 중복 확인
 const checkNickname = nickname => {
-  return fetchApi('get', '/api/v1/users/check-nickname', { params: nickname })
+  return fetchApi('get', `/api/v1/users/check-nickname`, {
+    params: { nickname },
+  })
 }
 
 // 이메일 중복 확인
