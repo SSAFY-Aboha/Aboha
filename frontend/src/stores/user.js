@@ -8,7 +8,7 @@ const useUserStore = defineStore('user', () => {
 
   // ? state
   // 로그인 상태
-  const isLogin = ref(false)
+  const isAuthenticated = ref(false)
   const userInfo = ref({
     nickname: '',
     email: '',
@@ -24,12 +24,12 @@ const useUserStore = defineStore('user', () => {
     const { status, data, error } = await userAPI.checkLogin()
 
     if (error) {
-      alert(error)
-    } else if (status === 200) {
-      console.log('in store', data)
-      isLogin.value = true
-      userInfo.value = data
+      isAuthenticated.value = false
+      return
     }
+
+    isAuthenticated.value = true
+    userInfo.value = data
   }
 
   // 로그인
@@ -39,7 +39,7 @@ const useUserStore = defineStore('user', () => {
     if (error) {
       alert(error)
     } else if (status === 200) {
-      isLogin.value = true
+      isAuthenticated.value = true
       userInfo.value = data
       return { status, data }
     }
@@ -52,7 +52,7 @@ const useUserStore = defineStore('user', () => {
     if (error) {
       alert(error)
     } else if (status === 200) {
-      isLogin.value = false
+      isAuthenticated.value = false
     }
   }
 
@@ -97,7 +97,7 @@ const useUserStore = defineStore('user', () => {
   return {
     initializeAuth,
     userInfo,
-    isLogin,
+    isAuthenticated,
     login,
     logout,
     signup,

@@ -4,8 +4,6 @@ import attractionAPI from '@/api/attractions'
 import { Button } from '../ui/button'
 import AttractionDetailSkeleton from './AttractionDetailSkeleton.vue'
 import AttractionDetail from '@/components/Attractions/AttractionDetail.vue'
-import { getSummarizeAIResponse } from '@/services/summarizeAIService'
-import { getTagAIResponse } from '@/services/getTagAIService'
 
 const props = defineProps({
   tripId: {
