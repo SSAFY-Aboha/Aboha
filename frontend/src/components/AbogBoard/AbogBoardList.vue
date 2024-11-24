@@ -39,7 +39,7 @@ useInfiniteScroll(observerTarget, () => {
 </script>
 
 <template>
-  <div class="flex flex-col w-full h-full gap-4">
+  <div class="flex flex-col h-full max-w-2xl gap-4 py-5 bg-white shadow-md">
     <ul v-if="!isLoading && boardList" class="flex flex-col gap-6">
       <AbogBoardItem
         v-for="each in boardList"

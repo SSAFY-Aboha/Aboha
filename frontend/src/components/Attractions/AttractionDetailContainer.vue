@@ -60,10 +60,10 @@ watch(
 
 <template>
   <div
-    class="flex flex-col items-center justify-start h-full gap-4 mx-auto min-w-80"
+    class="flex flex-col items-center justify-start h-full mx-auto bg-gray-100 min-w-80"
   >
     <!-- header -->
-    <header class="w-full py-4">
+    <header class="w-full max-w-4xl py-4 bg-white">
       <div
         class="flex items-center justify-start max-w-6xl min-w-[56rem] mx-auto px-7"
       >
@@ -76,12 +76,15 @@ watch(
       </div>
     </header>
     <!-- content -->
-    <AttractionDetailSkeleton v-if="isLoading" />
-    <AttractionDetail
-      v-if="!isLoading && attraction"
-      :attraction="attraction"
-      v-model:likeCount="attraction.likeCount"
-    />
+    <div class="max-w-4xl px-16 py-4 bg-white shadow-md">
+      <AttractionDetailSkeleton v-if="isLoading" />
+      <AttractionDetail
+        v-if="!isLoading && attraction"
+        :attraction="attraction"
+        v-model:likeCount="attraction.likeCount"
+      />
+    </div>
+
     <!-- 추가 정보 -->
     <!-- <div class="flex flex-col w-full max-w-4xl gap-4 py-4">
       <h1 class="text-3xl font-bold">함께 추천 하는 관광지</h1>

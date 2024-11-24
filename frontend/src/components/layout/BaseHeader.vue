@@ -20,13 +20,15 @@ onMounted(async () => {
 
 const handleLogout = async () => {
   await userStore.logout()
-  window.location.reload()
+  window.location.href = '/'
 }
 </script>
 
 <template>
   <!-- Header -->
-  <header class="flex items-center justify-between gap-10 px-12 py-2 shadow-sm">
+  <header
+    class="flex items-center justify-between gap-10 px-12 py-2 bg-transparent shadow-sm"
+  >
     <div class="cursor-pointer w-44 logo">
       <RouterLink to="/" replace>
         <img
@@ -40,7 +42,7 @@ const handleLogout = async () => {
       <RouterLink class="hover:text-black" to="/trips">
         모든 여행 보러가기
       </RouterLink>
-      <RouterLink class="hover:text-black" to="/">
+      <RouterLink class="hover:text-black" :to="{ name: 'trips-map' }">
         지도에서 찾아보기
       </RouterLink>
       <RouterLink class="hover:text-black" :to="{ name: 'abog' }">
