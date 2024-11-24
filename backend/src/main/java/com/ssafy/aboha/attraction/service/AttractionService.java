@@ -175,6 +175,10 @@ public class AttractionService {
         return attractionRepository.findByUserLiked(userId, pageable);
     }
 
+    public Long getCountByUserLikedAttractions(Integer userId) {
+        return attractionRepository.countUserLiked(userId);
+    }
+
     /**
      * 사용자가 리뷰 남긴 관광지 목록 조회
      */
@@ -183,6 +187,10 @@ public class AttractionService {
             throw new NotFoundException("로그인한 사용자가 존재하지 않습니다.");
         }
         return attractionRepository.findByUserReviewed(userId, pageable);
+    }
+
+    public Long getCountByuserReviewedAttractions(Integer userId) {
+        return attractionRepository.countUserReviewed(userId);
     }
 
     private void validateSidoGugun(Integer sidoCode, Integer gugunCode) {
