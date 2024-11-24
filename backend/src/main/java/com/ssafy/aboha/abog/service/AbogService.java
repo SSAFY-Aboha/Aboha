@@ -123,4 +123,7 @@ public class AbogService {
         return abogRepository.findByUserAbog(userId, pageable);
     }
 
+    public Long getCountByUserAbog(Integer userId) {
+        return abogRepository.countUserAbog(userId);
+    }
 }

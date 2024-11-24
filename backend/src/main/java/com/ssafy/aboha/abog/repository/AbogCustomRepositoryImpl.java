@@ -8,11 +8,10 @@ import com.ssafy.aboha.attraction.domain.QAttraction;
 import com.ssafy.aboha.attraction.domain.QGugun;
 import com.ssafy.aboha.common.dto.response.KeySetPaginatedResponse;
 import jakarta.persistence.EntityManager;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public class AbogCustomRepositoryImpl implements AbogCustomRepository {
@@ -93,6 +92,17 @@ public class AbogCustomRepositoryImpl implements AbogCustomRepository {
                 .lastId(newLastId)
                 .totalElements(0)  // 사용 안 함
                 .build();
+    }
+
+    @Override
+    public Long countUserAbog(Integer userId) {
+        QAbog qAbog = QAbog.abog;
+
+        return queryFactory
+            .select(qAbog.count())
+            .from(qAbog)
+            .where(qAbog.user.id.eq(userId))
+            .fetchOne();
     }
 
 
