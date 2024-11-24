@@ -7,7 +7,7 @@ import com.ssafy.aboha.attraction.dto.response.MyReviewedAttractionResponse;
 import com.ssafy.aboha.attraction.service.AttractionService;
 import com.ssafy.aboha.common.dto.response.KeySetPaginatedResponse;
 import com.ssafy.aboha.common.exception.UnauthorizedException;
-import com.ssafy.aboha.user.dto.response.UserResponse;
+import com.ssafy.aboha.user.dto.response.UserInfo;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -32,7 +32,7 @@ public class MyPageController {
             @PageableDefault(size = 12) Pageable pageable
     ) {
         // 세션에서 인증된 사용자 정보 확인
-        UserResponse userResponse = (UserResponse) session.getAttribute("user");
+        UserInfo userResponse = (UserInfo) session.getAttribute("user");
         if (userResponse == null) {
             throw new UnauthorizedException("로그인이 필요합니다."); // 인증 실패
         }
@@ -48,7 +48,7 @@ public class MyPageController {
             @PageableDefault(size = 12) Pageable pageable
     ) {
         // 세션에서 인증된 사용자 정보 확인
-        UserResponse userResponse = (UserResponse) session.getAttribute("user");
+        UserInfo userResponse = (UserInfo) session.getAttribute("user");
         if (userResponse == null) {
             throw new UnauthorizedException("로그인이 필요합니다."); // 인증 실패
         }
@@ -64,7 +64,7 @@ public class MyPageController {
             @PageableDefault(size = 12) Pageable pageable
     ) {
         // 세션에서 인증된 사용자 정보 확인
-        UserResponse userResponse = (UserResponse) session.getAttribute("user");
+        UserInfo userResponse = (UserInfo) session.getAttribute("user");
         if (userResponse == null) {
             throw new UnauthorizedException("로그인이 필요합니다."); // 인증 실패
         }

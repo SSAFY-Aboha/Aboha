@@ -13,7 +13,7 @@ import com.ssafy.aboha.common.dto.response.KeySetPaginatedResponse;
 import com.ssafy.aboha.common.exception.NotFoundException;
 import com.ssafy.aboha.like.repository.AbogLikeRepository;
 import com.ssafy.aboha.user.domain.User;
-import com.ssafy.aboha.user.dto.response.UserResponse;
+import com.ssafy.aboha.user.dto.response.UserInfo;
 import com.ssafy.aboha.user.repository.UserRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ public class AbogService {
     private final AbogLikeRepository likeRepository;
 
     @Transactional
-    public Integer createAbog(UserResponse userResponse, AbogRequest request) {
+    public Integer createAbog(UserInfo userResponse, AbogRequest request) {
         // 사용자 확인
         User user = userRepository.findById(userResponse.id())
             .orElseThrow(() -> new NotFoundException("로그인한 사용자가 존재하지 않습니다."));

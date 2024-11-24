@@ -10,7 +10,7 @@ import com.ssafy.aboha.common.dto.response.KeySetPaginatedResponse;
 import com.ssafy.aboha.common.exception.UnauthorizedException;
 import com.ssafy.aboha.like.dto.LikeResponse;
 import com.ssafy.aboha.like.service.LikeService;
-import com.ssafy.aboha.user.dto.response.UserResponse;
+import com.ssafy.aboha.user.dto.response.UserInfo;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -47,7 +47,7 @@ public class AttractionController {
         HttpSession session
     ) {
         // 세션에서 인증된 사용자 정보 확인 (null 안전 처리)
-        UserResponse userResponse = (UserResponse) session.getAttribute("user");
+        UserInfo userResponse = (UserInfo) session.getAttribute("user");
         Integer loginId = (userResponse != null) ? userResponse.id() : null;
 
         KeySetPaginatedResponse<AttractionInfoWithLiked> response = attractionService.getAttractions(request, pageable, loginId);
@@ -63,7 +63,7 @@ public class AttractionController {
         HttpSession session
     ) {
         // 세션에서 인증된 사용자 정보 확인 (null 안전 처리)
-        UserResponse userResponse = (UserResponse) session.getAttribute("user");
+        UserInfo userResponse = (UserInfo) session.getAttribute("user");
         Integer loginId = (userResponse != null) ? userResponse.id() : null;
 
         AttractionResponse response = attractionService.getAttraction(id, loginId);
@@ -87,7 +87,7 @@ public class AttractionController {
             HttpSession session
     ) {
         // 세션에서 인증된 사용자 정보 확인
-        UserResponse userResponse = (UserResponse) session.getAttribute("user");
+        UserInfo userResponse = (UserInfo) session.getAttribute("user");
         if (userResponse == null) {
             throw new UnauthorizedException("로그인이 필요합니다."); // 인증 실패
         }

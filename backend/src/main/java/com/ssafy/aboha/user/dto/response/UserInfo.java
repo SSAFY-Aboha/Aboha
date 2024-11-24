@@ -4,10 +4,10 @@ import com.ssafy.aboha.user.domain.User;
 import lombok.Builder;
 
 @Builder
-public record UserResponse(Integer id, String nickname, String email, String profileImageUrl) {
+public record UserInfo(Integer id, String nickname, String email, String profileImageUrl) {
 
-    public static UserResponse from(User user) {
-        return UserResponse.builder()
+    public static UserInfo from(User user) {
+        return UserInfo.builder()
                 .id(user.getId())
                 .nickname(user.getNickname())
                 .email(user.getEmail())

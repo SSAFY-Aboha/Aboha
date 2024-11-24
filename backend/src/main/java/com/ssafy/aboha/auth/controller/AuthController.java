@@ -3,7 +3,7 @@ package com.ssafy.aboha.auth.controller;
 import com.ssafy.aboha.auth.dto.SimpleAuthentication;
 import com.ssafy.aboha.auth.dto.request.LoginRequest;
 import com.ssafy.aboha.auth.service.AuthService;
-import com.ssafy.aboha.user.dto.response.UserResponse;
+import com.ssafy.aboha.user.dto.response.UserInfo;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +26,8 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<UserResponse> login(@RequestBody @Valid LoginRequest request, HttpSession session) {
-        UserResponse response = authService.authenticate(request);
+    public ResponseEntity<UserInfo> login(@RequestBody @Valid LoginRequest request, HttpSession session) {
+        UserInfo response = authService.authenticate(request);
 
         // 세션에 사용자 정보 저장
         session.setAttribute("user", response);
@@ -52,8 +52,8 @@ public class AuthController {
 
     // 세션에 저장된 사용자 정보 확인용 엔드포인트
     @GetMapping("/check-status")
-    public ResponseEntity<UserResponse> getSessionUser(HttpSession session) {
-        UserResponse user = (UserResponse) session.getAttribute("user");
+    public ResponseEntity<UserInfo> getSessionUser(HttpSession session) {
+        UserInfo user = (UserInfo) session.getAttribute("user");
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
