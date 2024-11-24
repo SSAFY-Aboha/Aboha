@@ -93,18 +93,20 @@ const handleAtmosphereChange = atmosphere => {
 </script>
 
 <template>
-  <h2 class="text-2xl font-bold text-center font-Nanum">
-    마지막으로, 원하는 분위기를 선택해주세요 😍
-  </h2>
-  <div class="flex flex-col h-3/4">
-    <div class="flex flex-col items-center h-full">
-      <div class="flex flex-col justify-start h-full gap-24">
-        <!-- 주요 지역 -->
-        <SuggestToggleGroup
-          :type="'multiple'"
-          :infoData="atmosphereList"
-          @update:modelValue="handleAtmosphereChange"
-        />
+  <div class="flex flex-col gap-4">
+    <h2 class="text-2xl font-bold text-center font-Nanum">
+      마지막으로, 원하는 분위기를 선택해주세요 😍
+    </h2>
+    <div class="flex flex-col h-3/4">
+      <div class="flex flex-col items-center h-full">
+        <div class="flex flex-col justify-start h-full gap-24">
+          <!-- 주요 지역 -->
+          <SuggestToggleGroup
+            :type="'multiple'"
+            :infoData="atmosphereList"
+            @update:modelValue="handleAtmosphereChange"
+          />
+        </div>
       </div>
     </div>
   </div>

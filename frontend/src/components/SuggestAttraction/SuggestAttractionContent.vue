@@ -59,9 +59,9 @@ const steps = [
 </script>
 
 <template>
-  <div class="flex flex-col min-h-[calc(100vh-6rem)] w-full">
+  <div class="flex flex-col min-h-[calc(100vh-12rem)] w-full">
     <!-- 전체 컨테이너 -->
-    <div class="flex-1 flex flex-col max-w-4xl mx-auto w-full px-4 py-8">
+    <div class="flex flex-col flex-1 w-full max-w-6xl px-4 py-6 mx-auto">
       <!-- Steps indicator - 상단에 고정 -->
       <div class="mb-8">
         <div class="flex justify-between">
@@ -89,7 +89,7 @@ const steps = [
             >
               {{ s.title }}
             </span>
-            <span class="text-xs text-gray-400 text-center mt-1">
+            <span class="mt-1 text-xs text-center text-gray-400">
               {{ s.description }}
             </span>
           </div>
@@ -97,10 +97,8 @@ const steps = [
       </div>
 
       <!-- Content - 스크롤 가능한 영역 -->
-      <div class="flex-1 flex flex-col">
-        <div
-          class="flex-1 overflow-y-auto min-h-[400px] max-h-[calc(100vh-20rem)]"
-        >
+      <div class="flex flex-col gap-9">
+        <div class="flex-1 min-h-[400px] max-h-[calc(100vh-30rem)]">
           <TransitionGroup name="slide">
             <SuggestLocation
               v-if="step === 1"
@@ -121,7 +119,7 @@ const steps = [
         </div>
 
         <!-- Navigation buttons - 하단에 고정 -->
-        <div class="flex justify-center gap-4 mt-8 pt-4 border-t">
+        <div class="flex justify-center gap-4 pt-4 border-t">
           <Button
             @click="handleBackBtn"
             variant="outline"
@@ -134,7 +132,7 @@ const steps = [
           <Button
             v-if="!isComplete"
             @click="handleNextBtn"
-            class="w-32 bg-green-600 hover:bg-green-700 text-white"
+            class="w-32 text-white bg-green-600 hover:bg-green-700"
             :disabled="!isNextBtnVisible"
           >
             다음
@@ -143,7 +141,7 @@ const steps = [
           <Button
             v-else
             @click="handleCompleteBtn"
-            class="w-32 bg-purple-600 hover:bg-purple-700 text-white"
+            class="w-32 text-white bg-purple-600 hover:bg-purple-700"
           >
             결과 보기
           </Button>

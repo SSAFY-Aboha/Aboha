@@ -21,7 +21,7 @@ const handleToggleGroupChange = value => {
 
 <template>
   <ToggleGroup
-    class="grid w-full max-w-3xl grid-cols-2 gap-3 mx-auto sm:grid-cols-3 md:grid-cols-4"
+    class="grid w-full max-w-5xl grid-cols-2 gap-3 mx-auto sm:grid-cols-6 md:grid-cols-8"
     :type="type"
     @update:model-value="handleToggleGroupChange"
   >
