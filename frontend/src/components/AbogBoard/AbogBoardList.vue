@@ -3,63 +3,97 @@ import { useInfiniteScroll } from '@/composables/useInfiniteScroll'
 import AbogBoardItem from './AbogBoardItem.vue'
 import AbogBoardSkeleton from '@/components/AbogBoard/AbogBoardSkeleton.vue'
 import DataHasMore from '@/components/common/DataHasMore.vue'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import abogAPI from '@/api/abog'
 
 const boardList = ref([])
 const observerTarget = ref(null)
-
-const hasMore = ref(true) // 더 이상 로드할 데이터 여부
-const isLoading = ref(false) // 로딩 중 상태
+const page = ref(1)
+const hasMore = ref(true)
+const isLoading = ref(false)
 
 const handleGetAbog = async () => {
+  if (isLoading.value || !hasMore.value) return
+
   isLoading.value = true
+  try {
+    const { data, error } = await abogAPI.getAbog(page.value)
 
-  const { data, status, error } = await abogAPI.getAbog(console.log, () =>
-    console.log('아보그 조회 실패'),
-  )
+    if (error) {
+      console.error('Error fetching abog:', error)
+      return
+    }
 
-  if (error) {
-    console.error(error)
-    return
+    if (data && data.length > 0) {
+      boardList.value = [...boardList.value, ...data]
+      page.value += 1
+    } else {
+      hasMore.value = false
+    }
+  } catch (error) {
+    console.error('Failed to fetch abog:', error)
+  } finally {
+    isLoading.value = false
   }
-
-  if (data.length > 0) {
-    boardList.value = [...boardList.value, ...data]
-  } else {
-    hasMore.value = false // 더 이상 로드할 데이터가 없는 경우
-  }
-  isLoading.value = false
 }
 
-// 무한 스크롤
-useInfiniteScroll(observerTarget, () => {
-  hasMore.value && handleGetAbog()
+// 초기 데이터 로드
+onMounted(() => {
+  handleGetAbog()
 })
+
+// 무한 스크롤 설정
+useInfiniteScroll(observerTarget, handleGetAbog)
 </script>
 
 <template>
-  <div class="flex flex-col h-full max-w-2xl gap-4 py-5 bg-white shadow-md">
-    <ul v-if="!isLoading && boardList" class="flex flex-col gap-6">
-      <AbogBoardItem
+  <div class="w-full max-w-3xl mx-auto">
+    <!-- 게시글 목록 -->
+    <ul v-if="boardList.length > 0" class="flex flex-col gap-6">
+      <li
         v-for="each in boardList"
-        :data="each"
         :key="each.abog.id"
-      />
+        class="bg-white rounded-lg shadow-sm overflow-hidden"
+      >
+        <AbogBoardItem :data="each" />
+      </li>
     </ul>
 
-    <!-- 스켈레톤 및 관찰 대상 요소, isLoading 상태일 때 로드 중 표시 -->
-    <div ref="observerTarget" class="flex-1 w-full h-full">
-      <ul v-if="isLoading" class="flex flex-col gap-6">
-        <AbogBoardSkeleton v-for="each in 1" :key="each" />
-      </ul>
+    <!-- 스켈레톤 및 관찰 대상 요소 -->
+    <div
+      ref="observerTarget"
+      class="w-full h-20 flex items-center justify-center"
+    >
+      <!-- 로딩 스켈레톤 -->
+      <div v-if="isLoading" class="w-full">
+        <ul class="flex flex-col gap-6">
+          <li
+            v-for="n in 2"
+            :key="n"
+            class="bg-white rounded-lg shadow-sm overflow-hidden"
+          >
+            <AbogBoardSkeleton />
+          </li>
+        </ul>
+      </div>
 
-      <!-- 더 이상 로드할 데이터가 없는 경우 -->
-      <div v-if="!hasMore && !isLoading" class="flex-1 w-full">
+      <!-- 더 이상 데이터가 없는 경우 -->
+      <div v-if="!hasMore && !isLoading" class="py-8">
         <DataHasMore />
       </div>
     </div>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}
+</style>

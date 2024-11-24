@@ -1,6 +1,6 @@
 <script setup>
 import AbogCommentList from '@/components/AbogBoard/AbogCommentList.vue'
-import { Avatar, AvatarImage } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Card, CardContent } from '@/components/ui/card'
 import {
   Carousel,
@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/carousel'
 import { computed, ref } from 'vue'
 import abogApi from '@/api/abog'
+import { UserIcon } from 'lucide-vue-next'
 
 const props = defineProps({
   data: Object,
@@ -62,127 +63,99 @@ const handleLike = async () => {
 </script>
 
 <template>
-  <li class="flex flex-col items-center gap-4 xl:flex-row">
-    <div
-      class="flex flex-col items-center justify-start w-screen max-w-6xl min-w-80"
-    >
-      <!-- header -->
-      <div class="flex flex-col justify-center h-full max-w-xl gap-2">
-        <div class="relative flex items-center justify-between gap-2 px-2">
-          <!-- user 정보 -->
-          <Avatar class="size-10">
-            <AvatarImage
-              :src="profileImageUrl || `/src/assets/mainPage_image.jpg`"
-              alt="avatar"
-            />
-          </Avatar>
-          <div class="flex items-center justify-start w-full gap-5">
-            <div class="flex items-baseline justify-between flex-1">
-              <div>
-                <span class="text-gray-600 text-md">{{ nickname }}</span>
-                <!-- 장소 마크 -->
-                <div class="flex items-center gap-3">
-                  <i class="text-xs text-gray-500 pi pi-map-marker"></i>
-                  <span class="text-xs text-gray-600">{{
-                    attractionTitle
-                  }}</span>
-                </div>
-              </div>
-              <span class="text-sm text-gray-500 text-end basis-1/3">{{
-                createdAt
-              }}</span>
-            </div>
-          </div>
-        </div>
+  <article class="w-full p-4">
+    <!-- 헤더 영역 -->
+    <div class="flex items-center gap-3 mb-4">
+      <Avatar class="size-10">
+        <AvatarImage
+          :src="profileImageUrl || `/src/assets/mainPage_image.jpg`"
+          alt="avatar"
+        />
+        <AvatarFallback>
+          <UserIcon class="size-6" />
+        </AvatarFallback>
+      </Avatar>
 
-        <!-- 이미지 -->
-        <div
-          class="flex items-center justify-center overflow-hidden rounded-xl"
-        >
-          <Carousel v-slot="{ canScrollNext, canScrollPrev }" class="w-full">
-            <CarouselContent>
-              <CarouselItem v-for="image in images" :key="image">
-                <div class="p-1">
-                  <Card class="">
-                    <CardContent
-                      class="flex items-center justify-center p-0 overflow-hidden rounded-md min-w-[450px] md:w-[500px] aspect-square"
-                    >
-                      <img
-                        class="object-cover w-full h-full col-start-1 col-end-3 row-start-1 row-end-3"
-                        :src="
-                          `${BASE_URL}${image}` ||
-                          '/src/assets/default_image.png'
-                        "
-                        alt=""
-                      />
-                    </CardContent>
-                  </Card>
-                </div>
-              </CarouselItem>
-            </CarouselContent>
-            <CarouselPrevious v-if="canScrollPrev" />
-            <CarouselNext v-if="canScrollNext" />
-          </Carousel>
+      <div class="flex-1">
+        <div class="flex items-center justify-between">
+          <span class="font-medium text-gray-900">{{ nickname }}</span>
+          <span class="text-sm text-gray-500">{{ createdAt }}</span>
         </div>
-
-        <div class="flex flex-col gap-3 px-2">
-          <!-- 날짜 & 태그 -->
-          <div class="flex items-center">
-            <div class="flex items-center justify-between w-full gap-2">
-              <div class="flex items-center gap-2">
-                <i
-                  @click="handleLike"
-                  class="text-2xl text-gray-500 cursor-pointer hover:text-red-500 pi"
-                  :class="{
-                    'text-red-500': isLiked,
-                    'pi-heart-fill': isLiked,
-                    'pi-heart': !isLiked,
-                  }"
-                ></i>
-                <span class="text-gray-600 text-md">{{ likeCounted }}</span>
-              </div>
-            </div>
-            <ul class="flex items-center justify-end w-full gap-2">
-              <li v-for="(item, index) in tags" :key="index">
-                <div class="px-3 py-1 text-xs bg-gray-200 rounded-full">
-                  {{ `#${item}` }}
-                </div>
-              </li>
-            </ul>
-          </div>
-          <!-- 제목 -->
-          <h1 class="text-lg font-bold">{{ `" ${abogTitle} "` }}</h1>
-          <!-- 내용 -->
-          <p class="text-sm text-gray-600">{{ content }}</p>
-          <!-- 댓글 -->
-          <div
-            class="flex items-center justify-start py-2 border-b cursor-pointer"
-            @click="handleOpenComment"
-          >
-            <span class="hover:font-bold">{{
-              isOpenComment ? '댓글 닫기' : '댓글 보기...'
-            }}</span>
-          </div>
+        <div class="flex items-center text-sm text-gray-500">
+          <i class="pi pi-map-marker mr-1"></i>
+          <span>{{ attractionTitle }}</span>
         </div>
       </div>
     </div>
-    <!-- 댓글 리스트 -->
-    <Transition
-      enter-active-class="transition duration-300 ease-out"
-      enter-from-class="transform -translate-x-full opacity-0"
-      enter-to-class="transform translate-x-0 opacity-100"
-      leave-active-class="transition duration-200 ease-in"
-      leave-from-class="transform translate-x-0 opacity-100"
-      leave-to-class="transform -translate-x-full opacity-0"
-    >
-      <AbogCommentList
-        v-if="isOpenComment"
-        :abogId="id"
-        :userId="userId"
-        @handleOpenComment="handleOpenComment"
-      />
-    </Transition>
-  </li>
+
+    <!-- 이미지 캐러셀 -->
+    <div class="mb-4 rounded-lg overflow-hidden">
+      <Carousel class="w-full">
+        <CarouselContent>
+          <CarouselItem v-for="image in images" :key="image">
+            <div class="aspect-square">
+              <img
+                :src="`${BASE_URL}${image}`"
+                alt=""
+                class="w-full h-full object-cover"
+              />
+            </div>
+          </CarouselItem>
+        </CarouselContent>
+        <CarouselPrevious />
+        <CarouselNext />
+      </Carousel>
+    </div>
+
+    <!-- 컨텐츠 영역 -->
+    <div class="space-y-3">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <button @click="handleLike" class="flex items-center gap-1">
+            <i
+              class="text-2xl pi"
+              :class="{
+                'text-red-500': isLiked,
+                'pi-heart-fill': isLiked,
+                'pi-heart': !isLiked,
+              }"
+            ></i>
+            <span>{{ likeCounted }}</span>
+          </button>
+        </div>
+      </div>
+
+      <h2 class="text-lg font-bold">{{ abogTitle }}</h2>
+      <p class="text-gray-600">{{ content }}</p>
+
+      <!-- 댓글 섹션 -->
+      <div class="pt-3">
+        <button
+          @click="handleOpenComment"
+          class="text-gray-600 hover:text-gray-900"
+        >
+          {{ isOpenComment ? '댓글 닫기' : '댓글 보기...' }}
+        </button>
+
+        <Transition
+          enter-active-class="transition-all duration-300 ease-out"
+          enter-from-class="opacity-0 max-h-0"
+          enter-to-class="opacity-100 max-h-[1000px]"
+          leave-active-class="transition-all duration-200 ease-in"
+          leave-from-class="opacity-100 max-h-[1000px]"
+          leave-to-class="opacity-0 max-h-0"
+        >
+          <div v-if="isOpenComment" class="mt-4">
+            <AbogCommentList
+              :abogId="id"
+              :userId="userId"
+              @handleOpenComment="handleOpenComment"
+            />
+          </div>
+        </Transition>
+      </div>
+    </div>
+  </article>
 </template>
 
 <style scoped>

@@ -3,60 +3,97 @@ import { Button } from '@/components/ui/button'
 import useUserStore from '@/stores/user'
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
+import { computed } from 'vue'
 
 const route = useRoute()
 const userStore = useUserStore()
 
 const { userInfo } = storeToRefs(userStore)
 
+const activeRoute = computed(() => route.name)
+
 console.log('userInfo', userInfo.value)
 </script>
 
 <template>
-  <div class="flex w-full h-screen overflow-hidden">
-    <aside class="flex flex-col items-center w-1/4 h-full py-3 shadow-md">
-      <div>
-        <RouterLink :to="{ name: 'home' }">
-          <img
-            class="object-center w-36"
-            src="@/assets/aboha_logo.svg"
-            alt="logo"
-          />
+  <div class="flex w-full min-h-screen bg-gray-50">
+    <aside class="fixed flex flex-col h-full bg-white shadow-lg w-72">
+      <!-- 로고 -->
+      <div class="p-6 border-b">
+        <RouterLink :to="{ name: 'home' }" class="block">
+          <img class="w-32 mx-auto" src="@/assets/aboha_logo.svg" alt="logo" />
         </RouterLink>
       </div>
-      <div class="flex flex-col justify-between w-full h-full">
-        <div class="flex flex-col items-center w-full py-10 gap-y-8">
-          <!-- 프로필 이미지 -->
-          <div class="overflow-hidden rounded-full size-36">
+
+      <!-- 프로필 섹션 -->
+      <div class="flex flex-col items-center px-6 py-8 border-b">
+        <div class="relative group">
+          <div
+            class="overflow-hidden transition-transform rounded-full size-32 group-hover:scale-105"
+          >
             <img
-              class="object-center"
+              class="object-cover w-full h-full"
               :src="
                 userInfo.profileImageUrl || '/src/assets/default_profile.png'
               "
-              alt="logo"
+              alt="프로필"
             />
           </div>
-          <!-- 나의 활동 내역 -->
-          <RouterLink
-            :to="{ name: 'mypage-main' }"
-            class="w-full py-4 text-center transition-all border border-white cursor-pointer hover:border-gray-300"
-          >
-            <div class="text-xl font-bold font-Namum">나의 활동 내역</div>
-          </RouterLink>
-          <!-- 회원정보 수정 -->
           <RouterLink
             :to="{ name: 'mypage-edit' }"
-            class="w-full py-4 text-center transition-all border border-white cursor-pointer hover:border-gray-300"
+            class="absolute bottom-0 right-0 p-2 text-white transition-colors bg-gray-700 rounded-full opacity-0 group-hover:opacity-100 hover:bg-gray-800"
           >
-            <div class="text-xl font-bold font-Namum">회원정보 수정</div>
+            <i class="text-sm pi pi-pencil"></i>
           </RouterLink>
         </div>
-        <div class="flex justify-center w-full py-4">
-          <Button @click="handleDelete" variant="outline">회원탈퇴</Button>
-        </div>
+        <h2 class="mt-4 text-xl font-bold">{{ userInfo.nickname }}</h2>
+        <p class="mt-1 text-sm text-gray-500">{{ userInfo.email }}</p>
+      </div>
+
+      <!-- 네비게이션 메뉴 -->
+      <nav class="flex-1 px-4 py-6">
+        <RouterLink
+          v-for="(item, index) in [
+            {
+              name: 'mypage-main',
+              icon: 'pi-chart-bar',
+              label: '나의 활동 내역',
+            },
+            {
+              name: 'mypage-edit',
+              icon: 'pi-user-edit',
+              label: '회원정보 수정',
+            },
+          ]"
+          :key="index"
+          :to="{ name: item.name }"
+          class="flex items-center px-4 py-3 mb-2 transition-colors rounded-lg gap-x-3"
+          :class="
+            activeRoute === item.name
+              ? 'bg-primary-50 text-primary-600'
+              : 'hover:bg-gray-100'
+          "
+        >
+          <i :class="`pi ${item.icon}`"></i>
+          <span class="font-medium">{{ item.label }}</span>
+        </RouterLink>
+      </nav>
+
+      <!-- 하단 버튼 -->
+      <div class="p-6 border-t">
+        <Button
+          variant="outline"
+          class="w-full text-red-500 border-red-200 hover:bg-red-50"
+          @click="handleDelete"
+        >
+          <i class="mr-2 pi pi-trash"></i>
+          회원탈퇴
+        </Button>
       </div>
     </aside>
-    <main class="w-full h-full">
+
+    <!-- 메인 컨텐츠 -->
+    <main class="flex-1 ml-72">
       <router-view></router-view>
     </main>
   </div>

@@ -21,6 +21,7 @@ const gugunList = ref([])
 onMounted(() => {
   // 시도 조회
   attractionsAPI.getSido(data => (sidoList.value = data))
+  console.log(sidoList.value)
 })
 
 const handleSidoChange = sidoCode => {

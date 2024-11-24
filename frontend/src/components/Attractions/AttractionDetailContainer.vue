@@ -4,6 +4,7 @@ import attractionAPI from '@/api/attractions'
 import { Button } from '../ui/button'
 import AttractionDetailSkeleton from './AttractionDetailSkeleton.vue'
 import AttractionDetail from '@/components/Attractions/AttractionDetail.vue'
+import { useToast } from '@/composables/useToast'
 
 const props = defineProps({
   tripId: {
@@ -15,29 +16,27 @@ const isLoading = ref(false)
 
 const attraction = ref(null)
 
+const toast = useToast()
+
 onMounted(async () => {
-  isLoading.value = true
-  const { status, data, error } = await attractionAPI.getAttractionDetail(
-    props.tripId,
-  )
-  if (status === 200) {
-    const { title, address, description } = data
+  try {
+    isLoading.value = true
+    const { status, data, error } = await attractionAPI.getAttractionDetail(
+      props.tripId,
+    )
 
-    const message = `여행지 이름: ${title}\n여행지 주소: ${address}\n여행지 소개글: ${description}`
-    // const tagString = await getTagAIResponse(message)
-    // const tags = tagString.split(',').map(tag => tag.trim())
-    // const summarize = await getSummarizeAIResponse(message)
-    // console.log(tags)
-
-    // attraction.value = { ...data, tags }
-    // attraction.value = { ...data, description: summarize, tags }
-
-    attraction.value = { ...data }
-  }
-  if (error) {
+    if (status === 200) {
+      const { title, address, description } = data
+      attraction.value = { ...data }
+    } else {
+      toast.error('데이터를 불러오는데 실패했습니다.')
+    }
+  } catch (error) {
     console.error('Error loading trip data:', error)
+    toast.error('오류가 발생했습니다. 다시 시도해주세요.')
+  } finally {
+    isLoading.value = false
   }
-  isLoading.value = false
 })
 
 // 컴포넌트가 업데이트될 때도 데이터를 다시 가져오도록
@@ -59,40 +58,52 @@ watch(
 </script>
 
 <template>
-  <div
-    class="flex flex-col items-center justify-start h-full mx-auto bg-gray-100 min-w-80"
-  >
+  <div class="min-h-screen bg-gray-50">
     <!-- header -->
-    <header class="w-full max-w-4xl py-4 bg-white">
-      <div
-        class="flex items-center justify-start max-w-6xl min-w-[56rem] mx-auto px-7"
-      >
+    <header class="sticky top-0 z-10 w-full bg-white shadow-sm">
+      <div class="px-4 py-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <Button
-          class="px-3 py-1 text-lg text-black transition-all bg-white rounded-lg shadow-none hover:bg-gray-200"
+          variant="outline"
+          class="flex items-center gap-2 px-4 py-2 text-gray-600 transition-all group hover:text-gray-900"
           @click="$router.push('/trips')"
-          ><i class="pi pi-angle-left"></i
-          ><span>목록으로 돌아가기</span></Button
         >
+          <i
+            class="text-lg transition-transform pi pi-angle-left group-hover:-translate-x-1"
+          />
+          <span class="font-medium">목록으로 돌아가기</span>
+        </Button>
       </div>
     </header>
-    <!-- content -->
-    <div class="max-w-4xl px-16 py-4 bg-white shadow-md">
-      <AttractionDetailSkeleton v-if="isLoading" />
-      <AttractionDetail
-        v-if="!isLoading && attraction"
-        :attraction="attraction"
-        v-model:likeCount="attraction.likeCount"
-      />
-    </div>
 
-    <!-- 추가 정보 -->
-    <!-- <div class="flex flex-col w-full max-w-4xl gap-4 py-4">
-      <h1 class="text-3xl font-bold">함께 추천 하는 관광지</h1>
-      <ul class="flex flex-wrap gap-4">
-        <AttractionItem v-for="each in 6" :data="data" :key="each" />
-      </ul>
-    </div> -->
+    <!-- content -->
+    <main class="px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
+      <div class="p-6 bg-white rounded-lg shadow-md sm:p-8">
+        <div v-if="isLoading" class="space-y-4">
+          <AttractionDetailSkeleton />
+        </div>
+
+        <div v-else-if="!attraction" class="py-12 text-center">
+          <p class="text-gray-500">데이터를 찾을 수 없습니다.</p>
+          <Button
+            class="mt-4 text-primary-600 hover:text-primary-700"
+            @click="$router.push('/trips')"
+          >
+            목록으로 돌아가기
+          </Button>
+        </div>
+
+        <AttractionDetail
+          v-else
+          :attraction="attraction"
+          v-model:likeCount="attraction.likeCount"
+        />
+      </div>
+    </main>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.group:hover .group-hover\:-translate-x-1 {
+  transform: translateX(-4px);
+}
+</style>

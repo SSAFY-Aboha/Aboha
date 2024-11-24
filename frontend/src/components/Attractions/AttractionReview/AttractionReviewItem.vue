@@ -1,6 +1,7 @@
 <script setup>
 import RatingStar from '@/components/common/RatingStar.vue'
-import { Avatar, AvatarImage } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { UserIcon } from 'lucide-vue-next'
 
 defineProps({
   review: {
@@ -18,6 +19,9 @@ defineProps({
     <div class="flex items-center w-full gap-2">
       <Avatar class="size-8">
         <AvatarImage src="/src/assets/mainPage_image.jpg" alt="avatar" />
+        <AvatarFallback>
+          <UserIcon class="size-4" />
+        </AvatarFallback>
       </Avatar>
       <span class="text-md">{{ review.user.nickname }}</span>
     </div>

@@ -15,14 +15,13 @@ import AttractionList from '@/components/Attractions/AttractionMap/AttractionLis
 
 const map = ref(null)
 
-onMounted(
-  () => {
-    getCurrentLocation()
-  },
-  {
-    immediate: true,
-  },
-)
+onMounted(() => {
+  getCurrentLocation()
+  // 지도 로딩 완료 시 로딩 상태 해제
+  setTimeout(() => {
+    mapLoading.value = false
+  }, 1000)
+})
 
 const onLoadKakaoMap = mapRef => {
   map.value = mapRef
@@ -116,10 +115,18 @@ const setCenter = (lat, lng) => {
 }
 
 const getCurrentLocation = () => {
-  navigator.geolocation.getCurrentPosition(position => {
-    const { latitude, longitude } = position.coords
-    initialCenter.value = { lat: latitude, lng: longitude }
-  })
+  navigator.geolocation.getCurrentPosition(
+    position => {
+      const { latitude, longitude } = position.coords
+      initialCenter.value = { lat: latitude, lng: longitude }
+    },
+    error => {
+      console.error('위치 정보를 가져오는데 실패했습니다:', error)
+      // 기본 위치 설정 (예: 서울시청)
+      initialCenter.value = { lat: 37.5666805, lng: 126.9784147 }
+      mapLoading.value = false
+    },
+  )
 }
 
 const setOneMarker = (lat, lng) => {
@@ -133,35 +140,56 @@ provide('hasMore', hasMore)
 provide('setCenter', setCenter)
 provide('setOneMarker', setOneMarker)
 console.log(markerList.value)
+
+// mapLoading 상태 선언
+const mapLoading = ref(true)
 </script>
 
 <template>
   <div class="relative w-screen h-screen">
-    <!-- nav -->
-    <div
-      class="absolute right-0 z-40 flex items-center justify-start w-full h-16 px-4 py-3"
-    >
-      <div class="basis-[420px]"></div>
-      <div class="flex gap-x-2">
-        <Button
-          @click="getCurrentLocation"
-          variant="outline"
-          class="border-green-500 rounded-full"
-        >
-          <CurrencyIcon class="w-4 h-4" />
-        </Button>
-        <Button
-          variant="outline"
-          class="border-green-500 rounded-full"
-          @click="handleCurrentLocation"
-        >
-          <MapPinIcon class="w-4 h-4" />
-          <span>현재 위치에서 검색</span>
-        </Button>
+    <!-- 네비게이션 바 개선 -->
+    <div class="absolute right-0 z-40 w-full shadow-sm bg-white/80">
+      <div
+        class="container flex items-center justify-between h-16 px-4 mx-auto"
+      >
+        <div class="flex items-center gap-x-4">
+          <h1 class="text-xl font-bold text-green-600">관광지도</h1>
+        </div>
+        <div class="flex gap-x-3">
+          <Button
+            @click="getCurrentLocation"
+            variant="outline"
+            class="border-green-500 rounded-full hover:bg-green-50"
+            title="현재 위치로 이동"
+          >
+            <CurrencyIcon class="w-4 h-4 text-green-600" />
+          </Button>
+          <Button
+            variant="outline"
+            class="border-green-500 rounded-full hover:bg-green-50"
+            @click="handleCurrentLocation"
+          >
+            <MapPinIcon class="w-4 h-4 text-green-600" />
+            <span class="ml-2">현재 위치에서 검색</span>
+          </Button>
+        </div>
       </div>
     </div>
 
-    <!-- 지도 -->
+    <!-- 지도 로딩 상태 표시 -->
+    <div
+      v-if="mapLoading"
+      class="absolute inset-0 z-30 flex items-center justify-center bg-gray-50"
+    >
+      <div class="flex flex-col items-center gap-2">
+        <div
+          class="w-8 h-8 border-4 border-green-500 rounded-full border-t-transparent animate-spin"
+        ></div>
+        <p class="text-sm text-gray-600">지도를 불러오는 중...</p>
+      </div>
+    </div>
+
+    <!-- 지도 컴포넌트 -->
     <KakaoMap
       width="100%"
       height="100%"
@@ -178,54 +206,85 @@ console.log(markerList.value)
         :clickable="true"
       />
     </KakaoMap>
-    <!-- 컨텐츠 -->
+
+    <!-- 사이드바 개선 -->
     <div
-      class="absolute top-0 z-50 flex h-full p-4 transition-all duration-300 bg-white shadow-md"
-      :class="isOpen ? 'left-0' : '-left-96'"
+      class="absolute z-50 flex transition-all duration-300 bg-white shadow-lg top-16"
+      :class="[isOpen ? 'left-0' : '-left-96']"
+      style="height: calc(100vh - 4rem)"
     >
-      <!-- 사이드바 -->
-      <div class="relative flex flex-col w-full h-full basis-96">
-        <div class="flex flex-col h-full w-96 gap-y-4">
+      <div class="relative flex flex-col w-96">
+        <div class="flex flex-col h-full p-4 gap-y-6">
+          <!-- 검색 영역 -->
           <div class="relative">
             <AttractionSearchInput
               @update:model-value="handleKeywordChange"
               :styleClass="{
-                'border-green-500 border-2 focus-visible:ring-0': true,
+                'border-green-500 border-2 focus-visible:ring-0 shadow-sm': true,
               }"
             />
           </div>
-          <!-- 중간 내용 -->
-          <div class="w-full">
-            <h1 class="text-xl font-bold">중간 내용</h1>
-            <div class="w-full h-52 bg-slate-100"></div>
+
+          <!-- 필터 영역 -->
+          <div class="p-4 rounded-lg bg-gray-50">
+            <h2 class="mb-3 text-lg font-semibold text-gray-800">필터</h2>
+            <div class="w-full h-40 rounded-md bg-gray-100/50"></div>
           </div>
+
           <!-- 검색 결과 -->
-          <div
-            v-if="attractionList.length > 0"
-            class="w-full h-full overflow-hidden"
-          >
-            <h1 class="pb-2 text-xl font-bold">검색 결과</h1>
+          <div v-if="attractionList.length > 0" class="flex-1 overflow-hidden">
+            <div class="flex items-center justify-between mb-3">
+              <h2 class="text-lg font-semibold text-gray-800">검색 결과</h2>
+              <span class="text-sm text-gray-500"
+                >{{ attractionList.length }}개의 장소</span
+              >
+            </div>
             <AttractionList
               v-model:attractionList="attractionList"
               v-model:isLoading="isLoading"
+              class="h-full overflow-y-auto"
             />
           </div>
+
+          <!-- 검색 결과가 없을 때 -->
+          <div
+            v-else-if="!isLoading"
+            class="flex items-center justify-center flex-1"
+          >
+            <p class="text-gray-500">검색 결과가 없습니다</p>
+          </div>
         </div>
-        <!-- toggle 버튼 -->
+
+        <!-- 토글 버튼 개선 -->
         <Button
           variant="outline"
           @click="handleToggle"
-          class="absolute w-2 h-10 -translate-y-1/2 -right-9 top-1/2"
+          class="absolute w-6 h-12 -translate-y-1/2 bg-white border-gray-200 -right-6 top-1/2 hover:bg-gray-50"
         >
           <ChevronLeftIcon v-if="isOpen" class="w-4 h-4 text-gray-500" />
           <ChevronRightIcon v-else class="w-4 h-4 text-gray-500" />
         </Button>
       </div>
-
-      <!-- 다른 영역 -->
-      <!-- <div class="flex flex-col w-full h-full bg-red-500 basis-96 w-96">ㅇ</div> -->
     </div>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+/* 스크롤바 스타일링 */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #666;
+}
+</style>

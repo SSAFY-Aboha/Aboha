@@ -7,6 +7,7 @@ import AttractionHasMore from '../../common/DataHasMore.vue'
 import defaultImage from '@/assets/default_image.png'
 import RatingStar from '@/components/common/RatingStar.vue'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Badge } from '@/components/ui/badge'
 
 const attractionList = defineModel('attractionList')
 const isLoading = defineModel('isLoading')
@@ -78,28 +79,69 @@ const onClickAttraction = async id => {
       @click="onClickAttraction(attraction.id)"
       v-for="attraction in attractionList"
       :key="attraction.id"
-      class="px-2 py-2 transition-all border-b border-gray-200 cursor-pointer hover:bg-gray-100"
+      class="relative px-4 py-3 transition-all border-b border-gray-200 cursor-pointer group hover:bg-gray-50"
     >
-      <div class="flex h-full gap-x-2">
-        <div class="w-20 h-20 overflow-hidden bg-slate-200 basis-1/3">
+      <div class="flex gap-4">
+        <!-- 이미지 섹션 -->
+        <div
+          class="relative overflow-hidden rounded-lg basis-1/3 aspect-square"
+        >
           <img
-            class="object-cover"
+            class="object-cover w-full h-full transition-transform group-hover:scale-105"
             :src="attraction.image || defaultImage"
-            alt="이미지"
+            :alt="attraction.title"
             loading="lazy"
           />
         </div>
-        <div class="flex flex-col justify-between w-full h-full">
-          <div class="flex flex-col">
-            <div class="flex items-center justify-between w-full">
-              <h1 class="text-lg font-bold">{{ attraction.title }}</h1>
+
+        <!-- 컨텐츠 섹션 -->
+        <div class="flex flex-col justify-between flex-1 py-1">
+          <div class="space-y-2">
+            <!-- 제목 및 카테고리 -->
+            <div>
+              <div class="flex items-center gap-2 mb-1">
+                <Badge
+                  v-if="attraction.category"
+                  class="px-2 py-0.5 text-xs bg-primary-50 text-primary-700"
+                >
+                  {{ attraction.category }}
+                </Badge>
+              </div>
+              <h1 class="text-lg font-bold group-hover:text-primary-600">
+                {{ attraction.title }}
+              </h1>
             </div>
-            <span class="text-sm text-gray-500">
-              {{ `${attraction.sidoName} ${attraction.gugunName}` }}
-            </span>
+
+            <!-- 위치 정보 -->
+            <div class="flex items-center gap-2 text-sm text-gray-600">
+              <i class="pi pi-map-marker"></i>
+              <span>{{
+                `${attraction.sidoName} ${attraction.gugunName}`
+              }}</span>
+            </div>
           </div>
-          <!-- 별점 -->
-          <RatingStar :rating="5" />
+
+          <!-- 하단 정보 -->
+          <div class="flex items-center justify-between mt-2">
+            <div class="flex items-center gap-4">
+              <!-- 별점 -->
+              <div class="flex items-center gap-1">
+                <RatingStar :rating="attraction.rating || 0" />
+                <span class="text-sm text-gray-600">
+                  ({{ attraction.reviewCount || 0 }})
+                </span>
+              </div>
+              <!-- 거리 표시 (있는 경우) -->
+              <span v-if="attraction.distance" class="text-sm text-gray-500">
+                {{ attraction.distance }}km
+              </span>
+            </div>
+
+            <!-- 상세보기 아이콘 -->
+            <i
+              class="transition-transform pi pi-arrow-right text-primary-600 group-hover:translate-x-1"
+            ></i>
+          </div>
         </div>
       </div>
     </li>
@@ -124,4 +166,8 @@ const onClickAttraction = async id => {
   </ul>
 </template>
 
-<style scoped></style>
+<style scoped>
+.aspect-square {
+  aspect-ratio: 1 / 1;
+}
+</style>
