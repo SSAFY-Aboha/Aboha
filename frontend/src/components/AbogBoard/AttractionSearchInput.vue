@@ -2,6 +2,13 @@
 import { Input } from '@/components/ui/input'
 import { Search } from 'lucide-vue-next'
 
+const props = defineProps({
+  styleClass: {
+    type: String,
+    required: false,
+  },
+})
+
 const emit = defineEmits(['update:model-value', 'focusout'])
 
 const handleKeywordChange = value => {
@@ -11,6 +18,7 @@ const handleKeywordChange = value => {
 
 <template>
   <Input
+    :class="styleClass"
     id="search"
     type="text"
     placeholder="키워드 입력 후 Enter..."
