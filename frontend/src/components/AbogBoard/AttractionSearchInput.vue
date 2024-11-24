@@ -9,28 +9,26 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['update:model-value', 'focusout'])
-
-const handleKeywordChange = value => {
-  emit('update:model-value', value)
-}
+const keyword = defineModel('keyword')
+const emit = defineEmits(['search'])
 </script>
 
 <template>
-  <Input
-    :class="styleClass"
-    id="search"
-    type="text"
-    placeholder="키워드 입력 후 Enter..."
-    class="pl-10"
-    @update:model-value="handleKeywordChange"
-    @focusout="emit('focusout')"
-  />
-  <span
-    class="absolute inset-y-0 flex items-center justify-center px-2 start-0"
-  >
-    <Search class="size-6 text-muted-foreground" />
-  </span>
+  <div :class="styleClass">
+    <Input
+      id="search"
+      type="text"
+      placeholder="키워드 입력 후 Enter..."
+      class="pl-10"
+      v-model="keyword"
+      @keyup.enter="emit('search')"
+    />
+    <span
+      class="absolute inset-y-0 flex items-center justify-center px-2 start-0"
+    >
+      <Search class="size-6 text-muted-foreground" />
+    </span>
+  </div>
 </template>
 
 <style scoped></style>

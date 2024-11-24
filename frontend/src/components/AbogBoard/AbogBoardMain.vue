@@ -4,6 +4,7 @@ import { ref, watch, onMounted, onUnmounted } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import { Button } from '../ui/button'
 import abog from '@/api/abog'
+import { ArrowUp } from 'lucide-vue-next'
 
 const route = useRoute()
 const isLoading = ref(false)
@@ -157,7 +158,7 @@ onUnmounted(() => {
         class="fixed z-50 p-3 text-white transition-all duration-300 bg-green-400 rounded-full shadow-lg bottom-8 right-8 hover:bg-green-500 hover:scale-110"
         aria-label="맨 위로 이동"
       >
-        <i class="text-xl fas fa-arrow-up"></i>
+        <ArrowUp class="size-6" />
       </button>
     </Transition>
   </main>

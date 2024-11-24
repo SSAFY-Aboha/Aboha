@@ -17,7 +17,7 @@ const handleKeywordChange = keyword => {
 
 <template>
   <nav
-    class="flex flex-col gap-4 w-full sm:flex-row sm:items-center sm:justify-between"
+    class="flex flex-col w-full gap-4 sm:flex-row sm:items-center sm:justify-between"
   >
     <!-- 선택된 태그 -->
     <div class="flex flex-wrap gap-2">
@@ -32,7 +32,7 @@ const handleKeywordChange = keyword => {
           @click="removeTag(tag)"
         />
       </Badge>
-      <span v-if="!searchDataName.length" class="text-sm text-gray-500 italic">
+      <span v-if="!searchDataName.length" class="text-sm italic text-gray-500">
         선택된 필터가 없습니다
       </span>
     </div>
@@ -42,7 +42,6 @@ const handleKeywordChange = keyword => {
       <div class="relative items-center w-full max-w-sm">
         <AttractionSearch
           @update:model-value="handleKeywordChange"
-          placeholder="관광지를 검색해보세요"
           class="transition-all focus-within:shadow-md"
         />
       </div>

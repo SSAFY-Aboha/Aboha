@@ -14,6 +14,12 @@ import attractionAPI from '@/api/attractions'
 import AttractionList from '@/components/Attractions/AttractionMap/AttractionList.vue'
 
 const map = ref(null)
+// mapLoading 상태 선언
+const mapLoading = ref(true)
+
+const onLoadKakaoMap = mapRef => {
+  map.value = mapRef
+}
 
 onMounted(() => {
   getCurrentLocation()
@@ -23,10 +29,6 @@ onMounted(() => {
   }, 1000)
 })
 
-const onLoadKakaoMap = mapRef => {
-  map.value = mapRef
-}
-
 const initialCenter = ref({
   lat: 0,
   lng: 0,
@@ -35,6 +37,8 @@ const initialCenter = ref({
 const isOpen = ref(true)
 
 const attractionList = ref([]) // 관광지 리스트
+
+// 마커 리스트 : 검색 후 마커 위치 설정
 const markerList = ref([
   {
     id: 1,
@@ -122,7 +126,7 @@ const getCurrentLocation = () => {
     },
     error => {
       console.error('위치 정보를 가져오는데 실패했습니다:', error)
-      // 기본 위치 설정 (예: 서울시청)
+
       initialCenter.value = { lat: 37.5666805, lng: 126.9784147 }
       mapLoading.value = false
     },
@@ -140,9 +144,6 @@ provide('hasMore', hasMore)
 provide('setCenter', setCenter)
 provide('setOneMarker', setOneMarker)
 console.log(markerList.value)
-
-// mapLoading 상태 선언
-const mapLoading = ref(true)
 </script>
 
 <template>
@@ -218,10 +219,9 @@ const mapLoading = ref(true)
           <!-- 검색 영역 -->
           <div class="relative">
             <AttractionSearchInput
-              @update:model-value="handleKeywordChange"
-              :styleClass="{
-                'border-green-500 border-2 focus-visible:ring-0 shadow-sm': true,
-              }"
+              v-model:keyword="searchParams.keyword"
+              styleClass="border-2 border-green-500 shadow-sm rounded-md focus-visible:ring-0"
+              @search="handleSearch(searchParams)"
             />
           </div>
 
