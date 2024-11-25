@@ -220,9 +220,10 @@ console.log(markerList.value)
           <!-- 검색 영역 -->
           <div class="relative">
             <AttractionSearchInput
+              @update:model-value="handleKeywordChange"
               v-model:keyword="searchParams.keyword"
               styleClass="border-2 border-green-500 shadow-sm rounded-md focus-visible:ring-0"
-              @search="handleSearch(searchParams)"
+              @handleSearch="handleSearch(searchParams)"
             />
           </div>
 

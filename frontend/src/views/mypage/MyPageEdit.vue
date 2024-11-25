@@ -6,9 +6,11 @@ import { storeToRefs } from 'pinia'
 import { computed, nextTick, ref, watch } from 'vue'
 import userAPI from '@/api/user'
 import { isPasswordValid } from '@/utils/isPasswordValid'
+import { useRouter } from 'vue-router'
 
 const userStore = useUserStore()
 const { userInfo } = storeToRefs(userStore)
+const router = useRouter()
 
 // const userUpdateData = ref(userInfo.value)
 const userUpdateData = ref({
@@ -64,7 +66,7 @@ const handleProfileImageChange = e => {
   console.log('프로필 이미지 변경')
 }
 
-const handleSave = () => {
+const handleSave = async () => {
   if (confirm('저장하시겠습니까?')) {
     // 저장 api 호출
 
@@ -73,16 +75,14 @@ const handleSave = () => {
     formData.append('nickname', userUpdateData.value.nickname)
     formData.append('password', userUpdateData.value.password)
 
-    userAPI.updateUserInfo(
-      userInfo.value.id,
-      formData,
-      () => {
-        alert('저장되었습니다.')
-      },
-      error => {
-        console.error(error)
-      },
-    )
+    const { error } = await userAPI.updateUserInfo(formData)
+    if (error) {
+      alert(error)
+      return
+    }
+    userInfo.value = { ...userInfo.value, ...userUpdateData.value }
+    alert('저장되었습니다.')
+    router.push({ name: 'mypage' })
   }
 }
 </script>

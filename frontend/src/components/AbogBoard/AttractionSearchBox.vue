@@ -69,7 +69,7 @@ watch(
     <div v-show="isOpen" class="absolute top-0 w-full">
       <div class="relative">
         <AttractionSearchInput
-          v-model:keyword="keyword"
+          @update:model-value="handleKeywordChange"
           @focusout="handleFocusout"
         />
         <div
