@@ -1,25 +1,19 @@
 <script setup>
 import Button from '@/components/ui/button/Button.vue'
 import AttractionReviewList from './AttractionReviewList.vue'
-import { ref, watch } from 'vue'
+import { ref, computed } from 'vue'
 import AttractionReviewEditor from '@/components/Attractions/AttractionReview/AttractionReviewEditor.vue'
+import RatingStar from '@/components/common/RatingStar.vue'
 
 const limit = ref(4)
 
-const props = defineProps({
-  reviews: Object,
+const reviews = defineModel('reviews')
+
+defineProps({
+  attractionId: Number,
 })
 
-const reviewData = ref(props.reviews?.data || [])
-
-watch(
-  () => props.reviews,
-  newData => {
-    reviewData.value = newData?.data
-    console.log('reviewData', reviewData.value)
-  },
-  { immediate: true },
-)
+const reviewData = computed(() => reviews?.value?.data || [])
 </script>
 
 <template>
@@ -32,15 +26,21 @@ watch(
         <h1 class="text-3xl font-bold">후기</h1>
         <div class="flex items-center gap-3">
           <div class="flex items-center gap-2">
-            <span class="text-2xl font-bold">4.5</span>
+            <span class="text-2xl font-bold">{{ reviews.totalAvgRating }}</span>
             <span class="text-gray-500">/</span>
             <span class="text-gray-500">5.0</span>
           </div>
-          <div class="h-6 w-px bg-gray-300"></div>
+          <div class="w-px h-6 bg-gray-300"></div>
+          <RatingStar :rating="Math.round(reviews.totalAvgRating)" />
+          <div class="w-px h-6 bg-gray-300"></div>
           <span class="text-gray-600">{{ reviewData.length }}개의 후기</span>
         </div>
       </div>
-      <AttractionReviewEditor v-model:reviews="reviewData" class="shrink-0" />
+      <AttractionReviewEditor
+        v-model:reviews="reviews"
+        :attraction-id="attractionId"
+        class="shrink-0"
+      />
     </div>
 
     <!-- 리뷰 리스트 -->

@@ -16,8 +16,12 @@ import RatingStarForm from '@/components/Attractions/AttractionReview/RatingStar
 import { Textarea } from '@/components/ui/textarea'
 
 const reviews = defineModel('reviews')
+const props = defineProps({
+  attractionId: Number,
+})
 
 const reviewData = ref({
+  attractionId: props.attractionId,
   rating: 0,
   content: '',
 })
@@ -27,24 +31,32 @@ const isOpen = ref(false)
 // 후기 등록
 const handleSubmit = async () => {
   if (!handleCheck()) return
-  console.log(reviewData.value)
 
   // 후기 등록
-  const { status, error, data } = await attractionAPI.postAttractionReview(
-    reviewData.value,
-  )
+  const { error: postError, data: postData } =
+    await attractionAPI.postAttractionReview(reviewData.value)
 
-  if (status === 200) {
-    reviews.value = [...reviews.value, data] // 후기 등록 후 바로 반영
-    console.log('추가', reviews.value)
+  if (postError) {
+    console.log(postError)
+    isOpen.value = false
+    return
   }
+
+  /**
+   *
+// Spring boot 에서 createReview 에서 return 값 변경
+Integer reviewId = reviewService.createReview(userResponse.id(), request);
+ReviewResponse response = reviewService.getReview(reviewId);
+
+return ResponseEntity.ok().body(response);
+   */
+  reviews.value.data = [...reviews.value.data, postData]
 
   // 후기 등록 후 초기화
   reviewData.value = {
     rating: 0,
     content: '',
   }
-
   alert('후기가 등록되었습니다.')
   isOpen.value = false
 }
@@ -97,7 +109,7 @@ const alreadyReviewCheck = () => {
         />
       </div>
       <DialogFooter>
-        <Button type="submit" @click="handleSubmit"> 등록하기 </Button>
+        <Button @click="handleSubmit"> 등록하기 </Button>
       </DialogFooter>
     </DialogContent>
   </Dialog>
