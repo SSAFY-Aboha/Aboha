@@ -13,7 +13,7 @@ import { useDropZone } from '@vueuse/core'
 import VueLoading from 'vue-loading-overlay'
 import abogApi from '@/api/abog'
 
-import { ref } from 'vue'
+import { ref, computed, watch } from 'vue'
 import {
   Carousel,
   CarouselContent,
@@ -84,21 +84,27 @@ const handleFileDelete = idx => {
 }
 
 const checkInput = () => {
-  if (inputVal.value.title === '') {
-    alert('제목을 입력해주세요. 🤣')
-    return false
-  } else if (inputVal.value.attraction === '') {
-    alert('장소를 선택해주세요. 🤣')
-    return false
-  } else if (inputVal.value.content === '') {
-    alert('내용을 입력해주세요. 🤣')
-    return false
-  } else if (inputVal.value.tags.length === 0) {
-    alert('태그를 입력해주세요. 🤣')
-    return false
-  } else if (inputVal.value.imageFiles.length === 0) {
-    alert('사진을 추가해주세요. 🤣')
-    return false
+  const messages = {
+    title: '제목을 입력해 주세요',
+    attraction: '방문하신 장소를 선택해 주세요',
+    content: '내용을 입력해 주세요',
+    tags: '하나 이상의 태그를 입력해 주세요',
+    imageFiles: '최소 한 장의 사진을 추가해 주세요',
+  }
+
+  for (const [field, message] of Object.entries(messages)) {
+    if (field === 'tags' && inputVal.value[field].length === 0) {
+      alert(message)
+      return false
+    }
+    if (field === 'imageFiles' && inputVal.value[field].length === 0) {
+      alert(message)
+      return false
+    }
+    if (field !== 'tags' && field !== 'imageFiles' && !inputVal.value[field]) {
+      alert(message)
+      return false
+    }
   }
   return true
 }
@@ -134,20 +140,52 @@ const handleSubmit = async () => {
 }
 
 const handleReset = () => {
-  if (confirm('정말 취소하시겠습니까?')) {
-    inputVal.value = {
-      title: '',
-      attraction: '',
-      content: '',
-      tags: [],
-      imageFiles: [],
+  if (
+    inputVal.value.title ||
+    inputVal.value.content ||
+    inputVal.value.tags.length ||
+    inputVal.value.imageFiles.length
+  ) {
+    if (confirm('작성 중인 내용이 모두 삭제됩니다. 계속하시겠습니까?')) {
+      inputVal.value = {
+        title: '',
+        attraction: '',
+        content: '',
+        tags: [],
+        imageFiles: [],
+      }
+      imageURLs.value = []
+      router.back()
     }
-    imageURLs.value = []
-
-    alert('취소되었습니다. 이전 페이지로 이동합니다.')
+  } else {
     router.back()
   }
 }
+
+// 폼 유효성 검사를 위한 computed 속성 추가
+const isFormValid = computed(() => {
+  return (
+    inputVal.value.title.length > 0 &&
+    inputVal.value.title.length <= 100 &&
+    inputVal.value.content.length > 0 &&
+    inputVal.value.content.length <= 2000 &&
+    inputVal.value.tags.length > 0 &&
+    inputVal.value.imageFiles.length > 0 &&
+    inputVal.value.attraction
+  )
+})
+
+// 태그 입력 처리를 위한 watch 추가
+watch(
+  () => inputVal.value.tags,
+  newTags => {
+    if (newTags.length > 3) {
+      inputVal.value.tags = newTags.slice(0, 3)
+      alert('태그는 최대 3개까지만 입력 가능합니다.')
+    }
+  },
+  { deep: true },
+)
 </script>
 
 <template>
@@ -176,102 +214,226 @@ const handleReset = () => {
         class="flex flex-col w-full gap-4"
       >
         <!-- 입력 input -->
-        <!-- 태그 선택 -->
-        <div class="flex items-center justify-between w-full gap-4">
-          <div class="flex flex-col w-full">
-            <label for="title" class="text-lg font-bold">태그 선택 </label>
-            <TagsInput class="px-2" v-model="inputVal.tags">
-              <TagsInputItem
-                v-for="item in inputVal.tags"
-                :key="item"
-                :value="item"
+        <!-- 태그와 장소 선택 섹션 -->
+        <div class="space-y-6">
+          <!-- 태그 선택 -->
+          <div class="flex flex-col space-y-2">
+            <div class="flex items-center justify-between">
+              <label class="text-lg font-bold">태그 선택</label>
+              <span class="text-sm text-gray-500">
+                ({{ inputVal.tags.length }}/3개)
+              </span>
+            </div>
+
+            <div class="relative">
+              <TagsInput
+                class="min-h-[42px] transition-shadow focus-within:shadow-md rounded-lg"
+                :class="{ 'border-red-500': inputVal.tags.length > 3 }"
+                v-model="inputVal.tags"
               >
-                <TagsInputItemText />
-                <TagsInputItemDelete />
-              </TagsInputItem>
-              <TagsInputInput placeholder="태그 입력 후 Enter..." />
-            </TagsInput>
+                <TagsInputItem
+                  v-for="item in inputVal.tags"
+                  :key="item"
+                  :value="item"
+                  class="transition-colors bg-primary/10 text-primary hover:bg-primary/20"
+                >
+                  <TagsInputItemText />
+                  <TagsInputItemDelete class="hover:text-red-500" />
+                </TagsInputItem>
+                <TagsInputInput
+                  :placeholder="
+                    inputVal.tags.length >= 3
+                      ? '태그는 최대 3개까지 가능합니다'
+                      : '태그를 입력하고 Enter를 눌러주세요'
+                  "
+                  :disabled="inputVal.tags.length >= 3"
+                />
+              </TagsInput>
+
+              <p class="mt-1 text-xs text-gray-500">
+                <i class="mr-1 pi pi-info-circle"></i>
+                태그는 방문하신 장소의 특징을 나타내는 키워드를 입력해주세요.
+                (예: 데이트, 가족여행, 포토스팟)
+              </p>
+            </div>
           </div>
-          <div class="w-full">
-            <label for="title" class="text-lg font-bold">장소</label>
-            <AttractionSearchBox
-              v-model:selectedAttraction="inputVal.attraction"
-            />
-            <!-- <ComboBox
-              class="w-full"
-              v-model:model-value="inputVal.attraction"
-            /> -->
+
+          <!-- 장소 선택 -->
+          <div class="flex flex-col space-y-2">
+            <label class="text-lg font-bold">방문 장소</label>
+            <div class="relative">
+              <AttractionSearchBox
+                v-model:selectedAttraction="inputVal.attraction"
+                class="transition-shadow focus-within:shadow-md"
+              />
+              <p class="mt-1 text-xs text-gray-500">
+                <i class="mr-1 pi pi-map-marker"></i>
+                방문하신 장소를 검색하여 선택해주세요
+              </p>
+            </div>
           </div>
         </div>
-        <label for="image" class="text-lg font-bold">
-          <span>사진 선택</span>
-          <span class="pl-3 text-sm italic text-gray-500">(최대 5장)</span>
-        </label>
-        <!-- 드로그앤 드롭 -->
-        <section class="flex items-center justify-center gap-3">
-          <Dropzone ref="dropzoneRef" />
-          <div class="flex flex-1 w-full gap-3">
-            <Carousel
-              v-slot="{ canScrollNext, canScrollPrev }"
-              class="w-full max-w-2xl px-2 py-1"
-              :opts="{
-                align: 'start',
-              }"
-            >
-              <CarouselContent class="w-full -ml-1 rounded-lg">
-                <CarouselItem
-                  v-for="(img, idx) in imageURLs"
-                  :key="img"
-                  class="pl-1 md:basis-2/6"
-                >
-                  <div class="p-1">
-                    <Card>
-                      <CardContent
-                        class="relative flex items-center justify-center p-6 aspect-square"
-                      >
-                        <img :src="img" alt="이미지" />
-                        <button class="hover:text-red-500">
-                          <i
-                            @click="handleFileDelete(idx)"
-                            class="absolute top-0 right-0 p-2 px-1 pi pi-times-circle"
-                          ></i>
+        <!-- 이미지 업로드 섹션 -->
+        <section class="space-y-4">
+          <div class="flex items-center gap-2">
+            <label for="image" class="text-lg font-bold">사진 선택</label>
+            <span class="text-sm text-gray-500">
+              ({{ imageURLs.length }}/5장)
+            </span>
+          </div>
+
+          <div class="flex flex-col gap-4 sm:flex-row">
+            <!-- 드래그 앤 드롭 영역 -->
+            <div class="w-full sm:w-1/3">
+              <Dropzone
+                ref="dropzoneRef"
+                class="min-h-[200px] transition-all duration-200"
+                :class="{
+                  'border-primary ring-2 ring-primary/20': isOverDropZone,
+                }"
+              >
+                <div class="flex flex-col items-center gap-2 text-gray-500">
+                  <i class="text-3xl pi pi-image"></i>
+                  <p class="text-sm text-center">
+                    이미지를 드래그하거나<br />
+                    클릭하여 업로드하세요
+                  </p>
+                  <p class="text-xs">(PNG, JPEG 형식만 가능)</p>
+                </div>
+              </Dropzone>
+            </div>
+
+            <!-- 이미지 미리보기 영역 -->
+            <div class="flex-1">
+              <div
+                v-if="imageURLs.length === 0"
+                class="flex items-center justify-center h-full min-h-[200px] border-2 border-dashed rounded-lg"
+              >
+                <p class="text-gray-400">업로드된 이미지가 없습니다</p>
+              </div>
+
+              <Carousel
+                v-else
+                v-slot="{ canScrollNext, canScrollPrev }"
+                class="relative w-full"
+                :opts="{
+                  align: 'start',
+                }"
+              >
+                <CarouselContent class="rounded-lg">
+                  <CarouselItem
+                    v-for="(img, idx) in imageURLs"
+                    :key="img"
+                    class="sm:basis-1/3 md:basis-1/4 lg:basis-1/5"
+                  >
+                    <Card
+                      class="overflow-hidden transition-shadow border hover:shadow-md"
+                    >
+                      <CardContent class="relative p-0">
+                        <!-- 이미지 -->
+                        <img
+                          :src="img"
+                          :alt="`이미지 ${idx + 1}`"
+                          class="object-cover w-full aspect-square"
+                        />
+
+                        <!-- 삭제 버튼 -->
+                        <button
+                          @click="handleFileDelete(idx)"
+                          class="absolute top-2 right-2 p-1.5 rounded-full bg-white/80 hover:bg-red-500 hover:text-white transition-colors shadow-sm"
+                        >
+                          <i class="pi pi-times"></i>
                         </button>
+
+                        <!-- 이미지 번호 -->
+                        <div
+                          class="absolute px-2 py-1 text-xs text-white rounded-full bottom-2 left-2 bg-black/50"
+                        >
+                          {{ idx + 1 }}/{{ imageURLs.length }}
+                        </div>
                       </CardContent>
                     </Card>
-                  </div>
-                </CarouselItem>
-              </CarouselContent>
-              <CarouselPrevious class="left-2" v-if="canScrollPrev" />
-              <CarouselNext class="right-2" v-if="canScrollNext" />
-            </Carousel>
+                  </CarouselItem>
+                </CarouselContent>
+
+                <!-- 네비게이션 버튼 -->
+                <CarouselPrevious
+                  v-if="canScrollPrev"
+                  class="left-0 -translate-x-1/2 bg-white/90 hover:bg-white"
+                />
+                <CarouselNext
+                  v-if="canScrollNext"
+                  class="right-0 translate-x-1/2 bg-white/90 hover:bg-white"
+                />
+              </Carousel>
+            </div>
           </div>
         </section>
 
-        <!-- 제목 입력 -->
-        <div class="flex flex-col gap-1">
-          <label for="title" class="text-lg font-bold">제목</label>
-          <Input
-            type="text"
-            id="title"
-            class="w-full"
-            placeholder="글의 제목을 입력해주세요."
-            v-model:model-value="inputVal.title"
-          />
-        </div>
-        <!-- content -->
-        <div class="flex flex-col gap-1">
-          <label for="title" class="text-lg font-bold">내용</label>
-          <Textarea
-            id="content"
-            class="w-full placeholder-slate-300"
-            placeholder="글의 내용을 입력해주세요."
-            v-model:model-value="inputVal.content"
-          />
-        </div>
-        <!-- 버튼 Box -->
-        <div class="flex gap-3">
-          <Button type="submit" class="btn btn-primary">저장</Button>
-          <Button type="reset" class="btn btn-secondary">취소</Button>
+        <!-- 메인 콘텐츠 영역 -->
+        <div class="space-y-6">
+          <!-- 제목 입력 -->
+          <div class="space-y-2">
+            <label
+              for="title"
+              class="flex items-center gap-2 text-lg font-bold"
+            >
+              제목
+              <span class="text-sm font-normal text-gray-500">
+                ({{ inputVal.title.length }}/100자)
+              </span>
+            </label>
+            <Input
+              type="text"
+              id="title"
+              class="w-full text-lg transition-shadow focus:shadow-md"
+              :class="{ 'border-red-500': inputVal.title.length > 100 }"
+              placeholder="멋진 제목을 입력해주세요"
+              maxlength="100"
+              v-model:model-value="inputVal.title"
+            />
+          </div>
+
+          <!-- 내용 입력 -->
+          <div class="space-y-2">
+            <label for="content" class="flex items-center justify-between">
+              <span class="text-lg font-bold">내용</span>
+              <span class="text-sm text-gray-500">
+                ({{ inputVal.content.length }}/2000자)
+              </span>
+            </label>
+            <Textarea
+              id="content"
+              class="w-full min-h-[200px] transition-shadow focus:shadow-md"
+              :class="{ 'border-red-500': inputVal.content.length > 2000 }"
+              placeholder="방문하신 장소에서의 경험을 자유롭게 작성해주세요.
+
+• 어떤 점이 좋았나요?
+• 다른 분들에게 추천하고 싶은 점은 무엇인가요?
+• 방문 시 주의할 점이 있나요?"
+              maxlength="2000"
+              v-model:model-value="inputVal.content"
+            />
+          </div>
+
+          <!-- 버튼 영역 -->
+          <div class="flex gap-4 pt-4 border-t">
+            <Button
+              type="submit"
+              class="flex-1 max-w-xs py-6 text-lg transition-transform btn btn-primary hover:scale-[1.02]"
+              :disabled="!isFormValid"
+            >
+              <i class="mr-2 pi pi-check"></i>
+              작성 완료
+            </Button>
+            <Button
+              type="reset"
+              class="px-6 py-6 transition-colors btn hover:bg-red-50"
+            >
+              <i class="mr-2 pi pi-times"></i>
+              취소
+            </Button>
+          </div>
         </div>
       </form>
     </div>
