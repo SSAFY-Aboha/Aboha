@@ -43,7 +43,7 @@ onMounted(() => {
 })
 
 // 무한 스크롤 설정
-useInfiniteScroll(observerTarget, handleGetAbog)
+// useInfiniteScroll(observerTarget, handleGetAbog)
 </script>
 
 <template>
@@ -53,7 +53,7 @@ useInfiniteScroll(observerTarget, handleGetAbog)
       <li
         v-for="each in boardList"
         :key="each.abog.id"
-        class="bg-white rounded-lg shadow-sm overflow-hidden"
+        class="overflow-hidden bg-white rounded-lg shadow-sm"
       >
         <AbogBoardItem :data="each" />
       </li>
@@ -62,7 +62,7 @@ useInfiniteScroll(observerTarget, handleGetAbog)
     <!-- 스켈레톤 및 관찰 대상 요소 -->
     <div
       ref="observerTarget"
-      class="w-full h-20 flex items-center justify-center"
+      class="flex items-center justify-center w-full h-20"
     >
       <!-- 로딩 스켈레톤 -->
       <div v-if="isLoading" class="w-full">
@@ -70,7 +70,7 @@ useInfiniteScroll(observerTarget, handleGetAbog)
           <li
             v-for="n in 2"
             :key="n"
-            class="bg-white rounded-lg shadow-sm overflow-hidden"
+            class="overflow-hidden bg-white rounded-lg shadow-sm"
           >
             <AbogBoardSkeleton />
           </li>
