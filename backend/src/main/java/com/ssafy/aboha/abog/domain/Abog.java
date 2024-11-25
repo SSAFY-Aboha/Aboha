@@ -40,8 +40,6 @@ public class Abog extends BaseEntity {
     @Column(name = "comment_count")
     private Long commentCount;
 
-    // TODO: 해시태그 적용 전
-
     @Builder
     public Abog(User user, Attraction attraction, String title, String content) {
         this.user = user;
@@ -59,5 +57,9 @@ public class Abog extends BaseEntity {
     public void decreaseLikeCount() {
         this.likeCount--;
     }
+
+    public void increaseCommentCount() { this.commentCount++; }
+
+    public void decreaseCommentCount() { this.commentCount--; }
 
 }
