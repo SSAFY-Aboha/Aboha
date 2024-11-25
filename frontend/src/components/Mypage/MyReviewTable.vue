@@ -8,6 +8,8 @@ import {
   TableHead,
   TableCell,
 } from '@/components/ui/table'
+import { ref, onMounted } from 'vue'
+import userAPI from '@/api/user'
 
 defineProps({
   title: {
@@ -16,10 +18,27 @@ defineProps({
   },
 })
 
-const data = defineModel('data', { type: Array })
 const isEdit = defineModel('isEdit', { type: Boolean })
 
-console.log(data.value)
+const reviews = ref([
+  {
+    attractionId: 0,
+    title: '',
+    reviewId: 0,
+    createdAt: '',
+    content: '',
+    rating: 0,
+  },
+])
+
+onMounted(async () => {
+  const { status, data, error } = await userAPI.getUserReviews()
+  if (error) {
+    console.error(error)
+    return
+  }
+  reviews.value = data.content
+})
 
 const emit = defineEmits('delete-handler')
 
@@ -46,22 +65,26 @@ const deleteHandler = id => {
       </TableRow>
     </TableHeader>
     <TableBody>
-      <TableRow v-for="each in data" :key="each.id">
+      <TableRow v-for="(each, index) in reviews" :key="each.reviewId">
         <TableCell class="font-medium text-center">
-          {{ each.id }}
+          {{ index + 1 }}
         </TableCell>
-        <TableCell class="text-center">{{ each.attraction.title }}</TableCell>
+        <TableCell class="text-center">{{ each.title }}</TableCell>
         <TableCell class="text-center">
           {{ each.createdAt }}
         </TableCell>
         <TableCell class="text-center">
-          {{ each.comment }}
+          {{ each.content }}
         </TableCell>
         <TableCell class="text-right">
           {{ each.rating }}
         </TableCell>
         <TableCell v-show="isEdit" class="text-right hover:text-red-400">
-          <button variant="outline" size="icon" @click="deleteHandler(each.id)">
+          <button
+            variant="outline"
+            size="icon"
+            @click="deleteHandler(each.reviewId)"
+          >
             <i class="pi pi-trash"></i>
           </button>
         </TableCell>

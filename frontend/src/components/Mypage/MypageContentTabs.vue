@@ -9,47 +9,6 @@ import MyReviewTable from '@/components/Mypage/MyReviewTable.vue'
 
 const isEdit = defineModel('isEdit')
 
-const likeAttractions = ref([
-  {
-    id: 1,
-    image: 'https://picsum.photos/300/300',
-    likeCount: 156,
-    title: '해운대 해수욕장',
-    sidoName: '부산광역시',
-    gugunName: '해운대구',
-  },
-])
-
-const myAbogs = ref([
-  {
-    id: 1,
-    title: '해운대 해수욕장',
-    createdAt: '2024-01-01',
-    likeCount: 156,
-    commentCount: 10,
-  },
-])
-
-const myReviews = ref([
-  {
-    id: 1,
-    attraction: {
-      id: 1,
-      title: '해운대 해수욕장',
-    },
-    rating: 5,
-    comment: '해운대 해수욕장 좋아요',
-    createdAt: '2024-01-01',
-  },
-])
-
-// 현재 선택된 탭의 데이터를 반환하는 computed 속성
-const getTabData = computed(() => ({
-  'my-place': likeAttractions,
-  'my-review': myReviews,
-  'my-abog': myAbogs,
-}))
-
 // 삭제 핸들러를 반환하는 computed 속성
 const getDeleteHandler = computed(() => ({
   'my-place': deleteAttraction,
@@ -57,20 +16,27 @@ const getDeleteHandler = computed(() => ({
   'my-abog': deleteAbog,
 }))
 
-const deleteAttraction = id => {
-  attractionApi.toggleAttractionLike(id, null, null)
-  likeAttractions.value = likeAttractions.value.filter(
-    attraction => attraction.id !== id,
-  )
+const deleteAttraction = async id => {
+  const { status, data, error } = await attractionApi.toggleAttractionLike(id)
+  if (error) {
+    console.error(error)
+  }
 }
 
-const deleteAbog = id => {
-  abogApi.deleteAbog(id, null, null)
-  myAbogs.value = myAbogs.value.filter(abog => abog.id !== id)
+const deleteAbog = async id => {
+  console.log('deleteAbog', id)
+  // const { status, data, error } = await abogApi.deleteAbog(id, null, null)
+  // if (error) {
+  //   console.error(error)
+  // }
 }
 
-const deleteReview = id => {
-  myReviews.value = myReviews.value.filter(review => review.id !== id)
+const deleteReview = async id => {
+  console.log('deleteReview', id)
+  // const { status, data, error } = await reviewApi.deleteReview(id, null, null)
+  // if (error) {
+  //   console.error(error)
+  // }
 }
 </script>
 
@@ -114,7 +80,6 @@ const deleteReview = id => {
         <component
           :is="content.component"
           :title="content.title"
-          :data="getTabData[content.value].value"
           @update:data="
             newValue => (getTabData[content.value].value = newValue)
           "
