@@ -8,11 +8,14 @@ import userAPI from '@/api/user'
 import { isPasswordValid } from '@/utils/isPasswordValid'
 import { useRouter } from 'vue-router'
 
+const BASE_URL = import.meta.env.VITE_API_BASE_URL
+
+const isImageChanged = ref(false)
+
 const userStore = useUserStore()
 const { userInfo } = storeToRefs(userStore)
 const router = useRouter()
 
-// const userUpdateData = ref(userInfo.value)
 const userUpdateData = ref({
   email: userInfo.value.email || '이메일',
   nickname: userInfo.value.nickname || '닉네임',
@@ -20,6 +23,10 @@ const userUpdateData = ref({
   passwordCheck: '',
   profileImageUrl: userInfo.value.profileImageUrl,
 })
+
+console.log(userUpdateData.value)
+
+const updateProfileImageFile = ref(null)
 
 const isPasswordValidState = computed(() => {
   const password = userUpdateData.value.password
@@ -59,7 +66,13 @@ watch(
 )
 
 // 프로필 이미지 변경
+const profileImageUrl = computed(() => {
+  return `${isImageChanged.value ? '' : BASE_URL}${userUpdateData.value.profileImageUrl}`
+})
+
 const handleProfileImageChange = e => {
+  isImageChanged.value = true
+  updateProfileImageFile.value = e.target.files?.[0]
   const fileURL = URL.createObjectURL(e.target.files?.[0])
   fileURL && (userUpdateData.value.profileImageUrl = fileURL)
 
@@ -71,7 +84,7 @@ const handleSave = async () => {
     // 저장 api 호출
 
     const formData = new FormData()
-    formData.append('profileImageUrl', userUpdateData.value.profileImageUrl)
+    formData.append('profileImage', updateProfileImageFile.value)
     formData.append('nickname', userUpdateData.value.nickname)
     formData.append('password', userUpdateData.value.password)
 
@@ -80,9 +93,11 @@ const handleSave = async () => {
       alert(error)
       return
     }
-    userInfo.value = { ...userInfo.value, ...userUpdateData.value }
+
+    formData.forEach(console.log)
+
     alert('저장되었습니다.')
-    router.push({ name: 'mypage' })
+    router.go(-1)
   }
 }
 </script>
@@ -104,10 +119,7 @@ const handleSave = async () => {
         <div class="overflow-hidden rounded-full size-36">
           <img
             class="object-center"
-            :src="
-              userUpdateData.profileImageUrl ||
-              '/src/assets/default_profile.png'
-            "
+            :src="profileImageUrl || '/src/assets/default_profile.png'"
             alt="logo"
           />
         </div>

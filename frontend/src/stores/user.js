@@ -15,7 +15,7 @@ const useUserStore = defineStore('user', () => {
     nickname: '',
     email: '',
     save: false,
-    profileImageUrl: null,
+    profileImageUrl: '',
   })
 
   // ? computed
@@ -32,7 +32,7 @@ const useUserStore = defineStore('user', () => {
 
     isAuthenticated.value = true
     userInfo.value = data
-    userInfo.value.profileImageUrl = `${BASE_URL}/${userInfo.value.profileImageUrl}`
+    userInfo.value.profileImageUrl = `${userInfo.value.profileImageUrl}`
   }
 
   // 로그인
@@ -42,10 +42,15 @@ const useUserStore = defineStore('user', () => {
     if (error) {
       alert(error)
     } else if (status === 200) {
+      router.push('/')
       isAuthenticated.value = true
       userInfo.value = data
-      userInfo.value.profileImageUrl = `${BASE_URL}/${userInfo.value.profileImageUrl}`
-      return { status, data }
+      console.log('login data', data)
+      userInfo.value.profileImageUrl = data.profileImageUrl
+    } else if (status === 401) {
+      alert('아이디 및 비밀번호를 확인해주세요.')
+    } else if (status === 400) {
+      alert('이메일 형식을 확인해주세요.')
     }
   }
 

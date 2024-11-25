@@ -12,14 +12,6 @@ const inputValue = ref({ email: '', password: '', save: false })
 
 const handleLogin = async () => {
   const { status, data } = await userStore.login(inputValue.value)
-
-  if (status === 200) {
-    router.push('/')
-  } else if (status === 401) {
-    alert('아이디 및 비밀번호를 확인해주세요.')
-  } else if (status === 400) {
-    alert('이메일 형식을 확인해주세요.')
-  }
 }
 </script>
 <template>

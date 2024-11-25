@@ -123,6 +123,7 @@ const handleSubmit = async () => {
 
   if (error) {
     alert(error)
+    isLoading.value = false
     return
   }
 
