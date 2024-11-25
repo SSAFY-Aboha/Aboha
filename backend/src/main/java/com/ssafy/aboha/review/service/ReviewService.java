@@ -84,15 +84,21 @@ public class ReviewService {
      */
     @Transactional
     public void deleteReview(Integer userId, Integer id) {
-        // 리뷰 조회
+        // 1. 리뷰 조회
         Review review = reviewRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("리뷰를 찾을 수 없습니다."));
 
-        // 작성자 확인
+        // 2. 작성자 확인
         if(!review.getUser().getId().equals(userId)) {
             throw new ForbiddenException("리뷰 삭제 권한이 없습니다.");
         }
 
+        // 3. 관광지 정보 업데이트
+        Attraction attraction = review.getAttraction();
+        BigDecimal rating = BigDecimal.valueOf(review.getRating());
+        attraction.deleteReview(rating);
+
+        // 4 리뷰 삭제
         review.delete();
     }
 
