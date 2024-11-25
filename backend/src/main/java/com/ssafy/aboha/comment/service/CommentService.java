@@ -82,13 +82,13 @@ public class CommentService {
      * 댓글 수정
      */
     @Transactional
-    public void updateComment(Integer id, CommentUpdateRequest request) {
+    public void updateComment(Integer userId, Integer id, CommentUpdateRequest request) {
         // 1. 리뷰 조회
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("댓글을 찾을 수 없습니다."));
 
         // 2. 사용자 권한 확인
-        if(!comment.getUser().getId().equals(id)) {
+        if(!comment.getUser().getId().equals(userId)) {
             throw new ForbiddenException("댓글 수정 권한이 없습니다.");
         }
 

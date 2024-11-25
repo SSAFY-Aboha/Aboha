@@ -60,7 +60,7 @@ public class CommentController {
             throw new UnauthorizedException("로그인이 필요합니다."); // 인증 실패
         }
 
-        commentService.updateComment(userResponse.id(), request);
+        commentService.updateComment(userResponse.id(), id, request);
 
         return ResponseEntity.noContent().build();
     }
