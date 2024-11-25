@@ -9,11 +9,13 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Table(name = "abogs")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@SQLRestriction("is_deleted = 0")
 public class Abog extends BaseEntity {
 
     @Id
@@ -40,8 +42,6 @@ public class Abog extends BaseEntity {
     @Column(name = "comment_count")
     private Long commentCount;
 
-    // TODO: 해시태그 적용 전
-
     @Builder
     public Abog(User user, Attraction attraction, String title, String content) {
         this.user = user;
@@ -58,6 +58,15 @@ public class Abog extends BaseEntity {
 
     public void decreaseLikeCount() {
         this.likeCount--;
+    }
+
+    public void increaseCommentCount() { this.commentCount++; }
+
+    public void decreaseCommentCount() { this.commentCount--; }
+
+    public void update(String title, String content) {
+        this.title = title;
+        this.content = content;
     }
 
 }

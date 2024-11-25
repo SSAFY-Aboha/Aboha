@@ -8,11 +8,13 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Table(name = "comments")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@SQLRestriction("is_deleted = 0")
 public class Comment extends BaseEntity {
 
     @Id
@@ -39,6 +41,10 @@ public class Comment extends BaseEntity {
         this.user = user;
         this.abog = abog;
         // TODO: 대댓글 적용 전
+        this.content = content;
+    }
+
+    public void updateContent(String content) {
         this.content = content;
     }
 }

@@ -3,6 +3,7 @@ package com.ssafy.aboha.review.controller;
 import com.ssafy.aboha.common.dto.response.CreatedResponse;
 import com.ssafy.aboha.common.exception.UnauthorizedException;
 import com.ssafy.aboha.review.dto.request.ReviewRequest;
+import com.ssafy.aboha.review.dto.request.ReviewUpdateRequest;
 import com.ssafy.aboha.review.dto.response.ReviewResponse;
 import com.ssafy.aboha.review.service.ReviewService;
 import com.ssafy.aboha.user.dto.response.UserInfo;
@@ -10,13 +11,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/reviews")
@@ -63,6 +58,24 @@ public class ReviewController {
         }
 
         reviewService.deleteReview(userResponse.id(), id);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    // 리뷰 수정
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> updateReview(
+            @PathVariable("id") Integer id,
+            @Valid @RequestBody ReviewUpdateRequest request,
+            HttpSession session
+    ) {
+        // 세션에서 인증된 사용자 정보 확인
+        UserInfo userResponse = (UserInfo) session.getAttribute("user");
+        if (userResponse == null) {
+            throw new UnauthorizedException("로그인이 필요합니다."); // 인증 실패
+        }
+
+        reviewService.updateReview(userResponse.id(), id, request);
 
         return ResponseEntity.noContent().build();
     }

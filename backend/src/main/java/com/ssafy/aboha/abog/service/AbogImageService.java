@@ -79,13 +79,34 @@ public class AbogImageService {
     /**
      * 아보그 이미지 리스트 조회
      */
-    public List<String> getAbogImages(Abog abog) {
+    public List<String> getImages(Abog abog) {
         String contextPath = ServletUtils.getContextPath(); // HTTP 요청 시점에 동적으로 Context Path 가져오기
 
         return abogImageRepository.findByAbog(abog)
                 .stream()
                 .map(abogImage -> contextPath + abogImage.getImageUrl()) // Context Path 추가
                 .toList();
+    }
+
+    /**
+     * 아보그 이미지 삭제
+     */
+    @Transactional
+    public void deleteImages(Abog abog) {
+        List<AbogImage> images = abogImageRepository.findByAbog(abog);
+
+        for (AbogImage image : images) {
+            // DB에서 이미지 삭제
+            abogImageRepository.delete(image);
+
+            // 로컬 파일 삭제
+            String filePath = UPLOAD_DIR + image.getImageUrl().substring(image.getImageUrl().lastIndexOf("/") + 1);
+            try {
+                Files.deleteIfExists(Paths.get(filePath));
+            } catch (IOException e) {
+                throw new RuntimeException("이미지 파일 삭제 중 오류가 발생했습니다: " + e.getMessage(), e);
+            }
+        }
     }
 
     private void validateImage(List<MultipartFile> images) {

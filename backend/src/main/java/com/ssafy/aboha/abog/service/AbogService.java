@@ -3,6 +3,7 @@ package com.ssafy.aboha.abog.service;
 
 import com.ssafy.aboha.abog.domain.Abog;
 import com.ssafy.aboha.abog.dto.request.AbogRequest;
+import com.ssafy.aboha.abog.dto.request.AbogUpdateRequest;
 import com.ssafy.aboha.abog.dto.response.AbogResponse;
 import com.ssafy.aboha.abog.dto.response.MyAbogResponse;
 import com.ssafy.aboha.abog.repository.AbogRepository;
@@ -10,6 +11,7 @@ import com.ssafy.aboha.attraction.domain.Attraction;
 import com.ssafy.aboha.attraction.repository.AttractionRepository;
 import com.ssafy.aboha.common.dto.response.KeySetPaginatedResponse;
 import com.ssafy.aboha.common.exception.NotFoundException;
+import com.ssafy.aboha.common.exception.UnauthorizedException;
 import com.ssafy.aboha.like.repository.AbogLikeRepository;
 import com.ssafy.aboha.user.domain.User;
 import com.ssafy.aboha.user.dto.response.UserInfo;
@@ -82,7 +84,7 @@ public class AbogService {
         return abogs.stream()
                 .map(abog -> {
                     // 각 아보그의 이미지 URL 리스트 조회
-                    List<String> imageUrls = abogImageService.getAbogImages(abog);
+                    List<String> imageUrls = abogImageService.getImages(abog);
 
                     // 각 아보그의 태그 리스트 조회
                     List<String> tags = abogTagService.getTags(abog);
@@ -104,7 +106,7 @@ public class AbogService {
                 .orElseThrow(() -> new NotFoundException("해당 아보그가 존재하지 않습니다."));
 
         // 아보그 이미지 URL 리스트 조회
-        List<String> imageUrls = abogImageService.getAbogImages(abog);
+        List<String> imageUrls = abogImageService.getImages(abog);
 
         // 아보그 태그 리스트 조회
         List<String> tags = abogTagService.getTags(abog);
@@ -113,6 +115,56 @@ public class AbogService {
         boolean isLiked = (loginId != null) && likeRepository.existsByUserIdAndAbogId(loginId, id);
 
         return AbogResponse.of(abog, imageUrls, tags, isLiked);
+    }
+
+    /**
+     * 아보그 수정
+     */
+    @Transactional
+    public void updateAbog(Integer userId, Integer id, AbogUpdateRequest request) {
+        // 1. 아보그 조회
+        Abog abog = abogRepository.findByAbogId(id)
+                .orElseThrow(() -> new NotFoundException("아보그를 찾을 수 없습니다."));
+
+        // 2. 사용자 권한 확인
+        if (!abog.getUser().getId().equals(userId)) {
+            throw new UnauthorizedException("아보그 수정 권한이 없습니다.");
+        }
+
+        // 3. 제목, 내용 수정
+        abog.update(request.title(), request.content());
+
+        // 4. 기존 이미지 삭제 및 새 이미지 업로드
+        abogImageService.deleteImages(abog);
+        abogImageService.uploadImages(abog, request.imageFiles());
+
+        // 5. 기존 태그 삭제 및 새 태그 생성
+        abogTagService.deleteTags(abog);
+        abogTagService.createTags(abog, request.tags());
+    }
+
+    /**
+     * 아보그 삭제
+     */
+    @Transactional
+    public void deleteAbog(Integer userId, Integer id) {
+        // 1. 아보그 조회
+        Abog abog = abogRepository.findByAbogId(id)
+                .orElseThrow(() -> new NotFoundException("해당 아보그가 존재하지 않습니다."));
+
+        // 2. 사용자 권한 확인
+        if (!abog.getUser().getId().equals(userId)) {
+            throw new UnauthorizedException("삭제 권한이 없습니다.");
+        }
+
+        // 3. 이미지 삭제
+        abogImageService.deleteImages(abog);
+
+        // 4. 태그 삭제
+        abogTagService.deleteTags(abog);
+
+        // 5. 아보그 삭제 (하위 엔티티는 DB에서 자동 삭제)
+        abog.delete();
     }
 
     /**
