@@ -17,12 +17,13 @@ import com.ssafy.aboha.common.dto.response.PaginatedResponse;
 import com.ssafy.aboha.like.domain.QAttractionLike;
 import com.ssafy.aboha.review.domain.QReview;
 import jakarta.persistence.EntityManager;
-import java.util.List;
-import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class AttractionCustomRepositoryImpl implements AttractionCustomRepository {
@@ -348,39 +349,31 @@ public class AttractionCustomRepositoryImpl implements AttractionCustomRepositor
     public KeySetPaginatedResponse<MyReviewedAttractionResponse> findByUserReviewed(Integer userId, Pageable pageable) {
         QAttraction qAttraction = QAttraction.attraction;
         QReview qReview = QReview.review;
-        QSido qSido = QSido.sido;
-        QGugun qGugun = QGugun.gugun;
 
-        // 3. 프로젝션을 사용하여 MyReviewedAttractionResponse DTO로 데이터 매핑
+        // 프로젝션을 사용하여 MyReviewedAttractionResponse DTO로 데이터 매핑
         List<MyReviewedAttractionResponse> pagedResults = queryFactory
-                .select(Projections.constructor(MyReviewedAttractionResponse.class,
-                        qAttraction.id,
-                        qAttraction.title,
-                        qReview.id,
-                        qReview.createdAt,
-                        qReview.content,
-                        qReview.rating))
-                .from(qReview)
+                .selectFrom(qReview)
                 .join(qReview.attraction, qAttraction)
-                .leftJoin(qAttraction.sido, qSido)
-                .leftJoin(qAttraction.gugun, qGugun)
                 .where(qReview.user.id.eq(userId))
                 .limit(pageable.getPageSize() + 1) // 다음 페이지 존재 여부 확인
-                .fetch();
+                .fetch()
+                .stream()
+                .map(review -> MyReviewedAttractionResponse.of(review.getAttraction(), review)) // of 메서드를 통해 매핑
+                .toList();
 
 
-        // 6. 다음 페이지 존재 여부 판단
+        // 다음 페이지 존재 여부 판단
         boolean hasNext = pagedResults.size() > pageable.getPageSize();
 
         if (hasNext) {
             pagedResults.remove(pagedResults.size() - 1); // 실제 데이터는 pageSize만큼 유지
         }
 
-        // 7. 마지막 정렬 값과 마지막 ID 추출
+        // 마지막 정렬 값과 마지막 ID 추출
         MyReviewedAttractionResponse lastRecord = pagedResults.get(pagedResults.size() - 1);
         Integer newLastId = lastRecord.attractionId();
 
-        // 8. `KeySetPaginatedResponse` 반환
+        // `KeySetPaginatedResponse` 반환
         return KeySetPaginatedResponse.<MyReviewedAttractionResponse>builder()
                 .content(pagedResults)
                 .hasNext(hasNext)

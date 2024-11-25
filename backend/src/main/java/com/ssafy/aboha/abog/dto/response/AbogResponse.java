@@ -3,8 +3,9 @@ package com.ssafy.aboha.abog.dto.response;
 import com.ssafy.aboha.abog.domain.Abog;
 import com.ssafy.aboha.attraction.dto.response.AttractionSummary;
 import com.ssafy.aboha.user.dto.response.UserSummary;
-import java.util.List;
 import lombok.Builder;
+
+import java.util.List;
 
 @Builder
 public record AbogResponse(
@@ -18,17 +19,17 @@ public record AbogResponse(
         Boolean isLiked
 ) {
 
-    public static AbogResponse of(Abog abog, List<String> imageUrls, Boolean isLiked) {
+    public static AbogResponse of(Abog abog, List<String> imageUrls, List<String> tags, Boolean isLiked) {
         UserSummary userSummary = UserSummary.from(abog.getUser());
         AttractionSummary attractionSummary = AttractionSummary.from(abog.getAttraction());
-        AbogSummary abogSummary = AbogSummary.of(abog, imageUrls);
+        AbogSummary abogSummary = AbogSummary.of(abog, imageUrls, tags);
 
         return AbogResponse.builder()
-            .user(userSummary)
-            .attraction(attractionSummary)
-            .abog(abogSummary)
-            .isLiked(isLiked)
-            .build();
+                .user(userSummary)
+                .attraction(attractionSummary)
+                .abog(abogSummary)
+                .isLiked(isLiked)
+                .build();
     }
 
 }

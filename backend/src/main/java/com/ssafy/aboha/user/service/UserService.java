@@ -88,6 +88,17 @@ public class UserService {
         }
     }
 
+    /**
+     * 회원 탈퇴
+     */
+    @Transactional
+    public void deleteUser(Integer id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("로그인한 사용자가 존재하지 않습니다."));
+
+        user.delete();
+    }
+
     private void verifyUniqueNickname(String nickname) {
         if(userRepository.existsUserByNickname(nickname)) {
             throw new ConflictException("이미 존재하는 닉네임입니다.");

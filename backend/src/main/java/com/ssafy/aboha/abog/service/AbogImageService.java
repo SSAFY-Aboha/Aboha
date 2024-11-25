@@ -4,22 +4,24 @@ import com.ssafy.aboha.abog.domain.Abog;
 import com.ssafy.aboha.abog.domain.AbogImage;
 import com.ssafy.aboha.abog.repository.AbogImageRepository;
 import com.ssafy.aboha.common.exception.BadRequestException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class AbogImageService {
 
+    private static final Long MAX_FILE_SIZE = 10 * 1024 * 1024L; // 최대 10MB
     private static final int MAX_IMAGES = 5; // 최대 이미지 개수
     private static final String UPLOAD_DIR = "src/main/resources/uploads/abog/"; // 저장 경로
     private static final String BASE_URL = "/uploads/abog/"; // 반환할 URL 경로 prefix
@@ -42,9 +44,9 @@ public class AbogImageService {
 
                 // 엔티티 생성 및 저장
                 AbogImage abogImage = AbogImage.builder()
-                    .abog(abog)
-                    .imageUrl(dbFilePath)
-                    .build();
+                        .abog(abog)
+                        .imageUrl(dbFilePath)
+                        .build();
 
                 abogImageRepository.save(abogImage);
             }
@@ -76,8 +78,11 @@ public class AbogImageService {
     /**
      * 아보그 이미지 리스트 조회
      */
-    public List<AbogImage> getAbogImages(Integer abogId) {
-        return abogImageRepository.findByAbogId(abogId);
+    public List<String> getAbogImages(Abog abog) {
+        return abogImageRepository.findByAbog(abog)
+                .stream()
+                .map(AbogImage::getImageUrl)
+                .toList();
     }
 
     private void validateImage(List<MultipartFile> images) {
@@ -89,10 +94,9 @@ public class AbogImageService {
         // 각 이미지 파일에 대해 추가 유효성 검사 수행
         for (MultipartFile image : images) {
             // 파일 크기 제한 (예: 5MB 이하)
-            long maxFileSize = 5 * 1024 * 1024; // 5MB
-            if (image.getSize() > maxFileSize) {
+            if (image.getSize() > MAX_FILE_SIZE) {
                 throw new BadRequestException(
-                    "이미지 파일 크기는 최대 5MB를 초과할 수 없습니다: " + image.getOriginalFilename());
+                        "이미지 파일 크기는 최대 5MB를 초과할 수 없습니다: " + image.getOriginalFilename());
             }
 
             // 파일 형식 제한 (예: JPG, JPEG, PNG)
