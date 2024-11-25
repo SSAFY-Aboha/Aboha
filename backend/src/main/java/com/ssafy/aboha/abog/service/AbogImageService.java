@@ -29,6 +29,7 @@ public class AbogImageService {
     /**
      * 아보그 이미지 등록
      */
+    @Transactional
     public void uploadImages(Abog abog, List<MultipartFile> images) {
         try {
             // 이미지 유효성 검사

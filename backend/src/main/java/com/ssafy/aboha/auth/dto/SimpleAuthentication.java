@@ -1,16 +1,16 @@
 package com.ssafy.aboha.auth.dto;
 
-import com.ssafy.aboha.user.dto.response.UserResponse;
+import com.ssafy.aboha.user.dto.response.UserInfo;
 import java.util.Collection;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
 public class SimpleAuthentication implements Authentication {
 
-    private final UserResponse userResponse;
+    private final UserInfo userResponse;
     private boolean authenticated = true;
 
-    public SimpleAuthentication(UserResponse userResponse) {
+    public SimpleAuthentication(UserInfo userResponse) {
         this.userResponse = userResponse;
     }
 

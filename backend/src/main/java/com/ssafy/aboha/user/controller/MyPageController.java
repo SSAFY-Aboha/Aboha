@@ -7,7 +7,8 @@ import com.ssafy.aboha.attraction.dto.response.MyReviewedAttractionResponse;
 import com.ssafy.aboha.attraction.service.AttractionService;
 import com.ssafy.aboha.common.dto.response.KeySetPaginatedResponse;
 import com.ssafy.aboha.common.exception.UnauthorizedException;
-import com.ssafy.aboha.user.dto.response.UserResponse;
+import com.ssafy.aboha.user.dto.response.MyPageResposne;
+import com.ssafy.aboha.user.dto.response.UserInfo;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -32,7 +33,7 @@ public class MyPageController {
             @PageableDefault(size = 12) Pageable pageable
     ) {
         // 세션에서 인증된 사용자 정보 확인
-        UserResponse userResponse = (UserResponse) session.getAttribute("user");
+        UserInfo userResponse = (UserInfo) session.getAttribute("user");
         if (userResponse == null) {
             throw new UnauthorizedException("로그인이 필요합니다."); // 인증 실패
         }
@@ -48,12 +49,12 @@ public class MyPageController {
             @PageableDefault(size = 12) Pageable pageable
     ) {
         // 세션에서 인증된 사용자 정보 확인
-        UserResponse userResponse = (UserResponse) session.getAttribute("user");
-        if (userResponse == null) {
+        UserInfo user = (UserInfo) session.getAttribute("user");
+        if (user == null) {
             throw new UnauthorizedException("로그인이 필요합니다."); // 인증 실패
         }
 
-        KeySetPaginatedResponse<MyReviewedAttractionResponse> response = attractionService.getUserReviewedAttractions(userResponse.id(), pageable);
+        KeySetPaginatedResponse<MyReviewedAttractionResponse> response = attractionService.getUserReviewedAttractions(user.id(), pageable);
         return ResponseEntity.ok().body(response);
     }
 
@@ -64,12 +65,36 @@ public class MyPageController {
             @PageableDefault(size = 12) Pageable pageable
     ) {
         // 세션에서 인증된 사용자 정보 확인
-        UserResponse userResponse = (UserResponse) session.getAttribute("user");
-        if (userResponse == null) {
+        UserInfo user = (UserInfo) session.getAttribute("user");
+        if (user == null) {
             throw new UnauthorizedException("로그인이 필요합니다."); // 인증 실패
         }
 
-        KeySetPaginatedResponse<MyAbogResponse> response = abogService.getUserAbogs(userResponse.id(), pageable);
+        KeySetPaginatedResponse<MyAbogResponse> response = abogService.getUserAbogs(user.id(), pageable);
+        return ResponseEntity.ok().body(response);
+    }
+
+    // 사용자 정보 조회
+    @GetMapping("/me")
+    public ResponseEntity<MyPageResposne> getUser(
+        HttpSession session
+    ) {
+        // 세션에서 인증된 사용자 정보 확인
+        UserInfo user = (UserInfo) session.getAttribute("user");
+        if (user == null) {
+            throw new UnauthorizedException("로그인이 필요합니다."); // 인증 실패
+        }
+
+        Long likeCount = attractionService.getCountByUserLikedAttractions(user.id());
+        Long reviewedCount = attractionService.getCountByuserReviewedAttractions(user.id());
+        Long abogCount = abogService.getCountByUserAbog(user.id());
+
+        MyPageResposne response = MyPageResposne.builder()
+            .user(user)
+            .likeCount(likeCount)
+            .reviewCount(reviewedCount)
+            .abogCount(abogCount)
+            .build();
         return ResponseEntity.ok().body(response);
     }
 

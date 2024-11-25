@@ -332,6 +332,19 @@ public class AttractionCustomRepositoryImpl implements AttractionCustomRepositor
     }
 
     @Override
+    public Long countUserLiked(Integer userId) {
+        QAttraction qAttraction = QAttraction.attraction;
+        QAttractionLike qAttractionLike = QAttractionLike.attractionLike;
+
+        return queryFactory
+            .select(qAttractionLike.count())
+            .from(qAttractionLike)
+            .join(qAttractionLike.attraction, qAttraction) // AttractionLike와 Attraction 조인
+            .where(qAttractionLike.user.id.eq(userId))
+            .fetchOne();
+    }
+
+    @Override
     public KeySetPaginatedResponse<MyReviewedAttractionResponse> findByUserReviewed(Integer userId, Pageable pageable) {
         QAttraction qAttraction = QAttraction.attraction;
         QReview qReview = QReview.review;
@@ -375,6 +388,19 @@ public class AttractionCustomRepositoryImpl implements AttractionCustomRepositor
                 .lastId(newLastId)
                 .totalElements(0)   // 사용 안 함
                 .build();
+    }
+
+    @Override
+    public Long countUserReviewed(Integer userId) {
+        QAttraction qAttraction = QAttraction.attraction;
+        QReview qReview = QReview.review;
+
+        return queryFactory
+            .select(qReview.count())
+            .from(qReview)
+            .join(qReview.attraction, qAttraction) // Review와 Attraction 조인
+            .where(qReview.user.id.eq(userId))
+            .fetchOne();
     }
 
     private OrderSpecifier<?> getOrderSpecifier(String sort, QAttraction qAttraction) {

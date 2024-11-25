@@ -7,10 +7,9 @@ import com.ssafy.aboha.attraction.dto.response.MyLikedAttractionResponse;
 import com.ssafy.aboha.attraction.dto.response.MyReviewedAttractionResponse;
 import com.ssafy.aboha.common.dto.response.KeySetPaginatedResponse;
 import com.ssafy.aboha.common.dto.response.PaginatedResponse;
-import org.springframework.data.domain.Pageable;
-
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Pageable;
 
 public interface AttractionCustomRepository {
 
@@ -30,6 +29,10 @@ public interface AttractionCustomRepository {
     // 사용자가 좋아요한 관광지 목록 조회
     KeySetPaginatedResponse<MyLikedAttractionResponse> findByUserLiked(Integer userId, Pageable pageable);
 
+    Long countUserLiked(Integer userId);
+
     // 사용자가 남긴 리뷰의 목록 조회
     KeySetPaginatedResponse<MyReviewedAttractionResponse> findByUserReviewed(Integer userId, Pageable pageable);
+
+    Long countUserReviewed(Integer userId);
 }

@@ -37,10 +37,23 @@ public class User extends BaseEntity {
 
 
     @Builder
-    public User(String nickname, String email, String password) {
+    public User(String nickname, String email, String password, String profileImageUrl) {
         this.nickname = nickname;
         this.email = email;
         this.password = password;
+        this.profileImageUrl = profileImageUrl;
+    }
+
+    public void updateNickname(String newNickname) {
+        this.nickname = newNickname;
+    }
+
+    public void updatePassword(String newPassword) {
+        this.password = newPassword;
+    }
+
+    public void updateProfileImageUrl(String newProfileImageUrl) {
+        this.profileImageUrl = newProfileImageUrl;
     }
 
 }
