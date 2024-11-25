@@ -3,6 +3,7 @@ package com.ssafy.aboha.abog.service;
 
 import com.ssafy.aboha.abog.domain.Abog;
 import com.ssafy.aboha.abog.dto.request.AbogRequest;
+import com.ssafy.aboha.abog.dto.request.AbogUpdateRequest;
 import com.ssafy.aboha.abog.dto.response.AbogResponse;
 import com.ssafy.aboha.abog.dto.response.MyAbogResponse;
 import com.ssafy.aboha.abog.repository.AbogRepository;
@@ -114,6 +115,32 @@ public class AbogService {
         boolean isLiked = (loginId != null) && likeRepository.existsByUserIdAndAbogId(loginId, id);
 
         return AbogResponse.of(abog, imageUrls, tags, isLiked);
+    }
+
+    /**
+     * 아보그 수정
+     */
+    @Transactional
+    public void updateAbog(Integer userId, Integer id, AbogUpdateRequest request) {
+        // 1. 아보그 조회
+        Abog abog = abogRepository.findByAbogId(id)
+                .orElseThrow(() -> new NotFoundException("아보그를 찾을 수 없습니다."));
+
+        // 2. 사용자 권한 확인
+        if (!abog.getUser().getId().equals(userId)) {
+            throw new UnauthorizedException("아보그 수정 권한이 없습니다.");
+        }
+
+        // 3. 제목, 내용 수정
+        abog.update(request.title(), request.content());
+
+        // 4. 기존 이미지 삭제 및 새 이미지 업로드
+        abogImageService.deleteImages(abog);
+        abogImageService.uploadImages(abog, request.imageFiles());
+
+        // 5. 기존 태그 삭제 및 새 태그 생성
+        abogTagService.deleteTags(abog);
+        abogTagService.createTags(abog, request.tags());
     }
 
     /**
