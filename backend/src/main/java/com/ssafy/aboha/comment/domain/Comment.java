@@ -41,4 +41,8 @@ public class Comment extends BaseEntity {
         // TODO: 대댓글 적용 전
         this.content = content;
     }
+
+    public void updateContent(String content) {
+        this.content = content;
+    }
 }
