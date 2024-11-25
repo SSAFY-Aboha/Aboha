@@ -74,7 +74,7 @@ const onClickAttraction = async id => {
 </script>
 
 <template>
-  <ul class="flex flex-col h-full overflow-y-auto gap-y-2">
+  <ul class="flex flex-col h-full gap-y-2">
     <li
       @click="onClickAttraction(attraction.id)"
       v-for="attraction in attractionList"
@@ -145,25 +145,24 @@ const onClickAttraction = async id => {
         </div>
       </div>
     </li>
-
-    <!-- 스켈레톤 및 관찰 대상 요소, isLoading 상태일 때 로드 중 표시 -->
-    <div ref="observerTarget" class="w-full">
-      <div v-if="isLoading">
-        <div class="flex flex-col gap-3">
-          <Skeleton
-            v-for="each in 4"
-            :key="each"
-            class="w-full h-24 rounded-xl"
-          />
-        </div>
-      </div>
-
-      <!-- 더 이상 로드할 데이터가 없는 경우 -->
-      <div v-if="!hasMore && !isLoading">
-        <AttractionHasMore />
+  </ul>
+  <!-- 스켈레톤 및 관찰 대상 요소, isLoading 상태일 때 로드 중 표시 -->
+  <div ref="observerTarget" class="w-full">
+    <div v-if="isLoading">
+      <div class="flex flex-col gap-3">
+        <Skeleton
+          v-for="each in 4"
+          :key="each"
+          class="w-full h-24 rounded-xl"
+        />
       </div>
     </div>
-  </ul>
+
+    <!-- 더 이상 로드할 데이터가 없는 경우 -->
+    <div v-if="!hasMore && !isLoading">
+      <AttractionHasMore />
+    </div>
+  </div>
 </template>
 
 <style scoped>

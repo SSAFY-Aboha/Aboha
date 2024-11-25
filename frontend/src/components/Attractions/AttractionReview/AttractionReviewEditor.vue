@@ -25,14 +25,19 @@ const reviewData = ref({
 const isOpen = ref(false)
 
 // 후기 등록
-const handleSubmit = () => {
+const handleSubmit = async () => {
   if (!handleCheck()) return
   console.log(reviewData.value)
 
   // 후기 등록
-  attractionAPI.postAttractionReview(reviewData.value, () => {
-    reviews.value = [...reviews.value, reviewData.value] // 후기 등록 후 바로 반영
-  })
+  const { status, error, data } = await attractionAPI.postAttractionReview(
+    reviewData.value,
+  )
+
+  if (status === 200) {
+    reviews.value = [...reviews.value, data] // 후기 등록 후 바로 반영
+    console.log('추가', reviews.value)
+  }
 
   // 후기 등록 후 초기화
   reviewData.value = {
