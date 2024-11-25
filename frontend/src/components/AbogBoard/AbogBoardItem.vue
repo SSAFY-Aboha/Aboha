@@ -13,6 +13,7 @@ import { computed, ref } from 'vue'
 import abogApi from '@/api/abog'
 import { UserIcon } from 'lucide-vue-next'
 import { Badge } from '../ui/badge'
+import AvatarIcon from '../common/AvatarIcon.vue'
 
 const props = defineProps({
   data: Object,
@@ -68,15 +69,7 @@ const handleLike = async () => {
   <article class="w-full p-4">
     <!-- 헤더 영역 -->
     <div class="flex items-center gap-3 mb-4">
-      <Avatar class="size-10">
-        <AvatarImage
-          :src="profileImageUrl || `/src/assets/mainPage_image.jpg`"
-          alt="avatar"
-        />
-        <AvatarFallback>
-          <UserIcon class="size-6" />
-        </AvatarFallback>
-      </Avatar>
+      <AvatarIcon :src="profileImageUrl" />
 
       <div class="flex-1">
         <div class="flex items-center justify-between">
