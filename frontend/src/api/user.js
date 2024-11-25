@@ -52,8 +52,8 @@ const checkEmail = email => {
  *
  * @body { email: String, nickname: String, password: String, profileImageUrl: String }
  */
-const updateUserInfo = async (userId, formData) => {
-  return fetchApi('put', `/api/v1/users/${userId}`, formData, {
+const updateUserInfo = formData => {
+  return fetchApi('put', `/api/v1/users/me`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -61,8 +61,8 @@ const updateUserInfo = async (userId, formData) => {
 }
 
 // 회원 탈퇴
-const deleteUser = userId => {
-  return fetchApi('delete', `/api/v1/users/${userId}`)
+const deleteUser = () => {
+  return fetchApi('delete', `/api/v1/users/me`)
 }
 
 // 사용자가 좋아요한 관광지 목록 조회

@@ -9,7 +9,12 @@ const props = defineProps({
   },
 })
 
-const keyword = defineModel('keyword')
+const emit = defineEmits(['handleSearch', 'update:model-value'])
+// const keyword = defineModel('keyword')
+
+const handleSearch = keyword => {
+  emit('update:model-value', keyword)
+}
 </script>
 
 <template>
@@ -20,6 +25,8 @@ const keyword = defineModel('keyword')
       placeholder="키워드 입력 후 Enter..."
       class="pl-10"
       v-model="keyword"
+      @keyup.enter="emit('handleSearch')"
+      @update:model-value="handleSearch"
     />
     <span
       class="absolute inset-y-0 flex items-center justify-center px-2 start-0"

@@ -28,6 +28,12 @@ onMounted(async () => {
 const userStore = useUserStore()
 const { userInfo } = storeToRefs(userStore)
 
+const updateUserInfo = computed(() => {
+  return userInfo.value
+})
+
+console.log('updateUserInfo', updateUserInfo.value)
+
 const activityStats = computed(() => {
   return [
     {
@@ -73,7 +79,7 @@ const activityStats = computed(() => {
       <header class="flex flex-col items-start justify-center py-5 gap-y-8">
         <div class="w-full px-8">
           <h1 class="text-3xl font-bold font-Namum">
-            안녕하세요. {{ userInfo.nickname }}님
+            안녕하세요. {{ updateUserInfo.nickname }}님
           </h1>
         </div>
         <div class="flex justify-around w-full gap-4">

@@ -1,4 +1,5 @@
 <script setup>
+import AvatarIcon from '@/components/common/AvatarIcon.vue'
 import RatingStar from '@/components/common/RatingStar.vue'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { UserIcon } from 'lucide-vue-next'
@@ -17,12 +18,7 @@ defineProps({
   >
     <!-- 유저 정보 -->
     <div class="flex items-center w-full gap-2">
-      <Avatar class="size-8">
-        <AvatarImage src="/src/assets/mainPage_image.jpg" alt="avatar" />
-        <AvatarFallback>
-          <UserIcon class="size-4" />
-        </AvatarFallback>
-      </Avatar>
+      <AvatarIcon :src="profileImageUrl" />
       <span class="text-md">{{ review.user.nickname }}</span>
     </div>
     <div class="flex flex-col w-full gap-2">
