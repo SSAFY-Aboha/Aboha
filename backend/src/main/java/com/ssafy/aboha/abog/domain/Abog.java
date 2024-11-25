@@ -64,4 +64,9 @@ public class Abog extends BaseEntity {
 
     public void decreaseCommentCount() { this.commentCount--; }
 
+    public void update(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
+
 }
