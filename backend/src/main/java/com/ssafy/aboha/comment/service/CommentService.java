@@ -96,4 +96,26 @@ public class CommentService {
         comment.updateContent(request.content());
     }
 
+    /**
+     * 댓글 삭제
+     */
+    @Transactional
+    public void deleteComment(Integer userId, Integer id) {
+        // 1. 리뷰 조회
+        Comment comment = commentRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("댓글을 찾을 수 없습니다."));
+
+        // 2. 사용자 권한 확인
+        if(!comment.getUser().getId().equals(userId)) {
+            throw new ForbiddenException("댓글 삭제 권한이 없습니다.");
+        }
+
+        // 3. 아보그 정보 업데이트
+        Abog abog = comment.getAbog();
+        abog.decreaseCommentCount();
+
+        // 3. 댓글 삭제
+        commentRepository.delete(comment);
+    }
+
 }

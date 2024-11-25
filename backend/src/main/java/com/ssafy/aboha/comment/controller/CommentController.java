@@ -64,4 +64,21 @@ public class CommentController {
 
         return ResponseEntity.noContent().build();
     }
+
+    // 댓글 삭제
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteComment(
+            @PathVariable("id") Integer id,
+            HttpSession session
+    ) {
+        // 세션에서 인증된 사용자 정보 확인
+        UserInfo userResponse = (UserInfo) session.getAttribute("user");
+        if (userResponse == null) {
+            throw new UnauthorizedException("로그인이 필요합니다."); // 인증 실패
+        }
+
+        commentService.deleteComment(userResponse.id(), id);
+
+        return ResponseEntity.noContent().build();
+    }
 }
