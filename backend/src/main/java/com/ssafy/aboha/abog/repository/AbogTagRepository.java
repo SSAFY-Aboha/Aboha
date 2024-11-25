@@ -9,4 +9,6 @@ import java.util.List;
 public interface AbogTagRepository extends JpaRepository<AbogTag, Integer> {
 
     List<AbogTag> findByAbog(Abog abog);
+
+    void deleteByAbog(Abog abog);
 }
