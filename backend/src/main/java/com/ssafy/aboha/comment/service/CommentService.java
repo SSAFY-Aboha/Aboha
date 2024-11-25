@@ -4,8 +4,10 @@ import com.ssafy.aboha.abog.domain.Abog;
 import com.ssafy.aboha.abog.repository.AbogRepository;
 import com.ssafy.aboha.comment.domain.Comment;
 import com.ssafy.aboha.comment.dto.request.CommentRequest;
+import com.ssafy.aboha.comment.dto.request.CommentUpdateRequest;
 import com.ssafy.aboha.comment.dto.response.CommentResponse;
 import com.ssafy.aboha.comment.repository.CommentRepository;
+import com.ssafy.aboha.common.exception.ForbiddenException;
 import com.ssafy.aboha.common.exception.NotFoundException;
 import com.ssafy.aboha.user.domain.User;
 import com.ssafy.aboha.user.repository.UserRepository;
@@ -44,6 +46,9 @@ public class CommentService {
                 .content(request.content())
                 .build();
 
+        // 댓글수 증가
+        abog.increaseCommentCount();
+
         commentRepository.save(comment);
 
         return comment.getId();
@@ -72,4 +77,23 @@ public class CommentService {
 
         return CommentResponse.from(comment);
     }
+
+    /**
+     * 댓글 수정
+     */
+    @Transactional
+    public void updateComment(Integer id, CommentUpdateRequest request) {
+        // 1. 리뷰 조회
+        Comment comment = commentRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("댓글을 찾을 수 없습니다."));
+
+        // 2. 사용자 권한 확인
+        if(!comment.getUser().getId().equals(id)) {
+            throw new ForbiddenException("댓글 수정 권한이 없습니다.");
+        }
+
+        // 3. 댓글 정보 업데이트
+        comment.updateContent(request.content());
+    }
+
 }
