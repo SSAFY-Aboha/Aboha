@@ -68,7 +68,7 @@ const handleLogout = async () => {
       </div>
 
       <!-- Navigation -->
-      <nav class="hidden md:flex items-center space-x-6">
+      <nav class="items-center hidden space-x-6 md:flex">
         <RouterLink
           v-for="item in [
             { to: '/trips', label: '모든 여행 보러가기' },
@@ -82,9 +82,7 @@ const handleLogout = async () => {
           {{ item.label }}
         </RouterLink>
 
-        <Button variant="ghost" class="text-sm font-medium">
-          여행 계획 세우기
-        </Button>
+        <Button variant="ghost" class="text-sm font-medium"> 여행 계획 </Button>
 
         <Button variant="secondary" class="text-sm font-medium">
           <RouterLink :to="{ name: 'suggest' }">아보하 추천받기</RouterLink>
@@ -95,14 +93,14 @@ const handleLogout = async () => {
       <div class="flex items-center space-x-4">
         <template v-if="isLoading">
           <Skeleton class="h-9 w-[100px]" />
-          <Skeleton class="h-10 w-10 rounded-full" />
+          <Skeleton class="w-10 h-10 rounded-full" />
         </template>
 
         <template v-else>
           <Button
             v-if="!isAuthenticated"
             variant="ghost"
-            class="text-sm hidden md:inline-flex"
+            class="hidden text-sm md:inline-flex"
           >
             <RouterLink to="/signup">회원가입</RouterLink>
           </Button>
@@ -126,14 +124,14 @@ const handleLogout = async () => {
 
             <RouterLink :to="`/mypage/${userInfo?.email}`" class="relative">
               <Avatar
-                class="size-10 ring-2 ring-offset-2 ring-green-500/10 transition-all hover:ring-green-500/20"
+                class="transition-all size-10 ring-2 ring-offset-2 ring-green-500/10 hover:ring-green-500/20"
               >
                 <AvatarImage
                   :src="userInfo?.profileImageUrl"
                   alt="프로필 이미지"
                 />
                 <AvatarFallback class="bg-green-50">
-                  <UserIcon class="size-5 text-green-500" />
+                  <UserIcon class="text-green-500 size-5" />
                 </AvatarFallback>
               </Avatar>
             </RouterLink>

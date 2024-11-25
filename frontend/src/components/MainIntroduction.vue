@@ -1,11 +1,70 @@
-<script setup></script>
+<script setup>
+import { ref } from 'vue'
+import { AlertTitle } from './ui/alert'
+import Alert from './ui/alert/Alert.vue'
+import AlertDescription from './ui/alert/AlertDescription.vue'
+
+const isAlertVisible = ref(false)
+
+const cloverMessage = ref([
+  {
+    title: '당신을 응원합니다 😘',
+    message: '화이팅!!',
+  },
+  {
+    title: '오늘도 좋은 하루 보내세요 🌟',
+    message: '당신의 하루가 행복으로 가득하길!',
+  },
+  {
+    title: '힘내세요! 💪',
+    message: '당신은 할 수 있어요!',
+  },
+  {
+    title: '행복한 여행되세요 ✈️',
+    message: '즐거운 추억 만드시길 바랍니다!',
+  },
+  {
+    title: '아보하와 함께해요 🍀',
+    message: '좋은 곳 많이 찾으시길 바랄게요!',
+  },
+])
+
+const handleCloverClick = () => {
+  isAlertVisible.value = true
+
+  console.log(Math.floor(Math.random() * cloverMessage.value.length))
+  console.log(cloverMessage.value[0].message)
+
+  setTimeout(() => {
+    isAlertVisible.value = false
+  }, 3000)
+}
+</script>
 
 <template>
+  <Transition name="fade">
+    <Alert
+      v-show="isAlertVisible"
+      class="absolute transition-all duration-300 bg-green-100 left-1/5 w-96 top-20"
+      variant=""
+    >
+      <AlertTitle>{{
+        cloverMessage[Math.floor(Math.random() * cloverMessage.length)].title
+      }}</AlertTitle>
+      <AlertDescription>
+        {{
+          cloverMessage[Math.floor(Math.random() * cloverMessage.length)]
+            .message
+        }}
+      </AlertDescription>
+    </Alert>
+  </Transition>
   <div class="relative w-4/5 h-full overflow-hidden">
     <div
+      @click="handleCloverClick"
       v-for="n in 10"
       :key="n"
-      class="clover"
+      class="transition-all cursor-pointer clover hover:scale-110"
       :style="{ '--delay': `${n * 2}s`, '--position': `${n * 10}%` }"
     >
       🍀
@@ -59,6 +118,10 @@
   transform: translateZ(0);
 }
 
+.clover:hover {
+  transform: scale(1.2);
+}
+
 @keyframes falling {
   0% {
     transform: translateY(-20px) rotate(0deg);
@@ -93,5 +156,15 @@
 .clover:nth-child(5n) {
   --duration: 19s;
   font-size: 22px;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

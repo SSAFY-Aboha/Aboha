@@ -123,6 +123,7 @@ const getCurrentLocation = () => {
     position => {
       const { latitude, longitude } = position.coords
       initialCenter.value = { lat: latitude, lng: longitude }
+      setCenter(latitude, longitude)
     },
     error => {
       console.error('위치 정보를 가져오는데 실패했습니다:', error)
@@ -232,7 +233,7 @@ console.log(markerList.value)
           </div>
 
           <!-- 검색 결과 -->
-          <div v-if="attractionList.length > 0" class="flex-1 overflow-hidden">
+          <div v-if="attractionList.length > 0" class="flex-1 overflow-auto">
             <div class="flex items-center justify-between mb-3">
               <h2 class="text-lg font-semibold text-gray-800">검색 결과</h2>
               <span class="text-sm text-gray-500"
@@ -242,7 +243,6 @@ console.log(markerList.value)
             <AttractionList
               v-model:attractionList="attractionList"
               v-model:isLoading="isLoading"
-              class="h-full overflow-y-auto"
             />
           </div>
 

@@ -211,7 +211,9 @@ import SuggestTrip from '@/components/SuggestTrip.vue'
     </section>
 
     <!-- 여행지 컨텐츠 -->
-    <section class="flex flex-col items-center justify-center w-full py-6">
+    <section
+      class="flex flex-col items-center justify-center w-full py-6 overflow-hidden"
+    >
       <SuggestTrip />
     </section>
 

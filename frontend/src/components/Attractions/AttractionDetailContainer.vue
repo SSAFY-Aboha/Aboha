@@ -5,6 +5,8 @@ import { Button } from '../ui/button'
 import AttractionDetailSkeleton from './AttractionDetailSkeleton.vue'
 import AttractionDetail from '@/components/Attractions/AttractionDetail.vue'
 import { useToast } from '@/composables/useToast'
+import { getTagAIResponse } from '@/services/getTagAIService'
+import { getSummarizeAIResponse } from '@/services/summarizeAIService'
 
 const props = defineProps({
   tripId: {
@@ -19,6 +21,10 @@ const attraction = ref(null)
 const toast = useToast()
 
 onMounted(async () => {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth',
+  })
   try {
     isLoading.value = true
     const { status, data, error } = await attractionAPI.getAttractionDetail(
@@ -28,6 +34,15 @@ onMounted(async () => {
     if (status === 200) {
       const { title, address, description } = data
       attraction.value = { ...data }
+
+      const message = `여행지 이름: ${title}\n여행지 주소: ${address}\n여행지 소개글: ${description}`
+      const tagString = await getTagAIResponse(message)
+      const tags = tagString.split(',').map(tag => tag.trim())
+      const summarize = await getSummarizeAIResponse(message)
+      console.log(tags)
+
+      attraction.value = { ...data, tags }
+      attraction.value = { ...data, description: summarize, tags }
     } else {
       toast.error('데이터를 불러오는데 실패했습니다.')
     }

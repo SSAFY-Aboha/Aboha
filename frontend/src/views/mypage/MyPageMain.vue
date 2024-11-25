@@ -5,45 +5,65 @@ import { Card, CardHeader } from '@/components/ui/card'
 import CardContent from '@/components/ui/card/CardContent.vue'
 import useUserStore from '@/stores/user'
 import { storeToRefs } from 'pinia'
-import { ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
+import userAPI from '@/api/user'
 
 const route = useRoute()
 const isEdit = ref(false)
+const userActivityStats = ref([])
+
+onMounted(async () => {
+  const { status, data, error } = await userAPI.getUserInfo()
+
+  if (error) {
+    console.error(error)
+    return
+  }
+
+  userActivityStats.value = data
+  console.log('userActivityStats', userActivityStats.value)
+})
 
 const userStore = useUserStore()
 const { userInfo } = storeToRefs(userStore)
 
-const activityStats = [
-  {
-    title: '좋아요한 관광지',
-    value: 0,
-    icon: 'pi-heart',
-    color: 'text-red-500',
-    // link: { name: 'mypage-likes' },
-  },
-  {
-    title: '작성한 리뷰',
-    value: 0,
-    icon: 'pi-comments',
-    color: 'text-blue-500',
-    // link: { name: 'mypage-reviews' },
-  },
-  {
-    title: '작성한 아보그',
-    value: 0,
-    icon: 'pi-file-edit',
-    color: 'text-green-500',
-    link: { name: 'mypage-abogs' },
-  },
-  {
-    title: '저장한 여행일정',
-    value: 0,
-    icon: 'pi-map',
-    color: 'text-purple-500',
-    // link: { name: 'mypage-trips' },
-  },
-]
+const activityStats = computed(() => {
+  return [
+    {
+      title: '좋아요한 관광지',
+      value: userActivityStats.value.likeCount,
+      icon: 'pi-heart',
+      color: 'text-red-500',
+      increaseRate: 9, // 추후 구현 예정
+      // link: { name: 'mypage-likes' },
+    },
+    {
+      title: '작성한 리뷰',
+      value: userActivityStats.value.reviewCount,
+      icon: 'pi-comments',
+      color: 'text-blue-500',
+      increaseRate: 7, // 추후 구현 예정
+      // link: { name: 'mypage-reviews' },
+    },
+    {
+      title: '작성한 아보그',
+      value: userActivityStats.value.abogCount,
+      icon: 'pi-file-edit',
+      color: 'text-green-500',
+      increaseRate: 8, // 추후 구현 예정
+      link: { name: 'mypage-abogs' },
+    },
+    {
+      title: '저장한 여행일정',
+      value: 10,
+      icon: 'pi-map',
+      color: 'text-purple-500',
+      increaseRate: 10, // 추후 구현 예정
+      // link: { name: 'mypage-trips' },
+    },
+  ]
+})
 </script>
 
 <template>
@@ -57,10 +77,9 @@ const activityStats = [
           </h1>
         </div>
         <div class="flex justify-around w-full gap-4">
-          <RouterLink
+          <div
             v-for="stat in activityStats"
             :key="stat.title"
-            :to="'/'"
             class="w-full max-w-64"
           >
             <Card class="transition-all hover:shadow-md hover:-translate-y-1">
@@ -77,12 +96,14 @@ const activityStats = [
                   <span class="text-3xl font-bold">{{ stat.value }}</span>
                   <div class="mt-2 text-sm text-gray-500">
                     지난달 대비
-                    <span class="font-medium text-green-500">+0%</span>
+                    <span class="font-medium text-green-500"
+                      >+{{ stat.increaseRate }}%</span
+                    >
                   </div>
                 </div>
               </CardContent>
             </Card>
-          </RouterLink>
+          </div>
         </div>
       </header>
       <!-- 관광지, 아보그 활동 내역 -->

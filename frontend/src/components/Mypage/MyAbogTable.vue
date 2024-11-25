@@ -8,6 +8,8 @@ import {
   TableHead,
   TableCell,
 } from '@/components/ui/table'
+import { onMounted, ref } from 'vue'
+import userAPI from '@/api/user'
 
 defineProps({
   title: {
@@ -16,10 +18,27 @@ defineProps({
   },
 })
 
-const data = defineModel('data', { type: Array })
-const isEdit = defineModel('isEdit', { type: Boolean })
+const abogs = ref([
+  {
+    attractionId: 0,
+    title: '',
+    abogId: 0,
+    createdAt: '',
+    likeCount: 0,
+    commentCount: 0,
+  },
+])
 
-console.log(data.value)
+onMounted(async () => {
+  const { status, data, error } = await userAPI.getUserAbogs()
+  if (error) {
+    console.error(error)
+    return
+  }
+  abogs.value = data.content
+})
+
+const isEdit = defineModel('isEdit', { type: Boolean })
 
 const emit = defineEmits('delete-handler')
 
@@ -46,9 +65,9 @@ const deleteHandler = id => {
       </TableRow>
     </TableHeader>
     <TableBody>
-      <TableRow v-for="each in data" :key="each.id">
+      <TableRow v-for="(each, index) in abogs" :key="each.id">
         <TableCell class="font-medium">
-          {{ each.id }}
+          {{ index + 1 }}
         </TableCell>
         <TableCell class="text-center">{{ each.title }}</TableCell>
         <TableCell class="text-center">
@@ -61,7 +80,11 @@ const deleteHandler = id => {
           {{ each.commentCount }}
         </TableCell>
         <TableCell v-show="isEdit" class="text-right hover:text-red-400">
-          <button variant="outline" size="icon" @click="deleteHandler(each.id)">
+          <button
+            variant="outline"
+            size="icon"
+            @click="deleteHandler(each.abogId)"
+          >
             <i class="pi pi-trash"></i>
           </button>
         </TableCell>
