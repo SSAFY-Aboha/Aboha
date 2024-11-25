@@ -4,6 +4,7 @@ import com.ssafy.aboha.abog.domain.Abog;
 import com.ssafy.aboha.abog.domain.AbogImage;
 import com.ssafy.aboha.abog.repository.AbogImageRepository;
 import com.ssafy.aboha.common.exception.BadRequestException;
+import com.ssafy.aboha.common.utils.ServletUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,7 @@ public class AbogImageService {
     private static final int MAX_IMAGES = 5; // 최대 이미지 개수
     private static final String UPLOAD_DIR = "src/main/resources/uploads/abog/"; // 저장 경로
     private static final String BASE_URL = "/uploads/abog/"; // 반환할 URL 경로 prefix
+    private static final String CONTEXT_PATH = ServletUtils.getContextPath();   // Context Path 가져오기
 
     private final AbogImageRepository abogImageRepository;
 
@@ -81,7 +83,7 @@ public class AbogImageService {
     public List<String> getAbogImages(Abog abog) {
         return abogImageRepository.findByAbog(abog)
                 .stream()
-                .map(AbogImage::getImageUrl)
+                .map(abogImage -> CONTEXT_PATH + abogImage.getImageUrl())
                 .toList();
     }
 
