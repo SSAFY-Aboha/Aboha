@@ -4,8 +4,10 @@ import com.ssafy.aboha.attraction.domain.Attraction;
 import com.ssafy.aboha.attraction.repository.AttractionRepository;
 import com.ssafy.aboha.common.exception.ForbiddenException;
 import com.ssafy.aboha.common.exception.NotFoundException;
+import com.ssafy.aboha.common.exception.UnauthorizedException;
 import com.ssafy.aboha.review.domain.Review;
 import com.ssafy.aboha.review.dto.request.ReviewRequest;
+import com.ssafy.aboha.review.dto.request.ReviewUpdateRequest;
 import com.ssafy.aboha.review.dto.response.ReviewResponse;
 import com.ssafy.aboha.review.repository.ReviewRepository;
 import com.ssafy.aboha.user.domain.User;
@@ -92,6 +94,32 @@ public class ReviewService {
         }
 
         review.delete();
+    }
+
+    /**
+     * 리뷰 수정
+     */
+    @Transactional
+    public void updateReview(Integer userId, Integer id, ReviewUpdateRequest request) {
+        // 1. 리뷰 조회
+        Review review = reviewRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("리뷰를 찾을 수 없습니다."));
+
+        // 2. 사용자 권한 확인
+        if (!review.getUser().getId().equals(userId)) {
+            throw new UnauthorizedException("리뷰 수정 권한이 없습니다.");
+        }
+
+        // 3. 리뷰 평점 및 내용 업데이트
+        review.update(request.rating(), request.content());
+
+        // 4. 관광지 정보 업데이트
+        Attraction attraction = review.getAttraction();
+        BigDecimal oldRating = BigDecimal.valueOf(review.getRating());
+        BigDecimal newRating = BigDecimal.valueOf(request.rating());
+        attraction.updateReview(oldRating, newRating);
+
+        review.update(request.rating(), request.content());
     }
 
 }
