@@ -1,13 +1,12 @@
 package com.ssafy.aboha.abog.repository;
 
 import com.ssafy.aboha.abog.domain.Abog;
-import com.ssafy.aboha.abog.domain.AbogImage;
+import com.ssafy.aboha.abog.domain.AbogTag;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface AbogImageRepository extends JpaRepository<AbogImage, Integer> {
+public interface AbogTagRepository extends JpaRepository<AbogTag, Integer> {
 
-    List<AbogImage> findByAbog(Abog abog);
-
+    List<AbogTag> findByAbog(Abog abog);
 }

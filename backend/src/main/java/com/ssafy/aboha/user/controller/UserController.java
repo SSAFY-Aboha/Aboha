@@ -10,16 +10,11 @@ import com.ssafy.aboha.user.dto.response.UserInfo;
 import com.ssafy.aboha.user.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("/users")
@@ -50,6 +45,7 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    // 회원 정보 수정 API
     @PutMapping("/me")
     public ResponseEntity<Void> updateUser(
         @Valid @ModelAttribute UserUpdateRequest request,
@@ -62,6 +58,19 @@ public class UserController {
         }
 
         userService.updateUser(user.id(), request);
+        return ResponseEntity.noContent().build();
+    }
+
+    // 회원 탈퇴
+    @DeleteMapping("/me")
+    public ResponseEntity<Void> deleteUser(HttpSession session) {
+        // 세션에서 인증된 사용자 정보 확인
+        UserInfo user = (UserInfo) session.getAttribute("user");
+        if (user == null) {
+            throw new UnauthorizedException("로그인이 필요합니다."); // 인증 실패
+        }
+
+        userService.deleteUser(user.id());
         return ResponseEntity.noContent().build();
     }
 }

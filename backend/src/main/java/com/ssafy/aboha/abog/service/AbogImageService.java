@@ -44,9 +44,9 @@ public class AbogImageService {
 
                 // 엔티티 생성 및 저장
                 AbogImage abogImage = AbogImage.builder()
-                    .abog(abog)
-                    .imageUrl(dbFilePath)
-                    .build();
+                        .abog(abog)
+                        .imageUrl(dbFilePath)
+                        .build();
 
                 abogImageRepository.save(abogImage);
             }
@@ -78,8 +78,11 @@ public class AbogImageService {
     /**
      * 아보그 이미지 리스트 조회
      */
-    public List<AbogImage> getAbogImages(Integer abogId) {
-        return abogImageRepository.findByAbogId(abogId);
+    public List<String> getAbogImages(Abog abog) {
+        return abogImageRepository.findByAbog(abog)
+                .stream()
+                .map(AbogImage::getImageUrl)
+                .toList();
     }
 
     private void validateImage(List<MultipartFile> images) {
@@ -93,7 +96,7 @@ public class AbogImageService {
             // 파일 크기 제한 (예: 5MB 이하)
             if (image.getSize() > MAX_FILE_SIZE) {
                 throw new BadRequestException(
-                    "이미지 파일 크기는 최대 5MB를 초과할 수 없습니다: " + image.getOriginalFilename());
+                        "이미지 파일 크기는 최대 5MB를 초과할 수 없습니다: " + image.getOriginalFilename());
             }
 
             // 파일 형식 제한 (예: JPG, JPEG, PNG)
