@@ -34,9 +34,6 @@ watch(
   },
 )
 
-// 부가 상태
-const searchDataName = ref([])
-
 watch(hasMore, () => {
   console.log('hasMore', hasMore.value)
 })
@@ -76,7 +73,6 @@ const handleSearch = async searchData => {
 
 provide('handleSearch', handleSearch)
 provide('searchParams', searchParams)
-provide('searchDataName', searchDataName)
 provide('pageNo', pageNo)
 provide('totalElements', totalElements)
 

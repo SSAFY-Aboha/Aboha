@@ -1,12 +1,19 @@
 <script setup>
-import { onMounted, ref } from 'vue'
-import { Toggle } from '../../ui/toggle'
+import { onMounted, ref, watch } from 'vue'
 defineProps({ title: String })
 import attractionAPI from '@/api/attractions'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 
 const contentTypeId = defineModel('contentTypeId')
 const contentTypeList = ref([])
+const searchDataName = defineModel('searchDataName')
+
+watch(contentTypeId, () => {
+  searchDataName.value.tags.contentTypeId.code = contentTypeId.value
+  searchDataName.value.tags.contentTypeId.name = contentTypeList.value.find(
+    each => each.id === +contentTypeId.value,
+  ).name
+})
 
 onMounted(async () => {
   const { data } = await attractionAPI.getContentType()

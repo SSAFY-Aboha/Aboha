@@ -17,6 +17,7 @@ const isOpen = ref(false)
 
 const onSearch = inject('handleSearch')
 const searchParams = inject('searchParams')
+const searchDataName = defineModel('searchDataName')
 
 const handleSearchBtn = () => {
   isOpen.value = false
@@ -79,6 +80,7 @@ const resetFilters = () => {
         <section class="flex flex-col gap-4">
           <h3 class="text-lg font-semibold">지역 선택</h3>
           <AttractionFilterSelector
+            v-model:searchDataName="searchDataName"
             v-model:sidoCode="searchParams.sidoCode"
             v-model:gugunCode="searchParams.gugunCode"
           />
@@ -89,6 +91,7 @@ const resetFilters = () => {
         <section class="flex flex-col gap-4">
           <h3 class="text-lg font-semibold">테마 선택</h3>
           <AttractionFilterToggle
+            v-model:searchDataName="searchDataName"
             v-model:contentTypeId="searchParams.contentTypeId"
           />
         </section>
