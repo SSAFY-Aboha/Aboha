@@ -2,7 +2,6 @@
 package com.ssafy.aboha.abog.service;
 
 import com.ssafy.aboha.abog.domain.Abog;
-import com.ssafy.aboha.abog.domain.AbogImage;
 import com.ssafy.aboha.abog.dto.request.AbogRequest;
 import com.ssafy.aboha.abog.dto.response.AbogResponse;
 import com.ssafy.aboha.abog.dto.response.MyAbogResponse;
@@ -15,12 +14,13 @@ import com.ssafy.aboha.like.repository.AbogLikeRepository;
 import com.ssafy.aboha.user.domain.User;
 import com.ssafy.aboha.user.dto.response.UserInfo;
 import com.ssafy.aboha.user.repository.UserRepository;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -32,30 +32,36 @@ public class AbogService {
     private final AttractionRepository attractionRepository;
     private final AbogImageService abogImageService;
     private final AbogLikeRepository likeRepository;
+    private final AbogTagService abogTagService;
+
 
     @Transactional
     public Integer createAbog(UserInfo userResponse, AbogRequest request) {
         // 사용자 확인
         User user = userRepository.findById(userResponse.id())
-            .orElseThrow(() -> new NotFoundException("로그인한 사용자가 존재하지 않습니다."));
+                .orElseThrow(() -> new NotFoundException("로그인한 사용자가 존재하지 않습니다."));
 
         // 관광지 확인
         Attraction attraction = attractionRepository.findByAttractionId(request.attraction())
-            .orElseThrow(() -> new NotFoundException("관광지가 존재하지 않습니다."));
+                .orElseThrow(() -> new NotFoundException("관광지가 존재하지 않습니다."));
 
         // 아보그 생성
         Abog abog = Abog.builder()
-            .user(user)
-            .attraction(attraction)
-            .title(request.title())
-            .content(request.content())
-            .build();
+                .user(user)
+                .attraction(attraction)
+                .title(request.title())
+                .content(request.content())
+                .build();
 
         abogRepository.save(abog);
 
         // 아보그 이미지 생성
         List<MultipartFile> images = request.imageFiles();
         abogImageService.uploadImages(abog, images);
+
+        // 아보그 태그 생성 및 저장
+        List<String> tags = request.tags();
+        abogTagService.createTags(abog, tags);
 
         return abog.getId();
     }
@@ -69,25 +75,25 @@ public class AbogService {
 
         // 로그인한 사용자가 좋아요한 아보그 ID 리스트 조회
         List<Integer> likedAbogIds = (loginId != null)
-            ? likeRepository.findAbogIdByUserId(loginId)
-            : List.of();
+                ? likeRepository.findAbogIdByUserId(loginId)
+                : List.of();
 
         // 아보그 데이터를 응답 형태로 변환
         return abogs.stream()
-            .map(abog -> {
-                // 각 아보그의 이미지 URL 리스트 조회
-                List<String> imageUrls = abogImageService.getAbogImages(abog.getId())
-                    .stream()
-                    .map(AbogImage::getImageUrl)
-                    .toList();
+                .map(abog -> {
+                    // 각 아보그의 이미지 URL 리스트 조회
+                    List<String> imageUrls = abogImageService.getAbogImages(abog);
 
-                // 좋아요 여부 판단
-                boolean isLiked = likedAbogIds.contains(abog.getId());
+                    // 각 아보그의 태그 리스트 조회
+                    List<String> tags = abogTagService.getTags(abog);
 
-                // 아보그 데이터를 AbogResponse로 변환
-                return AbogResponse.of(abog, imageUrls, isLiked);
-            })
-            .toList();
+                    // 좋아요 여부 판단
+                    boolean isLiked = likedAbogIds.contains(abog.getId());
+
+                    // 아보그 데이터를 AbogResponse로 변환
+                    return AbogResponse.of(abog, imageUrls, tags, isLiked);
+                })
+                .toList();
     }
 
     /**
@@ -95,18 +101,18 @@ public class AbogService {
      */
     public AbogResponse getAbogById(Integer id, Integer loginId) {
         Abog abog = abogRepository.findByAbogId(id)
-            .orElseThrow(() -> new NotFoundException("해당 아보그가 존재하지 않습니다."));
+                .orElseThrow(() -> new NotFoundException("해당 아보그가 존재하지 않습니다."));
 
         // 아보그 이미지 URL 리스트 조회
-        List<String> imageUrls = abogImageService.getAbogImages(id)
-            .stream()
-            .map(AbogImage::getImageUrl)
-            .toList();
+        List<String> imageUrls = abogImageService.getAbogImages(abog);
+
+        // 아보그 태그 리스트 조회
+        List<String> tags = abogTagService.getTags(abog);
 
         // 좋아요 여부 확인
         boolean isLiked = (loginId != null) && likeRepository.existsByUserIdAndAbogId(loginId, id);
 
-        return AbogResponse.of(abog, imageUrls, isLiked);
+        return AbogResponse.of(abog, imageUrls, tags, isLiked);
     }
 
     /**
