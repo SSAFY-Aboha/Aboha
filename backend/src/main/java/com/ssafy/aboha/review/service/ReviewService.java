@@ -51,9 +51,9 @@ public class ReviewService {
 
         reviewRepository.save(review);
 
-        // 평점 업데이트
+        // 관광지 평점 업데이트
+        attraction.increaseReviewCount();
         attraction.addReview(BigDecimal.valueOf(request.rating()));
-        attractionRepository.save(attraction);
 
         return review.getId();
     }
@@ -93,10 +93,11 @@ public class ReviewService {
             throw new ForbiddenException("리뷰 삭제 권한이 없습니다.");
         }
 
-        // 3. 관광지 정보 업데이트
+        // 3. 관광지 평점 업데이트
         Attraction attraction = review.getAttraction();
         BigDecimal rating = BigDecimal.valueOf(review.getRating());
         attraction.deleteReview(rating);
+        attraction.decreaseLikeCount();
 
         // 4 리뷰 삭제
         review.delete();
