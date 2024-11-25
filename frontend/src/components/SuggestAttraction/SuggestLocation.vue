@@ -39,12 +39,12 @@ const handleGugunChange = gugunCode => {
 </script>
 
 <template>
-  <h2 class="text-2xl font-bold text-center font-Nanum">
+  <h2 class="pb-4 text-2xl font-bold text-center font-Nanum">
     1. 지역을 선택해주세요.
   </h2>
   <div class="flex flex-col h-3/4">
     <div class="flex flex-col items-center h-full">
-      <div class="flex flex-col justify-start h-full gap-16">
+      <div class="flex flex-col justify-start h-full gap-14">
         <!-- 주요 지역 -->
         <SuggestToggleGroup
           :infoData="sidoList"

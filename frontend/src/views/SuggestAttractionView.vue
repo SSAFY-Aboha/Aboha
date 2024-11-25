@@ -19,7 +19,7 @@ const pickedData = ref({
 
 <template>
   <div
-    class="flex flex-col items-center justify-start h-full max-w-6xl pt-12 mx-auto gap-14"
+    class="flex flex-col items-center justify-start h-full max-w-6xl gap-6 pt-12 mx-auto"
   >
     <div
       @click="$router.push('/')"

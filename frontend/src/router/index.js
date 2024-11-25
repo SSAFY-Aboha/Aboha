@@ -1,6 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import TripListView from '@/views/TripListView.vue'
-import AttractionMain from '@/components/Attractions/AttractionMain.vue'
 import useUserStore from '@/stores/user'
 
 const router = createRouter({
@@ -44,14 +42,14 @@ const router = createRouter({
     {
       path: '/trips',
       name: 'trips',
-      component: TripListView,
-      redirect: { name: 'trips-main' },
+      component: () => import('@/views/TripListView.vue'),
+      redirect: { name: 'trips-list' },
       // meta: { keepAlive: true },
       children: [
         {
           path: '',
-          name: 'trips-main',
-          component: AttractionMain,
+          name: 'trips-list',
+          component: () => import('@/views/AttractionListView.vue'),
         },
         {
           path: ':tripId',
@@ -59,6 +57,13 @@ const router = createRouter({
           component: () =>
             import('@/components/Attractions/AttractionDetailContainer.vue'),
           props: true,
+        },
+        {
+          path: 'map',
+          name: 'trips-map',
+          component: () =>
+            import('@/views/AttractionMap/AttractoinMapView.vue'),
+          meta: { hideLayout: true },
         },
       ],
     },

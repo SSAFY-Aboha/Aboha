@@ -21,17 +21,19 @@ const handleContentTypeChange = contentTypeId => {
 </script>
 
 <template>
-  <h2 class="text-2xl font-bold text-center font-Nanum">
-    2. 테마를 선택해주세요.
-  </h2>
-  <div class="flex flex-col h-3/4">
-    <div class="flex flex-col items-center h-full">
-      <div class="flex flex-col justify-start h-full gap-24">
-        <!-- 주요 지역 -->
-        <SuggestToggleGroup
-          :infoData="contentTypeList"
-          @update:modelValue="handleContentTypeChange"
-        />
+  <div class="flex flex-col gap-4">
+    <h2 class="text-2xl font-bold text-center font-Nanum">
+      2. 테마를 선택해주세요.
+    </h2>
+    <div class="flex flex-col h-3/4">
+      <div class="flex flex-col items-center h-full">
+        <div class="flex flex-col justify-start h-full gap-24">
+          <!-- 주요 지역 -->
+          <SuggestToggleGroup
+            :infoData="contentTypeList"
+            @update:modelValue="handleContentTypeChange"
+          />
+        </div>
       </div>
     </div>
   </div>

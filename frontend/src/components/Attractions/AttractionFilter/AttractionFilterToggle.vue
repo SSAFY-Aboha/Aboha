@@ -8,8 +8,9 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 const contentTypeId = defineModel('contentTypeId')
 const contentTypeList = ref([])
 
-onMounted(() => {
-  attractionAPI.getContentType(data => (contentTypeList.value = data))
+onMounted(async () => {
+  const { data } = await attractionAPI.getContentType()
+  contentTypeList.value = data
 })
 </script>
 

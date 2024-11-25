@@ -21,22 +21,28 @@ const handleToggleGroupChange = value => {
 
 <template>
   <ToggleGroup
-    class="flex flex-wrap justify-center w-full gap-8"
+    class="grid w-full max-w-5xl grid-cols-2 gap-3 mx-auto sm:grid-cols-6 md:grid-cols-8"
     :type="type"
     @update:model-value="handleToggleGroupChange"
   >
     <TransitionGroup name="fade" appear>
       <ToggleGroupItem
-        class="px-5 py-3 rounded-full text-lg fade-item data-[state=on]:bg-gray-700 data-[state=on]:text-white data-[state=on]:hover:bg-gray-600 transition-colors hover:bg-gray-400 hover:text-white"
-        variant="outline"
         v-for="each in infoData"
         :key="each.code ?? each.id"
         :value="
           type == 'multiple' ? each.name : (each.code ?? each.id).toString()
         "
-        :aria-label="each.name"
-        >{{ each.name }}</ToggleGroupItem
+        class="relative flex items-center justify-center p-4 overflow-hidden text-sm font-medium transition-all rounded-lg cursor-pointer group hover:bg-green-50"
+        :class="[
+          'data-[state=on]:bg-green-100 data-[state=on]:text-green-800',
+          'data-[state=on]:ring-2 data-[state=on]:ring-green-600/50',
+        ]"
       >
+        <span class="relative z-10">{{ each.name }}</span>
+        <div
+          class="absolute inset-0 transition-transform duration-300 bg-green-100 opacity-0 group-hover:opacity-100"
+        />
+      </ToggleGroupItem>
     </TransitionGroup>
   </ToggleGroup>
 </template>

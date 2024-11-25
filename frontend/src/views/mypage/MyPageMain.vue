@@ -13,6 +13,37 @@ const isEdit = ref(false)
 
 const userStore = useUserStore()
 const { userInfo } = storeToRefs(userStore)
+
+const activityStats = [
+  {
+    title: '좋아요한 관광지',
+    value: 0,
+    icon: 'pi-heart',
+    color: 'text-red-500',
+    // link: { name: 'mypage-likes' },
+  },
+  {
+    title: '작성한 리뷰',
+    value: 0,
+    icon: 'pi-comments',
+    color: 'text-blue-500',
+    // link: { name: 'mypage-reviews' },
+  },
+  {
+    title: '작성한 아보그',
+    value: 0,
+    icon: 'pi-file-edit',
+    color: 'text-green-500',
+    link: { name: 'mypage-abogs' },
+  },
+  {
+    title: '저장한 여행일정',
+    value: 0,
+    icon: 'pi-map',
+    color: 'text-purple-500',
+    // link: { name: 'mypage-trips' },
+  },
+]
 </script>
 
 <template>
@@ -25,15 +56,33 @@ const { userInfo } = storeToRefs(userStore)
             안녕하세요. {{ userInfo.nickname }}님
           </h1>
         </div>
-        <div class="flex justify-around w-full gap-x-4">
-          <Card
-            v-for="item in 3"
-            :key="item"
-            class="w-full text-xl font-bold text-center bg-gray-50 font-Namum max-w-52"
+        <div class="flex justify-around w-full gap-4">
+          <RouterLink
+            v-for="stat in activityStats"
+            :key="stat.title"
+            :to="'/'"
+            class="w-full max-w-64"
           >
-            <CardHeader>좋아요한 관광지 수</CardHeader>
-            <CardContent>0</CardContent>
-          </Card>
+            <Card class="transition-all hover:shadow-md hover:-translate-y-1">
+              <CardHeader class="pb-2">
+                <div class="flex items-center justify-between">
+                  <h3 class="text-sm font-medium text-gray-600">
+                    {{ stat.title }}
+                  </h3>
+                  <i :class="`pi ${stat.icon} ${stat.color}`"></i>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div class="flex flex-col items-center">
+                  <span class="text-3xl font-bold">{{ stat.value }}</span>
+                  <div class="mt-2 text-sm text-gray-500">
+                    지난달 대비
+                    <span class="font-medium text-green-500">+0%</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </RouterLink>
         </div>
       </header>
       <!-- 관광지, 아보그 활동 내역 -->
@@ -72,4 +121,15 @@ const { userInfo } = storeToRefs(userStore)
 .fade-leave-to {
   opacity: 0;
 } */
+
+.card-hover-effect {
+  transition: all 0.3s ease;
+}
+
+.card-hover-effect:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 4px 6px -1px rgb(0 0 0 / 0.1),
+    0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
 </style>

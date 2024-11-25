@@ -18,14 +18,16 @@ const searchDataName = inject('searchDataName')
 const sidoList = ref([])
 const gugunList = ref([])
 
-onMounted(() => {
+onMounted(async () => {
   // 시도 조회
-  attractionsAPI.getSido(data => (sidoList.value = data))
+  const { data } = await attractionsAPI.getSido()
+  sidoList.value = data
 })
 
-const handleSidoChange = sidoCode => {
+const handleSidoChange = async sidoCode => {
   // 구군 조회
-  attractionsAPI.getGugun(sidoCode, data => (gugunList.value = data))
+  const { data } = await attractionsAPI.getGugun(sidoCode)
+  gugunList.value = data
 
   // 이름 저장
   // searchDataName.value.sidoName =

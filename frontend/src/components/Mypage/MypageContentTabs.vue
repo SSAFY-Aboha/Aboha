@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../ui/tabs'
 import attractionApi from '@/api/attractions'
 import abogApi from '@/api/abog'
@@ -43,80 +43,87 @@ const myReviews = ref([
   },
 ])
 
-const deleteAttraction = id => {
-  // 1. 삭제 API 호출
-  attractionApi.toggleAttractionLike(id, null, null)
+// 현재 선택된 탭의 데이터를 반환하는 computed 속성
+const getTabData = computed(() => ({
+  'my-place': likeAttractions,
+  'my-review': myReviews,
+  'my-abog': myAbogs,
+}))
 
-  // 2. 현재 페이지 상태 업데이트
+// 삭제 핸들러를 반환하는 computed 속성
+const getDeleteHandler = computed(() => ({
+  'my-place': deleteAttraction,
+  'my-review': deleteReview,
+  'my-abog': deleteAbog,
+}))
+
+const deleteAttraction = id => {
+  attractionApi.toggleAttractionLike(id, null, null)
   likeAttractions.value = likeAttractions.value.filter(
     attraction => attraction.id !== id,
   )
 }
 
 const deleteAbog = id => {
-  // 1. 삭제 API 호출
   abogApi.deleteAbog(id, null, null)
-
-  // 2. 현재 페이지 상태 업데이트
   myAbogs.value = myAbogs.value.filter(abog => abog.id !== id)
 }
 
 const deleteReview = id => {
-  // 1. 삭제 API 호출
-  // attractionApi.deleteReview(id, null, null)
-
-  // 2. 현재 페이지 상태 업데이트
   myReviews.value = myReviews.value.filter(review => review.id !== id)
 }
 </script>
 
 <template>
-  <Tabs default-value="my-place" class="flex flex-col w-full h-screen">
-    <TabsList class="w-full">
-      <TabsTrigger value="my-place" class="w-full font-bold text-md">
-        좋아요 한 관광지
-      </TabsTrigger>
-      <TabsTrigger value="my-review" class="w-full font-bold text-md">
-        내가 작성한 리뷰
-      </TabsTrigger>
-      <TabsTrigger value="my-abog" class="w-full font-bold text-md">
-        나의 아보그
+  <Tabs default-value="my-place" class="w-full space-y-6">
+    <TabsList class="grid w-full grid-cols-3 p-1 bg-gray-100 rounded-lg">
+      <TabsTrigger
+        v-for="tab in [
+          { value: 'my-place', label: '좋아요 한 관광지', icon: 'pi-heart' },
+          { value: 'my-review', label: '내가 작성한 리뷰', icon: 'pi-comment' },
+          { value: 'my-abog', label: '나의 아보그', icon: 'pi-file-edit' },
+        ]"
+        :key="tab.value"
+        :value="tab.value"
+        class="flex items-center justify-center py-3 transition-all gap-x-2 data-[state=active]:shadow-sm"
+      >
+        <i :class="`pi ${tab.icon}`" class="pr-2"></i>
+        <span class="font-medium">{{ tab.label }}</span>
       </TabsTrigger>
     </TabsList>
 
-    <TabsContent
-      value="my-place"
-      class="w-full p-2 overflow-y-auto border border-gray-200 rounded-lg max-h-[30rem]"
-    >
-      <LikeAttractionTable
-        :title="'좋아요 한 관광지 목록'"
-        v-model:data="likeAttractions"
-        v-model:isEdit="isEdit"
-        @delete-handler="deleteAttraction"
-      />
-    </TabsContent>
-    <TabsContent
-      value="my-review"
-      class="w-full p-2 overflow-y-auto border border-gray-200 rounded-lg max-h-[30rem]"
-    >
-      <MyReviewTable
-        :title="'내가 작성한 리뷰'"
-        v-model:data="myReviews"
-        v-model:isEdit="isEdit"
-        @delete-handler="deleteReview"
-      />
-    </TabsContent>
-    <TabsContent
-      value="my-abog"
-      class="w-full p-2 overflow-y-auto border border-gray-200 rounded-lg max-h-[30rem]"
-    >
-      <MyAbogTable
-        :title="'내가 작성한 아보그'"
-        v-model:data="myAbogs"
-        v-model:isEdit="isEdit"
-        @delete-handler="deleteAbog"
-      />
-    </TabsContent>
+    <div class="p-6 bg-white rounded-lg shadow-sm">
+      <TabsContent
+        v-for="content in [
+          {
+            value: 'my-place',
+            component: LikeAttractionTable,
+            title: '좋아요 한 관광지 목록',
+          },
+          {
+            value: 'my-review',
+            component: MyReviewTable,
+            title: '내가 작성한 리뷰',
+          },
+          { value: 'my-abog', component: MyAbogTable, title: '나의 아보그' },
+        ]"
+        :key="content.value"
+        :value="content.value"
+        class="mt-0 focus-visible:outline-none"
+      >
+        <component
+          :is="content.component"
+          :title="content.title"
+          :data="getTabData[content.value].value"
+          @update:data="
+            newValue => (getTabData[content.value].value = newValue)
+          "
+          v-model:isEdit="isEdit"
+          @delete-handler="getDeleteHandler[content.value]"
+          class="max-h-[calc(100vh-300px)] overflow-y-auto"
+        />
+      </TabsContent>
+    </div>
   </Tabs>
 </template>
 

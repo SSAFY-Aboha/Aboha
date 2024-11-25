@@ -26,11 +26,11 @@ watch(
 <template>
   <KakaoMap
     width="100%"
-    :lat="mapData.lat"
-    :lng="mapData.lng"
+    :lat="mapData?.lat"
+    :lng="mapData?.lng"
     @onLoadKakaoMap="onLoadKakaoMap"
   >
-    <KakaoMapMarker :lat="mapData.lat" :lng="mapData.lng" :clickable="true" />
+    <KakaoMapMarker :lat="mapData?.lat" :lng="mapData?.lng" :clickable="true" />
   </KakaoMap>
 </template>
 
