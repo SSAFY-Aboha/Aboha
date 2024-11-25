@@ -26,7 +26,6 @@ public class AbogImageService {
     private static final int MAX_IMAGES = 5; // 최대 이미지 개수
     private static final String UPLOAD_DIR = "src/main/resources/uploads/abog/"; // 저장 경로
     private static final String BASE_URL = "/uploads/abog/"; // 반환할 URL 경로 prefix
-    private static final String CONTEXT_PATH = ServletUtils.getContextPath();   // Context Path 가져오기
 
     private final AbogImageRepository abogImageRepository;
 
@@ -81,15 +80,17 @@ public class AbogImageService {
      * 아보그 이미지 리스트 조회
      */
     public List<String> getAbogImages(Abog abog) {
+        String contextPath = ServletUtils.getContextPath(); // HTTP 요청 시점에 동적으로 Context Path 가져오기
+
         return abogImageRepository.findByAbog(abog)
                 .stream()
-                .map(abogImage -> CONTEXT_PATH + abogImage.getImageUrl())
+                .map(abogImage -> contextPath + abogImage.getImageUrl()) // Context Path 추가
                 .toList();
     }
 
     private void validateImage(List<MultipartFile> images) {
         // 파일 개수 제한
-        if(images.size() > MAX_IMAGES) {
+        if (images.size() > MAX_IMAGES) {
             throw new BadRequestException("최대 " + MAX_IMAGES + "개의 이미지만 업로드 가능합니다.");
         }
 
@@ -108,5 +109,5 @@ public class AbogImageService {
             }
         }
     }
-
 }
+
