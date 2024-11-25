@@ -12,17 +12,13 @@ import com.ssafy.aboha.like.service.LikeService;
 import com.ssafy.aboha.user.dto.response.UserInfo;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import java.net.URI;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/abogs")
@@ -77,6 +73,23 @@ public class AbogController {
         AbogResponse response = abogService.getAbogById(id, loginId);
         return ResponseEntity.ok(response);
     }
+
+    // 아보그 삭제
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteAbog(
+            @PathVariable(value = "id") Integer id,
+            HttpSession session
+    ) {
+        // 세션에서 인증된 사용자 정보 확인
+        UserInfo userResponse = (UserInfo) session.getAttribute("user");
+        if (userResponse == null) {
+            throw new UnauthorizedException("로그인이 필요합니다."); // 인증 실패
+        }
+
+        abogService.deleteAbog(userResponse.id(), id);
+        return ResponseEntity.noContent().build();
+    }
+
 
     // 아보그 좋아요
     @PostMapping("/{id}/like")
