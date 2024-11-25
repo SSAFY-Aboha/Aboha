@@ -82,10 +82,9 @@ const useUserStore = defineStore('user', () => {
     const { status, data, error } = await userAPI.checkNickname(nickname)
 
     if (error) {
-      alert(error)
-    } else if (status === 200) {
-      return data
+      return false
     }
+    return data
   }
 
   // 이메일 중복확인
@@ -93,10 +92,9 @@ const useUserStore = defineStore('user', () => {
     const { status, data, error } = await userAPI.checkEmail(email)
 
     if (error) {
-      alert(error)
-    } else if (status === 200) {
-      return data
+      return false
     }
+    return data
   }
 
   // 회원정보 조회

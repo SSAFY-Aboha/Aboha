@@ -16,31 +16,69 @@ const isInput = computed(() => {
 const isValidate = computed(() => {
   return props.metaData.isValidate
 })
+
+const showPassword = ref(false)
+
+const inputType = computed(() => {
+  if (props.metaData.type !== 'password') return props.metaData.type
+  return showPassword.value ? 'text' : 'password'
+})
+
+const validationStatus = computed(() => {
+  if (!inputValue.value[props.metaData.id]) return null
+  return isValidate.value ? 'success' : 'error'
+})
 </script>
 
 <template>
   <div class="relative flex flex-col w-full gap-5">
     <div class="floating-input-container">
       <Input
-        :type="metaData.type"
+        :type="inputType"
         :id="metaData.id"
-        class="floating-input focus-visible:ring-0"
+        :class="[
+          'floating-input focus-visible:ring-0',
+          {
+            'border-green-500': validationStatus === 'success',
+            'border-red-500': validationStatus === 'error',
+          },
+        ]"
         placeholder=" "
         v-model="inputValue[metaData.id]"
       />
-      <label for="Email" class="floating-label">
+
+      <!-- 비밀번호 토글 버튼 -->
+      <button
+        v-if="metaData.type === 'password'"
+        type="button"
+        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+        @click="showPassword = !showPassword"
+      >
+        <i :class="showPassword ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
+      </button>
+
+      <label :for="metaData.id" class="floating-label">
         {{ metaData.text }} <span class="text-red-300">*</span>
       </label>
     </div>
+
+    <!-- 유효성 검사 상태 표시 개선 -->
     <div class="absolute text-xs left-3 top-12">
-      <p v-if="error" class="text-red-500">
+      <p v-if="error" class="flex items-center gap-1 text-red-500">
+        <i class="pi pi-times-circle"></i>
         {{ error }}
       </p>
       <p
         v-else-if="inputValue[props.metaData.id]"
-        :class="{ 'text-red-500': !isInput, 'text-green-500': isInput }"
+        :class="{
+          'text-red-500': !isValidate,
+          'text-green-500 flex items-center gap-1': isValidate,
+        }"
       >
-        {{ !isInput ? metaData.errorMsg : '사용 가능 합니다.' }}
+        <i
+          :class="isValidate ? 'pi pi-check-circle' : 'pi pi-times-circle'"
+        ></i>
+        {{ !isValidate ? metaData.errorMsg : '사용 가능합니다.' }}
       </p>
     </div>
   </div>
@@ -96,5 +134,15 @@ const isValidate = computed(() => {
 /* 유효성 검사 오류시  */
 .input-error {
   border-color: red;
+}
+
+/* 트랜지션 효과 추가 */
+.floating-input {
+  transition: all 0.2s ease-in-out;
+}
+
+/* 유효성 검사 아이콘 애니메이션 */
+.pi {
+  transition: all 0.2s ease-in-out;
 }
 </style>
