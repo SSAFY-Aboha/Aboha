@@ -1,20 +1,21 @@
 package com.ssafy.aboha.user.service;
 
 import com.ssafy.aboha.common.exception.BadRequestException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
 public class ProfileImageService {
 
-    private static final Long MAX_FILE_SIZE = 5 * 1024 * 1024L; // 최대 5MB
+    private static final Long MAX_FILE_SIZE = 10 * 1024 * 1024L; // 최대 10MB
     private static final String BASE_URL = "/uploads/user/"; // 반환할 URL prefix
     private static final String UPLOAD_DIR = "src/main/resources/uploads/user/"; // 저장 경로
 
