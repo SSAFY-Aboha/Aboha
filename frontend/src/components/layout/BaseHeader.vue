@@ -8,6 +8,7 @@ import { onMounted, onUnmounted, ref } from 'vue'
 import AvatarFallback from '@/components/ui/avatar/AvatarFallback.vue'
 import { UserIcon } from 'lucide-vue-next'
 import { Skeleton } from '@/components/ui/skeleton'
+import AvatarIcon from '../common/AvatarIcon.vue'
 
 const userStore = useUserStore()
 const isLoading = ref(true)
@@ -123,17 +124,10 @@ const handleLogout = async () => {
             </Button>
 
             <RouterLink :to="`/mypage/${userInfo?.email}`" class="relative">
-              <Avatar
-                class="transition-all size-10 ring-2 ring-offset-2 ring-green-500/10 hover:ring-green-500/20"
-              >
-                <AvatarImage
-                  :src="userInfo?.profileImageUrl"
-                  alt="프로필 이미지"
-                />
-                <AvatarFallback class="bg-green-50">
-                  <UserIcon class="text-green-500 size-5" />
-                </AvatarFallback>
-              </Avatar>
+              <AvatarIcon
+                :customClass="`transition-all size-10 ring-2 ring-offset-2 ring-green-500/10 hover:ring-green-500/20`"
+                :src="userInfo?.profileImageUrl"
+              />
             </RouterLink>
           </template>
         </template>
