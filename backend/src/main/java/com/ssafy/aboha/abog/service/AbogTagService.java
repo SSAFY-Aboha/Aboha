@@ -2,6 +2,7 @@ package com.ssafy.aboha.abog.service;
 
 import com.ssafy.aboha.abog.domain.Abog;
 import com.ssafy.aboha.abog.domain.AbogTag;
+import com.ssafy.aboha.abog.repository.AbogRepository;
 import com.ssafy.aboha.abog.repository.AbogTagRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import java.util.List;
 public class AbogTagService {
 
     private final AbogTagRepository abogTagRepository;
+    private final AbogRepository abogRepository;
 
     /**
      *  태그 리스트 생성 및 저장
@@ -38,6 +40,14 @@ public class AbogTagService {
                 .stream()
                 .map(AbogTag::getName)
                 .toList();
+    }
+
+    /**
+     * 태그 리스트 삭제
+     */
+    @Transactional
+    public void deleteTags(Abog abog) {
+        abogTagRepository.deleteByAbog(abog);
     }
 
 }
