@@ -5,6 +5,8 @@ import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
 import { computed } from 'vue'
 
+const BASE_URL = import.meta.env.VITE_API_BASE_URL
+
 const route = useRoute()
 const userStore = useUserStore()
 
@@ -34,7 +36,8 @@ console.log('userInfo', userInfo.value)
             <img
               class="object-cover w-full h-full"
               :src="
-                userInfo.profileImageUrl || '/src/assets/default_profile.png'
+                `${BASE_URL}${userInfo.profileImageUrl}` ||
+                '/src/assets/default_profile.png'
               "
               alt="프로필"
             />
