@@ -30,8 +30,9 @@ public class BaseEntity {
 
     // soft delete
     public void delete() {
-        if(!isDeleted) {
-            isDeleted = true;
+        if (!this.isDeleted) { // 클래스 필드임을 명시적으로 표현
+            this.isDeleted = true;
         }
     }
+
 }
