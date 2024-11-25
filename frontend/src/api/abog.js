@@ -40,13 +40,13 @@ const getAbogComments = abogId => {
 }
 
 // 아보그 댓글 추가
-const addAbogComment = (abogId, comment) => {
-  return fetchApi('post', `/api/v1/abogs/${abogId}/comments`, comment)
+const addAbogComment = (abogId, content) => {
+  return fetchApi('post', `/api/v1/comments`, { abogId, content })
 }
 
 // 아보그 댓글 삭제
-const deleteAbogComment = (abogId, commentId) => {
-  return fetchApi('delete', `/api/v1/abogs/${abogId}/comments/${commentId}`)
+const deleteAbogComment = commentId => {
+  return fetchApi('delete', `/api/v1/comments/${commentId}`)
 }
 
 export default {

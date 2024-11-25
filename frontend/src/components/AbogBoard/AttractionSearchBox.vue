@@ -8,27 +8,25 @@ const selectedAttraction = defineModel('selectedAttraction')
 
 const attractionList = ref([])
 const selectedData = ref('') // 검색어 입력 값
-
+const keyword = ref('')
 const isOpen = ref(false)
 
-const handleKeywordChange = async value => {
-  // 검색어 변경 시 호출
+const handleKeywordChange = async keyword => {
+  console.log('keyword', keyword)
 
-  if (!value.trim()) {
+  // 검색어 변경 시 호출
+  if (!keyword.trim()) {
     // 검색어가 비어있으면 목록 초기화
     attractionList.value = []
     return
   }
-
   const { data, status, error } = await attractionAPI.getAttractionName({
-    keyword: value,
+    keyword,
   })
-
   if (error) {
     console.error(error)
     attractionList.value = []
   }
-
   attractionList.value = data
   isOpen.value = true
 }
@@ -46,6 +44,16 @@ const handleFocusout = () => {
 const handleOpen = () => {
   isOpen.value = !isOpen.value
 }
+
+watch(
+  () => keyword.value,
+  newVal => {
+    handleKeywordChange(newVal)
+  },
+  {
+    immediate: true,
+  },
+)
 </script>
 
 <template>
@@ -61,14 +69,14 @@ const handleOpen = () => {
     <div v-show="isOpen" class="absolute top-0 w-full">
       <div class="relative">
         <AttractionSearchInput
-          @update:model-value="handleKeywordChange"
+          v-model:keyword="keyword"
           @focusout="handleFocusout"
         />
         <div
           class="absolute z-50 w-full h-56 p-2 bg-white rounded-md shadow-md top-11"
         >
           <ul class="flex flex-col h-full gap-4 overflow-auto scrollbar-hide">
-            <p class="text-center" v-if="attractionList.length === 0">
+            <p class="text-center" v-if="attractionList?.length === 0">
               검색 결과가 없습니다.
             </p>
             <li

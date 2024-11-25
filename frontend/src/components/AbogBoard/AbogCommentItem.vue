@@ -11,6 +11,8 @@ const props = defineProps({
   },
 })
 
+const emit = defineEmits(['handleDeleteComment'])
+
 const { id, nickname, profileImageUrl } = props.data.user
 const { content, createdAt } = props.data.comment
 </script>
@@ -32,6 +34,9 @@ const { content, createdAt } = props.data.comment
       <span class="pr-2 font-bold">{{ nickname }}</span>
       <span>{{ content }}</span>
     </div>
+    <Button variant="outline" @click="emit('handleDeleteComment', id)">
+      <i class="pi pi-trash hover:text-red-500"></i>
+    </Button>
   </div>
 </template>
 

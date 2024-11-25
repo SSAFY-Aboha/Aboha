@@ -41,7 +41,7 @@ const handleAddComment = async () => {
   // 댓글 작성 로직
   const { data, error } = await abogApi.addAbogComment(
     props.abogId,
-    comment.value,
+    comment.value.content,
   )
   if (error) {
     alert(error)
@@ -51,12 +51,24 @@ const handleAddComment = async () => {
   commentList.value = [...commentList.value, data]
 }
 
+const handleDeleteComment = async commentId => {
+  if (!confirm('댓글을 삭제하시겠습니까?')) {
+    return
+  }
+
+  const { error } = await abogApi.deleteAbogComment(commentId)
+  if (error) {
+    alert(error)
+    return
+  }
+}
+
 const emit = defineEmits(['handleOpenComment'])
 </script>
 
 <template>
   <Card
-    class="min-w-[500px] md:w-[500px] h-full max-h-[600px] relative overflow-hidden flex flex-col"
+    class="w-full h-full max-h-[600px] relative overflow-hidden flex flex-col"
   >
     <CardHeader class="text-lg font-bold">
       <div class="flex items-center justify-between">
@@ -73,6 +85,7 @@ const emit = defineEmits(['handleOpenComment'])
           v-for="each in commentList"
           :data="each"
           :key="each.id"
+          @handleDeleteComment="handleDeleteComment"
         /></ul
     ></CardContent>
     <!-- 댓글 작성하기 Form -->

@@ -12,6 +12,7 @@ import {
 import { computed, ref } from 'vue'
 import abogApi from '@/api/abog'
 import { UserIcon } from 'lucide-vue-next'
+import { Badge } from '../ui/badge'
 
 const props = defineProps({
   data: Object,
@@ -32,6 +33,7 @@ const {
   createdAt,
   updatedAt,
   images,
+  tags,
 } = abogData.value
 
 const { id: userId, nickname, profileImageUrl } = userData.value
@@ -41,7 +43,7 @@ const { id: attractionId, title: attractionTitle } = attractionData.value
 const isOpenComment = ref(false)
 
 // 좋아요
-const isLiked = ref(props.data.abog.isLiked)
+const isLiked = ref(props.data.isLiked)
 const likeCounted = computed(() => abogData.value.likeCount)
 
 const handleOpenComment = () => {
@@ -82,28 +84,28 @@ const handleLike = async () => {
           <span class="text-sm text-gray-500">{{ createdAt }}</span>
         </div>
         <div class="flex items-center text-sm text-gray-500">
-          <i class="pi pi-map-marker mr-1"></i>
+          <i class="mr-1 pi pi-map-marker"></i>
           <span>{{ attractionTitle }}</span>
         </div>
       </div>
     </div>
 
     <!-- 이미지 캐러셀 -->
-    <div class="mb-4 rounded-lg overflow-hidden">
-      <Carousel class="w-full">
+    <div class="mb-4 overflow-hidden rounded-lg">
+      <Carousel class="w-full" v-slot="{ canScrollNext, canScrollPrev }">
         <CarouselContent>
           <CarouselItem v-for="image in images" :key="image">
             <div class="aspect-square">
               <img
                 :src="`${BASE_URL}${image}`"
                 alt=""
-                class="w-full h-full object-cover"
+                class="object-cover w-full h-full"
               />
             </div>
           </CarouselItem>
         </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
+        <CarouselPrevious v-if="canScrollPrev" />
+        <CarouselNext v-if="canScrollNext" />
       </Carousel>
     </div>
 
@@ -122,6 +124,16 @@ const handleLike = async () => {
             ></i>
             <span>{{ likeCounted }}</span>
           </button>
+        </div>
+        <!-- 태그 영역 -->
+        <div class="flex items-center gap-3">
+          <Badge
+            variant="outline"
+            v-for="tag in tags"
+            :key="tag"
+            class="text-sm text-gray-500 bg-gray-100"
+            ># {{ tag }}</Badge
+          >
         </div>
       </div>
 

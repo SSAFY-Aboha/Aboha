@@ -10,7 +10,6 @@ const props = defineProps({
 })
 
 const keyword = defineModel('keyword')
-const emit = defineEmits(['search'])
 </script>
 
 <template>
@@ -21,7 +20,6 @@ const emit = defineEmits(['search'])
       placeholder="키워드 입력 후 Enter..."
       class="pl-10"
       v-model="keyword"
-      @keyup.enter="emit('search')"
     />
     <span
       class="absolute inset-y-0 flex items-center justify-center px-2 start-0"
