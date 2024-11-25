@@ -5,13 +5,13 @@ import com.ssafy.aboha.abog.domain.Abog;
 import com.ssafy.aboha.abog.domain.QAbog;
 import com.ssafy.aboha.abog.dto.response.MyAbogResponse;
 import com.ssafy.aboha.attraction.domain.QAttraction;
-import com.ssafy.aboha.attraction.domain.QGugun;
 import com.ssafy.aboha.common.dto.response.KeySetPaginatedResponse;
 import jakarta.persistence.EntityManager;
-import java.util.List;
-import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class AbogCustomRepositoryImpl implements AbogCustomRepository {
@@ -26,14 +26,12 @@ public class AbogCustomRepositoryImpl implements AbogCustomRepository {
     public Optional<Abog> findByAbogId(Integer id) {
         QAbog qAbog = QAbog.abog;
         QAttraction qAttraction = QAttraction.attraction;
-        QGugun qGugun = QGugun.gugun;
 
         return Optional.ofNullable(
                 queryFactory
                         .selectDistinct(qAbog)
                         .from(qAbog)
-                        .leftJoin(qAbog.attraction, qAttraction).fetchJoin()
-                        .leftJoin(qAttraction.gugun, qGugun).fetchJoin()
+                        .leftJoin(qAbog.attraction, qAttraction)
                         .where(qAbog.id.eq(id))
                         .fetchOne()
         );
@@ -43,13 +41,12 @@ public class AbogCustomRepositoryImpl implements AbogCustomRepository {
     public List<Abog> findAll() {
         QAbog qAbog = QAbog.abog;
         QAttraction qAttraction = QAttraction.attraction;
-        QGugun qGugun = QGugun.gugun;
 
        return queryFactory
                .selectDistinct(qAbog)
                .from(qAbog)
-               .leftJoin(qAbog.attraction, qAttraction).fetchJoin()
-               .leftJoin(qAttraction.gugun, qGugun).fetchJoin()
+               .leftJoin(qAbog.attraction, qAttraction)
+               .orderBy(qAbog.id.desc())
                .fetch()
                .stream()
                .distinct()
