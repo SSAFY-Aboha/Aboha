@@ -23,6 +23,11 @@ spring:
     resources:
       static-locations: classpath:/uploads/
 
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 50MB # 요청 전체의 최대 크기 (여러 파일 포함)
+
 server:
   servlet:
     context-path: /api/v1
@@ -34,8 +39,6 @@ server:
 #        http-only: true # JavaScript에서 쿠키 접근 금지
 #        same-site: lax  # SameSite 설정
       timeout: 30m       # 세션 유지 시간: 7일
-  tomcat:
-    max-swallow-size: 20MB # Tomcat에서 요청의 최대 크기 제한
 
 logging:
   level:
