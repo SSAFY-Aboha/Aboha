@@ -49,6 +49,11 @@ const postAttractionReview = reviewData => {
   return fetchApi('post', '/api/v1/reviews', reviewData)
 }
 
+// 관광지 후기 삭제
+const deleteAttractionReview = reviewId => {
+  return fetchApi('delete', `/api/v1/reviews/${reviewId}`)
+}
+
 // 관광지 좋아요 토글
 const toggleAttractionLike = attractionId => {
   return fetchApi('post', `/api/v1/attractions/${attractionId}/like`, null)
@@ -65,4 +70,5 @@ export default {
   toggleAttractionLike,
   getAttractionReview,
   getAttractionName,
+  deleteAttractionReview,
 }

@@ -7,6 +7,7 @@ import { computed, nextTick, ref, watch } from 'vue'
 import userAPI from '@/api/user'
 import { isPasswordValid } from '@/utils/isPasswordValid'
 import { useRouter } from 'vue-router'
+import urlToFile from '@/utils/urlToFile'
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL
 
@@ -67,7 +68,7 @@ watch(
 
 // 프로필 이미지 변경
 const profileImageUrl = computed(() => {
-  return `${isImageChanged.value ? '' : BASE_URL}${userUpdateData.value.profileImageUrl}`
+  return `${userUpdateData.value.profileImageUrl}`
 })
 
 const handleProfileImageChange = e => {
@@ -84,7 +85,18 @@ const handleSave = async () => {
     // 저장 api 호출
 
     const formData = new FormData()
-    formData.append('profileImage', updateProfileImageFile.value)
+
+    if (updateProfileImageFile.value === null) {
+      const file = await urlToFile(
+        userUpdateData.value.profileImageUrl,
+        'default_profile.png',
+      )
+      formData.append('profileImage', file)
+      console.log('file', file)
+    } else {
+      formData.append('profileImage', updateProfileImageFile.value)
+    }
+
     formData.append('nickname', userUpdateData.value.nickname)
     formData.append('password', userUpdateData.value.password)
 
@@ -95,6 +107,8 @@ const handleSave = async () => {
     }
 
     formData.forEach(console.log)
+
+    userStore.initializeAuth()
 
     alert('저장되었습니다.')
     router.go(-1)
@@ -117,11 +131,7 @@ const handleSave = async () => {
       <!-- 프로필 이미지 -->
       <section class="flex flex-col items-center justify-center w-full gap-9">
         <div class="overflow-hidden rounded-full size-36">
-          <img
-            class="object-center"
-            :src="profileImageUrl || '/src/assets/default_profile.png'"
-            alt="logo"
-          />
+          <img class="object-center" :src="profileImageUrl" alt="logo" />
         </div>
         <label
           for="profileImage"

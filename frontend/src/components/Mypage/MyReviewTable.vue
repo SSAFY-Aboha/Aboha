@@ -20,26 +20,7 @@ defineProps({
 
 const isEdit = defineModel('isEdit', { type: Boolean })
 
-const reviews = ref([
-  {
-    attractionId: 0,
-    title: '',
-    reviewId: 0,
-    createdAt: '',
-    content: '',
-    rating: 0,
-  },
-])
-
-onMounted(async () => {
-  const { status, data, error } = await userAPI.getUserReviews()
-  if (error) {
-    console.error(error)
-    return
-  }
-  reviews.value = data.content
-})
-
+const reviews = defineModel('data', { type: Array })
 const emit = defineEmits('delete-handler')
 
 const deleteHandler = id => {

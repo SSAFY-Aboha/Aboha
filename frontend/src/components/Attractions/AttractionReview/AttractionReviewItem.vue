@@ -8,6 +8,8 @@ const props = defineProps({
     required: true,
   },
 })
+
+console.log(props.review.user.profileImageUrl)
 </script>
 
 <template>
@@ -16,7 +18,7 @@ const props = defineProps({
   >
     <!-- 유저 정보 -->
     <div class="flex items-center w-full gap-2">
-      <AvatarIcon :src="review.user?.profileImageUrl" />
+      <AvatarIcon :src="review.user?.profileImageUrl ?? defaultProfile" />
       <span class="text-md">{{ review.user?.nickname }}</span>
     </div>
     <div class="flex flex-col w-full gap-2">

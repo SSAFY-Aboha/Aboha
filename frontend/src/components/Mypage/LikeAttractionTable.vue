@@ -8,8 +8,6 @@ import {
   TableHead,
   TableCell,
 } from '@/components/ui/table'
-import { ref, onMounted } from 'vue'
-import userAPI from '@/api/user'
 
 defineProps({
   title: {
@@ -18,27 +16,7 @@ defineProps({
   },
 })
 
-// const data = defineModel('data', { type: Array })
-
-const LikeList = ref([
-  {
-    content: [{ likedId: 0, attractionId: 0, title: '', address: '' }],
-    hasNext: true,
-    lastSortValue: 0,
-    lastId: 3838,
-    totalElements: 0,
-  },
-])
-
-onMounted(async () => {
-  const { status, data, error } = await userAPI.getUserLikes()
-  if (error) {
-    console.error(error)
-  }
-  LikeList.value = data.content
-  console.log(LikeList.value)
-})
-
+const likeList = defineModel('data', { type: Array })
 const isEdit = defineModel('isEdit', { type: Boolean })
 
 const emit = defineEmits('delete-handler')
@@ -65,7 +43,7 @@ const deleteHandler = id => {
       </TableRow>
     </TableHeader>
     <TableBody>
-      <TableRow v-for="(each, index) in LikeList" :key="each.likedId">
+      <TableRow v-for="(each, index) in likeList" :key="each.likedId">
         <TableCell class="font-medium">
           {{ index + 1 }}
         </TableCell>

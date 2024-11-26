@@ -13,6 +13,7 @@ const route = useRoute()
 const isEdit = ref(false)
 const userActivityStats = ref([])
 
+// 유저 활동 통계 조회
 onMounted(async () => {
   const { status, data, error } = await userAPI.getUserInfo()
 
@@ -31,8 +32,6 @@ const { userInfo } = storeToRefs(userStore)
 const updateUserInfo = computed(() => {
   return userInfo.value
 })
-
-console.log('updateUserInfo', updateUserInfo.value)
 
 const activityStats = computed(() => {
   return [

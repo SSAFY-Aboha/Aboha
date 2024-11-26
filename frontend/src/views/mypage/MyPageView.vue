@@ -5,16 +5,12 @@ import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
 import { computed } from 'vue'
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL
-
 const route = useRoute()
 const userStore = useUserStore()
 
 const { userInfo } = storeToRefs(userStore)
 
 const activeRoute = computed(() => route.name)
-
-console.log('userInfo', userInfo.value)
 </script>
 
 <template>
@@ -35,10 +31,7 @@ console.log('userInfo', userInfo.value)
           >
             <img
               class="object-cover w-full h-full"
-              :src="
-                `${BASE_URL}${userInfo.profileImageUrl}` ||
-                '/src/assets/default_profile.png'
-              "
+              :src="userInfo.profileImageUrl"
               alt="프로필"
             />
           </div>
