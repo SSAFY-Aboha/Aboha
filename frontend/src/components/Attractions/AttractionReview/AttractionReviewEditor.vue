@@ -60,7 +60,7 @@ return ResponseEntity.ok().body(response);
   alert('후기가 등록되었습니다.')
   isOpen.value = false
   // 후기 등록 후 새로고침
-  window.location.reload()
+  // window.location.reload()
 }
 
 // 후기 작성 가능 여부 체크
