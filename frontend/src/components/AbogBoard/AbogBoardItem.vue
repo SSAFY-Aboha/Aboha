@@ -63,13 +63,15 @@ const handleLike = async () => {
   isLiked.value = data.isLiked
   abogData.value.likeCount += data.isLiked ? 1 : -1
 }
+
+console.log(profileImageUrl)
 </script>
 
 <template>
   <article class="w-full p-4">
     <!-- 헤더 영역 -->
     <div class="flex items-center gap-3 mb-4">
-      <AvatarIcon :src="profileImageUrl" />
+      <AvatarIcon :src="`${BASE_URL}${profileImageUrl}`" />
 
       <div class="flex-1">
         <div class="flex items-center justify-between">

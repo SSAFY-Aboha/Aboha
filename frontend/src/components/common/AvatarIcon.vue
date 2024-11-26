@@ -2,7 +2,6 @@
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { UserIcon } from 'lucide-vue-next'
 import defaultProfile from '@/assets/default_profile.png'
-const BASE_URL = import.meta.env.VITE_API_BASE_URL
 
 defineProps({
   src: {
