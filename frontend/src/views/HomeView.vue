@@ -2,12 +2,14 @@
 import MainIntroduction from '@/components/MainIntroduction.vue'
 import SpecsIntroduction from '@/components/SpecsIntroduction.vue'
 import SuggestTrip from '@/components/SuggestTrip.vue'
+import { Button } from '@/components/ui/button'
+import { StarIcon } from 'lucide-vue-next'
 </script>
 
 <template>
-  <div class="home">
+  <div class="flex flex-col gap-10 home">
     <section
-      class="flex flex-col w-full items-center justify-center h-[calc(100vh-5rem)]"
+      class="flex flex-col w-full items-center justify-center h-[calc(100vh-4rem)]"
     >
       <MainIntroduction />
     </section>
@@ -19,10 +21,13 @@ import SuggestTrip from '@/components/SuggestTrip.vue'
       >
         <div class="flex flex-col items-center gap-4">
           <h1 class="text-3xl font-bold font-Namum">일상의 특별한 순간들</h1>
-          <pre class="max-w-2xl leading-relaxed text-center text-gray-600">
+          <pre
+            class="max-w-2xl leading-relaxed text-center text-gray-600 text-wrap text-md"
+          >
     매일 반복되는 일상 속에서도 특별한 순간들이 있습니다.
     커피 한 잔의 여유, 퇴근길의 노을, 주말의 게으른 브런치...
-    당신의 평범한 하루를 특별하게 만들어줄 작은 행복들을 찾아보세요.
+
+    당신의 평범한 하루를 특별하게 만들어줄 작은 행복들을 <span class="font-bold">아보하</span>에서 찾아보세요.
           </pre>
         </div>
         <div class="grid grid-cols-1 gap-6 mt-8 md:grid-cols-3">
@@ -93,7 +98,7 @@ import SuggestTrip from '@/components/SuggestTrip.vue'
       </div>
     </section>
 
-    <!-- 추천 여행 계획 컨텐츠 -->
+    <!--  데일리 챌린지 -->
     <section
       class="flex flex-col items-center justify-center w-full py-6 bg-gray-50"
     >
@@ -101,47 +106,58 @@ import SuggestTrip from '@/components/SuggestTrip.vue'
         class="flex flex-col items-center justify-center max-w-screen-xl gap-8 py-12 mx-auto"
       >
         <div class="flex flex-col items-center gap-4">
-          <h1 class="text-3xl font-bold font-Namum">나만의 완벽한 여행 계획</h1>
+          <h1 class="flex items-center gap-2 text-3xl font-bold font-Namum">
+            <StarIcon class="w-8 h-8 text-yellow-500" />
+            <span>오늘의 챌린지</span>
+            <StarIcon class="w-8 h-8 text-yellow-500" />
+          </h1>
           <p class="max-w-2xl text-center text-gray-600">
-            하루의 특별한 순간을 위한 맞춤형 여행 계획을 제안합니다. <br />
-            시간대별로 최적화된 일정으로 당신의 하루를 채워보세요.
+            매일 새로운 여행 미션에 도전해보세요! <br />
+            일상 속 작은 모험으로 특별한 추억을 만들어보세요.
           </p>
         </div>
         <div class="grid w-full grid-cols-1 gap-6 px-4 md:grid-cols-3">
           <div class="p-6 bg-white rounded-lg shadow-sm">
             <div class="flex items-center gap-3 mb-4">
-              <span class="text-3xl">🌅</span>
-              <h3 class="font-semibold">아침 일정</h3>
+              <span class="text-3xl">📸</span>
+              <h3 class="font-semibold">포토 챌린지</h3>
             </div>
-            <ul class="space-y-2 text-gray-600">
-              <li>• 일출 명소 산책</li>
-              <li>• 현지 조식 체험</li>
-              <li>• 시장 구경</li>
-            </ul>
+            <div class="mb-3 text-gray-600">오늘의 미션</div>
+            <p class="p-3 text-sm rounded-md bg-gray-50">
+              동네에서 가장 예쁜 카페를 찾아 인생샷 남기기
+            </p>
           </div>
           <div class="p-6 bg-white rounded-lg shadow-sm">
             <div class="flex items-center gap-3 mb-4">
-              <span class="text-3xl">☀️</span>
-              <h3 class="font-semibold">오후 일정</h3>
+              <span class="text-3xl">🍽️</span>
+              <h3 class="font-semibold">맛집 챌린지</h3>
             </div>
-            <ul class="space-y-2 text-gray-600">
-              <li>• 로컬 맛집 탐방</li>
-              <li>• 문화재 관람</li>
-              <li>• 카페 투어</li>
-            </ul>
+            <div class="mb-3 text-gray-600">오늘의 미션</div>
+            <p class="p-3 text-sm rounded-md bg-gray-50">
+              한 번도 가보지 않은 식당에서 새로운 메뉴 도전하기
+            </p>
           </div>
           <div class="p-6 bg-white rounded-lg shadow-sm">
             <div class="flex items-center gap-3 mb-4">
-              <span class="text-3xl">🌙</span>
-              <h3 class="font-semibold">저녁 일정</h3>
+              <span class="text-3xl">🚶</span>
+              <h3 class="font-semibold">산책 챌린지</h3>
             </div>
-            <ul class="space-y-2 text-gray-600">
-              <li>• 야경 포인트</li>
-              <li>• 로컬 펍 체험</li>
-              <li>• 야시장 탐방</li>
-            </ul>
+            <div class="mb-3 text-gray-600">오늘의 미션</div>
+            <p class="p-3 text-sm rounded-md bg-gray-50">
+              평소와 다른 경로로 동네 한 바퀴 돌아보기
+            </p>
           </div>
         </div>
+        <Button
+          variant="outline"
+          class="py-6 mt-6 text-lg font-medium text-white transition-all duration-300 bg-green-600 border-none rounded-xl w-80 hover:bg-green-700 hover:shadow-lg hover:scale-105 active:scale-95 focus:ring-4 focus:ring-green-200"
+          @click="$router.push('/challenge')"
+        >
+          <div class="flex items-center justify-center gap-2">
+            <i class="text-xl pi pi-star"></i>
+            <span>AI로 오늘의 챌린지 추천받기</span>
+          </div>
+        </Button>
       </div>
     </section>
 
@@ -163,7 +179,7 @@ import SuggestTrip from '@/components/SuggestTrip.vue'
         >
           <div class="relative overflow-hidden rounded-lg group">
             <img
-              src="/src/assets/default_image.png"
+              src="/src/assets/seoul.png"
               alt="서울"
               class="object-cover w-full h-64 transition-transform group-hover:scale-105"
             />
@@ -178,7 +194,7 @@ import SuggestTrip from '@/components/SuggestTrip.vue'
           </div>
           <div class="relative overflow-hidden rounded-lg group">
             <img
-              src="/src/assets/default_image.png"
+              src="/src/assets/busan.jpg"
               alt="부산"
               class="object-cover w-full h-64 transition-transform group-hover:scale-105"
             />
@@ -193,7 +209,7 @@ import SuggestTrip from '@/components/SuggestTrip.vue'
           </div>
           <div class="relative overflow-hidden rounded-lg group">
             <img
-              src="/src/assets/default_image.png"
+              src="/src/assets/jeju.jpg"
               alt="제주"
               class="object-cover w-full h-64 transition-transform group-hover:scale-105"
             />
