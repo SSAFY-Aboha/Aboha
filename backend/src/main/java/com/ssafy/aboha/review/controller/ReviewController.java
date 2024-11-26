@@ -1,6 +1,5 @@
 package com.ssafy.aboha.review.controller;
 
-import com.ssafy.aboha.common.dto.response.CreatedResponse;
 import com.ssafy.aboha.common.exception.UnauthorizedException;
 import com.ssafy.aboha.review.dto.request.ReviewRequest;
 import com.ssafy.aboha.review.dto.request.ReviewUpdateRequest;
@@ -22,7 +21,7 @@ public class ReviewController {
 
     // 리뷰 생성
     @PostMapping
-    public ResponseEntity<CreatedResponse> createReview(
+    public ResponseEntity<ReviewResponse> createReview(
         @Valid @RequestBody ReviewRequest request,
         HttpSession session
     ) {
@@ -33,9 +32,9 @@ public class ReviewController {
         }
 
         // 리뷰 생성 후 ID 반환
-        Integer reviewId = reviewService.createReview(userResponse.id(), request);
+        ReviewResponse response = reviewService.createReview(userResponse.id(), request);
 
-        return ResponseEntity.created(null).body(CreatedResponse.of(true));
+        return ResponseEntity.created(null).body(response);
     }
 
     // 리뷰 상세 조회
