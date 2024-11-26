@@ -6,44 +6,55 @@ import VueLoading from 'vue-loading-overlay'
 
 const isLoading = ref(false)
 
+const MOCK_MISSIONS = {
+  title: '오늘의 행복 찾기 챌린지',
+  description: '일상 속 작은 행복을 발견하고 공유해보세요',
+  missions: [
+    {
+      emoji: '☀️',
+      title: '아침 햇살 인사',
+      description: '창문을 열고 3분간 햇살을 느껴보세요',
+      tip: '따뜻한 차 한잔과 함께하면 더욱 좋아요!',
+    },
+    {
+      emoji: '📸',
+      title: '오늘의 풍경 한 컷',
+      description: '평소에 지나쳤던 주변의 아름다운 순간을 카메라에 담아보세요',
+      tip: '하늘, 꽃, 건물 등 무엇이든 좋아요',
+    },
+    {
+      emoji: '🌿',
+      title: '잠시, 산책',
+      description: '10분 동안 걸으며 주변을 둘러보세요',
+      tip: '점심시간이나 퇴근 후에 가볍게 시작해보세요',
+    },
+  ],
+}
+
+const dailyMission = ref({
+  title: '',
+  description: '',
+  missions: [],
+})
+
 onMounted(async () => {
   isLoading.value = true
   // AI로 챌린지 데이터 불러오기
-  const response = await getChallengeMissions()
-  const missions = JSON.parse(response)
 
-  console.log('missions', missions)
+  try {
+    const response = await getChallengeMissions()
+    const missions = JSON.parse(response)
 
-  dailyMission.value.missions = missions
-  isLoading.value = false
+    console.log('missions', missions)
+
+    dailyMission.value.missions = missions
+  } catch (error) {
+    console.error('Error fetching challenge missions:', error)
+    dailyMission.value.missions = MOCK_MISSIONS.missions
+  } finally {
+    isLoading.value = false
+  }
 })
-
-// {
-//   title: '오늘의 행복 찾기 챌린지',
-//   description: '일상 속 작은 행복을 발견하고 공유해보세요',
-//   missions: [
-//     {
-//       emoji: '☀️',
-//       title: '아침 햇살 인사',
-//       description: '창문을 열고 3분간 햇살을 느껴보세요',
-//       tip: '따뜻한 차 한잔과 함께하면 더욱 좋아요!',
-//     },
-//     {
-//       emoji: '📸',
-//       title: '오늘의 풍경 한 컷',
-//       description: '평소에 지나쳤던 주변의 아름다운 순간을 카메라에 담아보세요',
-//       tip: '하늘, 꽃, 건물 등 무엇이든 좋아요',
-//     },
-//     {
-//       emoji: '🌿',
-//       title: '잠시, 산책',
-//       description: '10분 동안 걸으며 주변을 둘러보세요',
-//       tip: '점심시간이나 퇴근 후에 가볍게 시작해보세요',
-//     },
-//   ],
-// }
-
-const dailyMission = ref([])
 </script>
 
 <template>
@@ -72,7 +83,7 @@ const dailyMission = ref([])
       <VueLoading
         :active="isLoading"
         color="#6bd46b"
-        width="300"
+        :width="300"
         loader="dots"
       />
       <p class="mt-4 text-xl text-gray-600">
