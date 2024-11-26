@@ -406,11 +406,7 @@ watch(
               id="content"
               class="w-full min-h-[200px] transition-shadow focus:shadow-md"
               :class="{ 'border-red-500': inputVal.content.length > 2000 }"
-              placeholder="방문하신 장소에서의 경험을 자유롭게 작성해주세요.
-
-• 어떤 점이 좋았나요?
-• 다른 분들에게 추천하고 싶은 점은 무엇인가요?
-• 방문 시 주의할 점이 있나요?"
+              placeholder="방문하신 장소 혹은 오늘의 챌린지에 대한 경험을 자유롭게 작성해주세요. :)"
               maxlength="2000"
               v-model:model-value="inputVal.content"
             />

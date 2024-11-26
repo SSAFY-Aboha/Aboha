@@ -48,7 +48,22 @@ const handleAddComment = async () => {
     return
   }
 
-  commentList.value = [...commentList.value, data]
+  comment.value.content = ''
+
+  const { data: newData, error: newError } = await abogApi.getAbogComments(
+    props.abogId,
+  )
+  if (newError) {
+    console.error(newError)
+    return
+  }
+  commentList.value = newData
+
+  // 댓글 작성 후 스크롤 맨 아래로 이동
+  const commentListElement = document.querySelector('.comment-list')
+  if (commentListElement) {
+    commentListElement.scrollTop = commentListElement.scrollHeight
+  }
 }
 
 const handleDeleteComment = async commentId => {
@@ -80,7 +95,7 @@ const emit = defineEmits(['handleOpenComment'])
     </CardHeader>
     <!-- 댓글 리스트 -->
     <CardContent class="flex-1 pb-[60px] overflow-auto">
-      <ul class="flex flex-col gap-6">
+      <ul class="flex flex-col gap-6 comment-list">
         <AbogCommentItem
           v-for="each in commentList"
           :data="each"
