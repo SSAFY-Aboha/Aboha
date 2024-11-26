@@ -24,7 +24,6 @@ const handleSearch = keyword => {
       type="text"
       placeholder="키워드 입력 후 Enter..."
       class="pl-10"
-      v-model="keyword"
       @keyup.enter="emit('handleSearch')"
       @update:model-value="handleSearch"
     />
