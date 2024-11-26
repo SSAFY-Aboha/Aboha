@@ -32,7 +32,7 @@ public class ReviewService {
      * 리뷰 작성
      */
     @Transactional
-    public Integer createReview(Integer userId, ReviewRequest request) {
+    public ReviewResponse createReview(Integer userId, ReviewRequest request) {
         // 사용자 확인
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("로그인한 사용자가 존재하지 않습니다."));
@@ -55,7 +55,7 @@ public class ReviewService {
         attraction.increaseReviewCount();
         attraction.addReview(BigDecimal.valueOf(request.rating()));
 
-        return review.getId();
+        return ReviewResponse.from(review);
     }
 
     /**
