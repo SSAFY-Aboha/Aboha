@@ -67,7 +67,7 @@ const handleCloverClick = () => {
       class="transition-all cursor-pointer clover hover:scale-110"
       :style="{ '--delay': `${n * 2}s`, '--position': `${n * 10}%` }"
     >
-      🍀
+      <span>🍀</span>
     </div>
 
     <div class="flex flex-col items-center w-4/5 h-full md:flex-row">

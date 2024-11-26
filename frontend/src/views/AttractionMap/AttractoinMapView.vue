@@ -160,15 +160,28 @@ watch(contentTypeId, newVal => {
   handleSearch(searchParams.value)
 })
 
-const hoveredAttraction = ref(null)
+// 클릭한 관광지 정보
+const clickAttraction = ref(null)
+const isOpenOverlay = ref(false)
 
-const handleMarkerClick = attraction => {
-  console.log(attraction)
-  hoveredAttraction.value = attraction
+const handleMarkerClick = async attraction => {
+  const { status, data, error } = await attractionAPI.getAttractionDetail(
+    attraction.id,
+  )
+
+  if (error) {
+    console.error(error)
+    return
+  }
+
+  console.log(data)
+  clickAttraction.value = data
+  isOpenOverlay.value = true
 }
 
 const handleMarkerMouseout = () => {
-  hoveredAttraction.value = null
+  clickAttraction.value = null
+  isOpenOverlay.value = false
 }
 </script>
 
@@ -180,13 +193,15 @@ const handleMarkerMouseout = () => {
         class="container flex items-center justify-between h-16 px-4 mx-auto"
       >
         <div class="flex items-center gap-x-4">
-          <div class="flex items-center w-32 gap-x-2">
-            <img
-              src="/src/assets/aboha_logo.svg"
-              alt="logo"
-              class="object-cover"
-            />
-          </div>
+          <router-link to="/">
+            <div class="flex items-center w-32 gap-x-2">
+              <img
+                src="/src/assets/aboha_logo.svg"
+                alt="logo"
+                class="object-cover"
+              />
+            </div>
+          </router-link>
         </div>
         <div class="flex gap-x-3">
           <Button
@@ -240,45 +255,48 @@ const handleMarkerMouseout = () => {
         @onClickKakaoMapMarker="handleMarkerClick(attraction)"
         @mouseout="handleMarkerMouseout"
       >
-        <!-- 마커 위에 표시될 커스텀 오버레이 -->
-        <template v-if="hoveredAttraction?.id === attraction.id">
-          <div
-            class="absolute z-40 w-64 mb-2 -translate-x-1/2 bottom-full left-1/2"
-          >
-            <div class="p-3 bg-white border rounded-lg shadow-lg">
-              <div class="relative">
-                <img
-                  :src="attraction.firstimage || '/default-image.jpg'"
-                  :alt="attraction.title"
-                  class="object-cover w-full h-32 rounded-md"
-                />
-                <div
-                  class="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/60 to-transparent"
-                >
-                  <h3 class="text-sm font-semibold text-white">
-                    {{ attraction.title }}
-                  </h3>
-                </div>
-              </div>
-              <div class="mt-2 text-sm">
-                <p class="text-gray-600 line-clamp-2">{{ attraction.addr1 }}</p>
-                <div class="flex items-center gap-2 mt-1">
-                  <span
-                    class="px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs"
-                  >
-                    {{ attraction.cat3name }}
-                  </span>
-                </div>
-              </div>
-            </div>
-            <!-- 말풍선 꼬리 -->
-            <div
-              class="w-3 h-3 bg-white transform rotate-45 absolute -bottom-1.5 left-1/2 -translate-x-1/2 border-r border-b"
-            ></div>
-          </div>
-        </template>
       </KakaoMapMarker>
     </KakaoMap>
+
+    <!-- 마커 위에 표시될 커스텀 오버레이 -->
+    <template v-if="isOpenOverlay">
+      <div
+        class="absolute z-40 w-64 mb-2 -translate-x-1/2 bottom-full left-1/2"
+      >
+        <div class="p-3 bg-white border rounded-lg shadow-lg">
+          <div class="relative">
+            <img
+              :src="clickAttraction.firstimage || '/default-image.jpg'"
+              :alt="clickAttraction.title"
+              class="object-cover w-full h-32 rounded-md"
+            />
+            <div
+              class="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/60 to-transparent"
+            >
+              <h3 class="text-sm font-semibold text-white">
+                {{ clickAttraction.title }}
+              </h3>
+            </div>
+          </div>
+          <div class="mt-2 text-sm">
+            <p class="text-gray-600 line-clamp-2">
+              {{ clickAttraction.addr1 }}
+            </p>
+            <div class="flex items-center gap-2 mt-1">
+              <span
+                class="px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs"
+              >
+                {{ clickAttraction.cat3name }}
+              </span>
+            </div>
+          </div>
+        </div>
+        <!-- 말풍선 꼬리 -->
+        <div
+          class="w-3 h-3 bg-white transform rotate-45 absolute -bottom-1.5 left-1/2 -translate-x-1/2 border-r border-b"
+        ></div>
+      </div>
+    </template>
 
     <!-- 사이드바 개선 -->
     <div

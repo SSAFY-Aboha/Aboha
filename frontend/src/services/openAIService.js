@@ -3,6 +3,10 @@ import axios from 'axios'
 const API_KEY = import.meta.env.VITE_OPENAI_API_KEY
 const API_URL = 'https://api.openai.com/v1/chat/completions'
 
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
 export const fetchChatGPTResponse = async (message, prompting, maxTokens) => {
   try {
     const body = {
@@ -17,6 +21,9 @@ export const fetchChatGPTResponse = async (message, prompting, maxTokens) => {
         Authorization: `Bearer ${API_KEY}`,
       },
     }
+
+    // 요청 전에 대기 시간 추가
+    await delay(1000) // 1초 대기 (요청 간격 조정)
 
     const response = await axios.post(API_URL, body, options)
 

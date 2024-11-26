@@ -93,6 +93,18 @@ const router = createRouter({
       component: () => import('@/views/SuggestAttractionView.vue'),
       meta: { hideLayout: true },
     },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'not-found',
+      component: () => import('@/views/NotFoundView.vue'),
+      meta: { hideLayout: true },
+    },
+    {
+      path: '/challenge',
+      name: 'challenge',
+      component: () => import('@/views/ChallengeView.vue'),
+      meta: { hideLayout: true },
+    },
   ],
 })
 
