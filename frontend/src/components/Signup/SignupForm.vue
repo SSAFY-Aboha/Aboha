@@ -127,6 +127,8 @@ const handleSubmit = async () => {
     try {
       await userStore.signup(inputValue.value)
       // 성공 메시지 표시
+      alert('회원가입이 완료되었습니다. 로그인을 해주세요.')
+      router.push('/login')
     } catch (error) {
       // 에러 메시지 표시
     } finally {

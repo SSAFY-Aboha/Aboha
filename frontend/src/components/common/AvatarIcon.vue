@@ -1,12 +1,13 @@
 <script setup>
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { UserIcon } from 'lucide-vue-next'
-
+import defaultProfile from '@/assets/default_profile.png'
 const BASE_URL = import.meta.env.VITE_API_BASE_URL
 
 defineProps({
   src: {
     type: String,
+    default: defaultProfile,
   },
   customClass: {
     type: String,
@@ -16,11 +17,7 @@ defineProps({
 
 <template>
   <Avatar class="size-10">
-    <AvatarImage
-      :src="`${BASE_URL}${src}` || `/src/assets/mainPage_image.jpg`"
-      :class="customClass"
-      alt="avatar"
-    />
+    <AvatarImage :src="src" :class="customClass" alt="avatar" />
     <AvatarFallback>
       <UserIcon class="size-6" />
     </AvatarFallback>

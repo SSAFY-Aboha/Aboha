@@ -2,8 +2,9 @@ import { defineStore } from 'pinia'
 import userAPI from '@/api/user'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import defaultProfile from '@/assets/default_profile.png'
 
-const BASE_URL = import.meta.env.VITE_BASE_URL
+const BASE_URL = import.meta.env.VITE_API_BASE_URL
 
 const useUserStore = defineStore('user', () => {
   const router = useRouter()
@@ -15,7 +16,7 @@ const useUserStore = defineStore('user', () => {
     nickname: '',
     email: '',
     save: false,
-    profileImageUrl: '',
+    profileImageUrl: null,
   })
 
   // ? computed
@@ -31,8 +32,14 @@ const useUserStore = defineStore('user', () => {
     }
 
     isAuthenticated.value = true
-    userInfo.value = data
-    userInfo.value.profileImageUrl = `${userInfo.value.profileImageUrl}`
+
+    userInfo.value = { ...userInfo.value, ...data }
+    userInfo.value.profileImageUrl =
+      data.profileImageUrl === null
+        ? defaultProfile
+        : `${BASE_URL}${data.profileImageUrl}`
+
+    console.log('초기화', userInfo.value)
   }
 
   // 로그인
@@ -46,7 +53,11 @@ const useUserStore = defineStore('user', () => {
       isAuthenticated.value = true
       userInfo.value = data
       console.log('login data', data)
-      userInfo.value.profileImageUrl = data.profileImageUrl
+      //
+      userInfo.value.profileImageUrl =
+        data.profileImageUrl === null
+          ? defaultProfile
+          : `${BASE_URL}${data.profileImageUrl}`
     } else if (status === 401) {
       alert('아이디 및 비밀번호를 확인해주세요.')
     } else if (status === 400) {
