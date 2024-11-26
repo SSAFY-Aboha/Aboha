@@ -6,9 +6,9 @@ import { onMounted, ref } from 'vue'
 onMounted(async () => {
   // AI로 챌린지 데이터 불러오기
   const response = await getChallengeMissions()
-  dailyMission.value.missions = response
+  const missions = JSON.parse(response)
 
-  console.log(dailyMission.value.missions)
+  dailyMission.value.missions = missions
 })
 
 const dailyMission = ref({
