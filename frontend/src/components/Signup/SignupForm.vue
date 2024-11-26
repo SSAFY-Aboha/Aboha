@@ -15,25 +15,48 @@ const metaData = ref([
     type: 'text',
     errorMsg: '이미 존재하는 닉네임 입니다.',
     isValidate: false,
-    validator: value => {
-      return value.length >= 2
+    validator: async value => {
+      const { isAvailable } = await userStore.checkNickname(value)
+      return isAvailable
     },
-    customErrorMsg: '닉네임은 2-10자 사이여야 합니다.',
+    customErrorMsg: '이미 존재하는 닉네임 입니다.',
   },
   {
     id: 'email',
     text: 'Email',
-    type: 'text',
+    type: 'email',
     errorMsg: '이미 존재하는 이메일 입니다.',
     isValidate: false,
     validator: async value => {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      if (emailRegex.test(value)) {
-        // const { isAvailable } = await userStore.checkEmail(value)
-        // return isAvailable
-        return true
+      try {
+        const emailRegex =
+          /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i
+        // 이메일 형식 검증
+        if (emailRegex.test(value)) {
+          const { isAvailable } = await userStore.checkEmail(value)
+          if (!isAvailable) {
+            console.log('이미 존재하는 이메일 입니다.')
+            return {
+              isValid: false,
+              errorMsg: '이미 존재하는 이메일 입니다.',
+            }
+          }
+          return {
+            isValid: true,
+          }
+        }
+        // 이메일 형식 검증 실패
+        return {
+          isValid: false,
+          errorMsg: '올바른 이메일 형식이 아닙니다.',
+        }
+      } catch (error) {
+        console.error('이메일 검증 중 오류 발생:', error)
+        return {
+          isValid: false,
+          errorMsg: '이메일 검증 중 오류가 발생했습니다.',
+        }
       }
-      return false
     },
     customErrorMsg: '올바른 이메일 형식이 아닙니다.',
   },
@@ -44,14 +67,18 @@ const metaData = ref([
     errorMsg: '비밀번호가 일치하지 않습니다.',
     isValidate: false,
     validator: async value => {
-      if (value.length >= 8 && /[A-Za-z]/.test(value) && /[0-9]/.test(value)) {
-        // const { isAvailable } = await userStore.checkNickname(value)
-        // return isAvailable
+      if (
+        value.length >= 8 &&
+        /[A-Za-z]/.test(value) &&
+        /[0-9]/.test(value) &&
+        /[!@#$%^&*(),.?":{}|<>]/.test(value)
+      ) {
         return true
       }
       return false
     },
-    customErrorMsg: '비밀번호는 8자 이상, 영문과 숫자를 포함해야 합니다.',
+    customErrorMsg:
+      '비밀번호는 8자 이상이며, 영문, 숫자, 특수문자를 모두 포함해야 합니다.',
   },
   {
     id: 'password-check',
@@ -76,7 +103,7 @@ const errors = ref({})
 const isFormValid = ref(false)
 const isLoading = ref(false)
 
-const validateField = (field, value) => {
+const validateField = async (field, value) => {
   const fieldMeta = metaData.value.find(m => m.id === field)
   if (!fieldMeta || !fieldMeta.validator) return true
 
@@ -86,51 +113,58 @@ const validateField = (field, value) => {
     return false
   }
 
-  const isValid = fieldMeta.validator(value, inputValue.value)
-  if (!isValid) {
-    errors.value[field] = fieldMeta.customErrorMsg
-  } else {
-    delete errors.value[field]
-  }
+  try {
+    const result = await fieldMeta.validator(value, inputValue.value)
+    const isValid = result.isValid ?? result // 기존 validator들과의 호환성 유지
 
-  fieldMeta.isValidate = isValid
-  return isValid
+    if (!isValid) {
+      errors.value[field] = result.errorMsg || fieldMeta.customErrorMsg
+    } else {
+      delete errors.value[field]
+    }
+    fieldMeta.isValidate = isValid
+    return isValid
+  } catch (error) {
+    console.error('Validation error:', error)
+    return false
+  }
 }
 
-const validateForm = () => {
+const validateForm = async () => {
   let isValid = true
-  Object.entries(inputValue.value).forEach(([field, value]) => {
-    if (!validateField(field, value)) {
+  for (const [field, value] of Object.entries(inputValue.value)) {
+    const fieldValid = await validateField(field, value)
+    if (!fieldValid) {
       isValid = false
     }
-  })
+  }
   isFormValid.value = isValid
   return isValid
 }
 
 watch(
   inputValue,
-  (newValue, oldValue) => {
-    Object.keys(newValue).forEach(field => {
+  async (newValue, oldValue) => {
+    for (const field of Object.keys(newValue)) {
       if (newValue[field] !== oldValue[field]) {
-        validateField(field, newValue[field])
+        await validateField(field, newValue[field])
       }
-    })
-    validateForm()
+    }
+    await validateForm()
   },
   { deep: true },
 )
 
 const handleSubmit = async () => {
-  if (validateForm()) {
+  if (await validateForm()) {
     isLoading.value = true
     try {
       await userStore.signup(inputValue.value)
-      // 성공 메시지 표시
       alert('회원가입이 완료되었습니다. 로그인을 해주세요.')
       router.push('/login')
     } catch (error) {
-      // 에러 메시지 표시
+      console.error('Error during signup:', error)
+      alert('회원가입에 실패하였습니다. 다시 시도해주세요.')
     } finally {
       isLoading.value = false
     }

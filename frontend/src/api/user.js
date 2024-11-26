@@ -44,7 +44,7 @@ const checkNickname = nickname => {
 
 // 이메일 중복 확인
 const checkEmail = email => {
-  return fetchApi('get', '/api/v1/users/check-email', { params: email })
+  return fetchApi('get', '/api/v1/users/check-email', { params: { email } })
 }
 
 // 회원 정보 수정
