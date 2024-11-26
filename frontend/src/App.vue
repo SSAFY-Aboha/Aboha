@@ -1,20 +1,13 @@
 <script setup>
-import { onMounted } from 'vue'
 import { RouterView } from 'vue-router'
 import BaseHeader from '@/components/layout/BaseHeader.vue'
 import BaseFooter from '@/components/layout/BaseFooter.vue'
-import useUserStore from '@/stores/user'
-
-const userStore = useUserStore()
-// cookie에서 JSESSIONID 확인
-onMounted(() => {
-  // userStore.initializeAuth()
-})
+import ChatBot from '@/components/common/ChatBot.vue'
 </script>
 
 <template>
-  <!-- Toast -->
-  <!-- <Toast position="center" /> -->
+  <!-- ChatBot -->
+  <ChatBot />
   <div class="flex flex-col w-full h-svh">
     <!-- Header -->
     <BaseHeader v-if="!$route.meta.hideLayout" />

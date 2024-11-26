@@ -4,7 +4,10 @@ import { Search } from 'lucide-vue-next'
 
 const emit = defineEmits(['update:model-value'])
 
+const searchDataName = defineModel('searchDataName')
+
 const handleKeywordChange = value => {
+  searchDataName.value.keyword = value
   emit('update:model-value', value)
 }
 

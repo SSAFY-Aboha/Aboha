@@ -6,28 +6,27 @@ import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
 import { computed, ref } from 'vue'
 import attractionAPI from '@/api/attractions'
-const props = defineProps({
-  attraction: Object,
-})
+
+const attraction = defineModel('attraction')
 
 const likeCount = defineModel('likeCount')
 
-const isLiked = ref(props.attraction.isLiked)
+const isLiked = ref(attraction.value.isLiked)
 
 const mapData = computed(() => {
   return {
-    lat: props.attraction.latitude,
-    lng: props.attraction.longitude,
+    lat: attraction.value.latitude,
+    lng: attraction.value.longitude,
   }
 })
 
 // const likeCount = computed(() => {
-//   return props.attraction.likeCount
+//   return attraction.likeCount
 // })
 
 const handleLike = async () => {
   const { data, status, error } = await attractionAPI.toggleAttractionLike(
-    props.attraction.id,
+    attraction.value.id,
   )
 
   if (error) {
@@ -111,7 +110,10 @@ const handleLike = async () => {
     <Separator />
     <!-- 리뷰 -->
     <div class="flex flex-col w-full gap-4 overflow-hidden">
-      <AttractionReview :reviews="attraction.reviews" />
+      <AttractionReview
+        v-model:reviews="attraction.reviews"
+        :attraction-id="attraction.id"
+      />
     </div>
   </main>
 </template>

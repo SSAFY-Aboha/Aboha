@@ -1,10 +1,8 @@
 <script setup>
 import AvatarIcon from '@/components/common/AvatarIcon.vue'
 import RatingStar from '@/components/common/RatingStar.vue'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { UserIcon } from 'lucide-vue-next'
 
-defineProps({
+const props = defineProps({
   review: {
     type: Object,
     required: true,
@@ -18,8 +16,8 @@ defineProps({
   >
     <!-- 유저 정보 -->
     <div class="flex items-center w-full gap-2">
-      <AvatarIcon :src="profileImageUrl" />
-      <span class="text-md">{{ review.user.nickname }}</span>
+      <AvatarIcon :src="review.user?.profileImageUrl" />
+      <span class="text-md">{{ review.user?.nickname }}</span>
     </div>
     <div class="flex flex-col w-full gap-2">
       <!-- 별점 -->

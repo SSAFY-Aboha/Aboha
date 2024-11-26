@@ -28,10 +28,10 @@ const metaData = ref([
     isValidate: false,
     validator: async value => {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
       if (emailRegex.test(value)) {
-        const { isAvailable } = await userStore.checkEmail(value)
-        return isAvailable
+        // const { isAvailable } = await userStore.checkEmail(value)
+        // return isAvailable
+        return true
       }
       return false
     },
@@ -45,8 +45,9 @@ const metaData = ref([
     isValidate: false,
     validator: async value => {
       if (value.length >= 8 && /[A-Za-z]/.test(value) && /[0-9]/.test(value)) {
-        const { isAvailable } = await userStore.checkNickname(value)
-        return isAvailable
+        // const { isAvailable } = await userStore.checkNickname(value)
+        // return isAvailable
+        return true
       }
       return false
     },
@@ -73,10 +74,17 @@ const inputValue = ref({
 })
 const errors = ref({})
 const isFormValid = ref(false)
+const isLoading = ref(false)
 
 const validateField = (field, value) => {
   const fieldMeta = metaData.value.find(m => m.id === field)
   if (!fieldMeta || !fieldMeta.validator) return true
+
+  if (!value) {
+    delete errors.value[field]
+    fieldMeta.isValidate = false
+    return false
+  }
 
   const isValid = fieldMeta.validator(value, inputValue.value)
   if (!isValid) {
@@ -102,7 +110,12 @@ const validateForm = () => {
 
 watch(
   inputValue,
-  () => {
+  (newValue, oldValue) => {
+    Object.keys(newValue).forEach(field => {
+      if (newValue[field] !== oldValue[field]) {
+        validateField(field, newValue[field])
+      }
+    })
     validateForm()
   },
   { deep: true },
@@ -110,13 +123,15 @@ watch(
 
 const handleSubmit = async () => {
   if (validateForm()) {
-    console.log('Form is valid:', inputValue.value)
-
-    // 회원가입 성공 시 로그인 페이지로 이동
-    // API 호출 등 추가 로직
-    await userStore.signup(inputValue.value)
-  } else {
-    console.log('Form is invalid:', errors.value)
+    isLoading.value = true
+    try {
+      await userStore.signup(inputValue.value)
+      // 성공 메시지 표시
+    } catch (error) {
+      // 에러 메시지 표시
+    } finally {
+      isLoading.value = false
+    }
   }
 }
 </script>
@@ -138,8 +153,12 @@ const handleSubmit = async () => {
       v-model:inputValue="inputValue"
       :error="errors[data.id]"
     />
-    <Button type="submit" class="w-full" :disabled="!isFormValid">
-      회원가입
+    <Button type="submit" class="w-full" :disabled="!isFormValid || isLoading">
+      <span v-if="isLoading" class="flex items-center justify-center gap-2">
+        <i class="pi pi-spinner animate-spin"></i>
+        처리중...
+      </span>
+      <span v-else>회원가입</span>
     </Button>
   </form>
 </template>

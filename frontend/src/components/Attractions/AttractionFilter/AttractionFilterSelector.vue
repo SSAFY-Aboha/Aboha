@@ -1,5 +1,5 @@
 <script setup>
-import { inject, onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import {
   Select,
   SelectContent,
@@ -13,7 +13,7 @@ import attractionsAPI from '@/api/attractions'
 
 const sidoCode = defineModel('sidoCode')
 const gugunCode = defineModel('gugunCode')
-const searchDataName = inject('searchDataName')
+const searchDataName = defineModel('searchDataName')
 
 const sidoList = ref([])
 const gugunList = ref([])
@@ -30,14 +30,18 @@ const handleSidoChange = async sidoCode => {
   gugunList.value = data
 
   // 이름 저장
-  // searchDataName.value.sidoName =
-  console.log(sidoList.value.filter(each => each.code == sidoCode).name)
+  searchDataName.value.tags.sidoCode.code = sidoCode
+  searchDataName.value.tags.sidoCode.name = sidoList.value.find(
+    each => each.code === +sidoCode,
+  ).name
 }
 
 // 구군 변경 시 이름 저장
 const handleGugunChange = gugunCode => {
-  // searchDataName.value.gugunName =
-  gugunList.value.find(item => item.code === gugunCode)
+  searchDataName.value.tags.gugunCode.code = gugunCode
+  searchDataName.value.tags.gugunCode.name = gugunList.value.find(
+    each => each.code === +gugunCode,
+  ).name
 }
 </script>
 <template>
