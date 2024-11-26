@@ -57,7 +57,8 @@ public class UserController {
             throw new UnauthorizedException("로그인이 필요합니다."); // 인증 실패
         }
 
-        userService.updateUser(user.id(), request);
+        UserInfo response = userService.updateUser(user.id(), request);
+        session.setAttribute("user", response); // 세션 데이터 갱신
         return ResponseEntity.noContent().build();
     }
 
