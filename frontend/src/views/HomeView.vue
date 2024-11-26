@@ -56,9 +56,9 @@ import { StarIcon } from 'lucide-vue-next'
         class="flex flex-col items-center justify-center max-w-screen-xl gap-8 py-12 mx-auto"
       >
         <div class="flex flex-col items-center gap-4">
-          <h1 class="text-3xl font-bold font-Namum">당신을 위한 맞춤 여행지</h1>
+          <h1 class="text-3xl font-bold font-Namum">당신을 위한 맞춤 일상</h1>
           <p class="max-w-2xl text-center text-gray-600">
-            지금 당신의 기분에 딱 맞는 여행지를 추천해드립니다. <br />혼자만의
+            지금 당신의 기분에 딱 맞는 일상을 추천해드립니다. <br />혼자만의
             여유로운 시간이 필요할 때, 활기찬 에너지가 필요할 때, <br />각자의
             순간에 어울리는 특별한 장소를 만나보세요.
           </p>

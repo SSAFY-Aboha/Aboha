@@ -8,10 +8,6 @@ const isAlertVisible = ref(false)
 
 const cloverMessage = ref([
   {
-    title: '당신을 응원합니다 😘',
-    message: '화이팅!!',
-  },
-  {
     title: '오늘도 좋은 하루 보내세요 🌟',
     message: '당신의 하루가 행복으로 가득하길!',
   },
@@ -26,6 +22,18 @@ const cloverMessage = ref([
   {
     title: '아보하와 함께해요 🍀',
     message: '좋은 곳 많이 찾으시길 바랄게요!',
+  },
+  {
+    title: '새로운 발견의 시간 🔍',
+    message: '오늘은 어떤 특별한 순간이 기다리고 있을까요?',
+  },
+  {
+    title: '당신과 함께하는 여정 🌈',
+    message: '일상의 작은 행복을 찾아보세요!',
+  },
+  {
+    title: '설레는 하루의 시작 🌅',
+    message: '오늘도 멋진 추억 만드시길 바랍니다!',
   },
 ])
 
@@ -67,7 +75,10 @@ const handleCloverClick = () => {
       class="transition-all cursor-pointer clover hover:scale-110"
       :style="{ '--delay': `${n * 2}s`, '--position': `${n * 10}%` }"
     >
-      <span>🍀</span>
+      <span
+        class="text-4xl transition-all duration-300 hover:text-5xl animate-spin hover:shadow-green-500 hover:shadow-2xl"
+        >🍀</span
+      >
     </div>
 
     <div class="flex flex-col items-center w-full h-full gap-9 md:flex-row">
@@ -80,7 +91,7 @@ const handleCloverClick = () => {
               class="pr-4 overflow-hidden text-xl italic border-r-2 md:text-3xl border-r-black animate-typing whitespace-nowrap"
               aria-label="아주 보통의 하루, 특별한 여정을 시작하다"
             >
-              "아주 보통의 하루, 특별한 여정을 시작하다."
+              "아주 보통의 하루, 일상의 소중함을 찾아보세요."
             </h2>
           </div>
           <pre

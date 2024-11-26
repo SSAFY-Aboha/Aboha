@@ -70,7 +70,7 @@ const handleLogout = async () => {
       <nav class="items-center hidden space-x-6 md:flex">
         <RouterLink
           v-for="item in [
-            { to: '/trips', label: '모든 여행 보러가기' },
+            { to: '/trips', label: '특별한 여정 찾아보기' },
             { to: { name: 'trips-map' }, label: '지도에서 찾아보기' },
             { to: { name: 'abog' }, label: '아보하 Log' },
           ]"
