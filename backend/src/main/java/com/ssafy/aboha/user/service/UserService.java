@@ -6,6 +6,7 @@ import com.ssafy.aboha.user.domain.User;
 import com.ssafy.aboha.user.dto.request.SignupRequest;
 import com.ssafy.aboha.user.dto.request.UserUpdateRequest;
 import com.ssafy.aboha.user.dto.response.UniqueResponse;
+import com.ssafy.aboha.user.dto.response.UserInfo;
 import com.ssafy.aboha.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -60,10 +61,10 @@ public class UserService {
     }
 
     /**
-     * 회원 정보 수정
+     * 회원 정보 수정 및 최신 데이터 반환
      */
     @Transactional
-    public void updateUser(Integer id, UserUpdateRequest request) {
+    public UserInfo updateUser(Integer id, UserUpdateRequest request) {
         // 1. 사용자 조회
         User user = userRepository.findById(id)
             .orElseThrow(() -> new NotFoundException("로그인한 사용자가 존재하지 않습니다."));
@@ -86,6 +87,11 @@ public class UserService {
             log.info(profileImageUrl);
             user.updateProfileImageUrl(profileImageUrl);
         }
+
+        // 데이터베이스 동기화
+        userRepository.flush();
+
+        return UserInfo.from(user);
     }
 
     /**
