@@ -41,7 +41,9 @@ onMounted(async () => {
         width="300"
         loader="dots"
       />
-      <p class="mt-4 text-lg text-gray-600">맞춤 여행지를 찾고 있어요...</p>
+      <p class="mt-4 text-xl text-gray-600">
+        AI가 맞춤 여행지를 찾고 있어요...
+      </p>
     </div>
 
     <!-- 결과 표시 -->

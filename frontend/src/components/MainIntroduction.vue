@@ -48,10 +48,10 @@ const handleCloverClick = () => {
       class="absolute transition-all duration-300 bg-green-100 left-1/5 w-96 top-20"
       variant=""
     >
-      <AlertTitle>{{
+      <AlertTitle class="font-bold text-center">{{
         cloverMessage[Math.floor(Math.random() * cloverMessage.length)].title
       }}</AlertTitle>
-      <AlertDescription>
+      <AlertDescription class="pt-6 text-center">
         {{
           cloverMessage[Math.floor(Math.random() * cloverMessage.length)]
             .message
@@ -70,7 +70,7 @@ const handleCloverClick = () => {
       <span>🍀</span>
     </div>
 
-    <div class="flex flex-col items-center w-4/5 h-full md:flex-row">
+    <div class="flex flex-col items-center w-full h-full gap-9 md:flex-row">
       <div class="flex items-start justify-around w-full h-[30rem]">
         <!-- 글자 공간 -->
         <div class="flex flex-col justify-around h-full mt-6">
@@ -92,10 +92,10 @@ const handleCloverClick = () => {
         </div>
         <!-- 이미지 공간 -->
         <div
-          class="bg-green-100 shadow-2xl rounded-lg shrink-0 w-[460px] h-[460px]"
+          class="shadow-green-200 shadow-2xl rounded-lg shrink-0 w-[460px] h-[460px] animate-in"
         >
           <img
-            class="object-cover size-full"
+            class="object-cover rounded-xl size-full"
             src="@/assets/mainPage_image.jpg"
             alt="아보하 메인 이미지"
             loading="lazy"
@@ -160,7 +160,7 @@ const handleCloverClick = () => {
 
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.3s ease;
+  transition: opacity 0.2s ease;
 }
 
 .fade-enter-from,

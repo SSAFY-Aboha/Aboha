@@ -22,9 +22,9 @@ const metaData = ref([
     color: 'bg-green-50 hover:bg-green-100',
   },
   {
-    title: '등록된 여행 계획',
+    title: '등록된 아보하 LOG',
     count: 22,
-    icon: 'pi-calendar',
+    icon: 'pi-book',
     color: 'bg-yellow-50 hover:bg-yellow-100',
   },
 ])

@@ -93,7 +93,7 @@ watch(
     <!-- content -->
     <main class="px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
       <div class="p-6 bg-white rounded-lg shadow-md sm:p-8">
-        <div v-if="isLoading" class="space-y-4">
+        <div v-if="isLoading" class="space-y-4 text-center">
           <AttractionDetailSkeleton />
         </div>
 
