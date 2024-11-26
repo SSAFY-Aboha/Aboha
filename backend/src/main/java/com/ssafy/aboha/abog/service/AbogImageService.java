@@ -24,8 +24,9 @@ public class AbogImageService {
 
     private static final Long MAX_FILE_SIZE = 10 * 1024 * 1024L; // 최대 10MB
     private static final int MAX_IMAGES = 5; // 최대 이미지 개수
-    private static final String UPLOAD_DIR = "src/main/resources/uploads/abog/"; // 저장 경로
-    private static final String BASE_URL = "/uploads/abog/"; // 반환할 URL 경로 prefix
+    private static final String SUB_DIR = "abog/"; // 하위 디렉토리
+    private static final String UPLOAD_DIR = "uploads/" + SUB_DIR; // 저장 경로
+    private static final String BASE_URL = "/uploads/" + SUB_DIR; // 반환할 URL 경로 prefix
 
     private final AbogImageRepository abogImageRepository;
 
@@ -99,8 +100,9 @@ public class AbogImageService {
             // DB에서 이미지 삭제
             abogImageRepository.delete(image);
 
-            // 로컬 파일 삭제
-            String filePath = UPLOAD_DIR + image.getImageUrl().substring(image.getImageUrl().lastIndexOf("/") + 1);
+            // 로컬 파일 삭제 (uploads/abog/fileName)
+            String fileName = image.getImageUrl().substring(image.getImageUrl().lastIndexOf("/") + 1);
+            String filePath = UPLOAD_DIR + fileName;
             try {
                 Files.deleteIfExists(Paths.get(filePath));
             } catch (IOException e) {
@@ -109,6 +111,9 @@ public class AbogImageService {
         }
     }
 
+    /**
+     * 이미지 유효성 검사
+     */
     private void validateImage(List<MultipartFile> images) {
         // 파일 개수 제한
         if (images.size() > MAX_IMAGES) {
@@ -117,13 +122,12 @@ public class AbogImageService {
 
         // 각 이미지 파일에 대해 추가 유효성 검사 수행
         for (MultipartFile image : images) {
-            // 파일 크기 제한 (예: 5MB 이하)
             if (image.getSize() > MAX_FILE_SIZE) {
                 throw new BadRequestException(
-                        "이미지 파일 크기는 최대 5MB를 초과할 수 없습니다: " + image.getOriginalFilename());
+                        "이미지 파일 크기는 최대 10MB를 초과할 수 없습니다: " + image.getOriginalFilename());
             }
 
-            // 파일 형식 제한 (예: JPG, JPEG, PNG)
+            // 파일 형식 제한 (JPG, JPEG, PNG)
             String contentType = image.getContentType();
             if (contentType == null || (!contentType.equals("image/jpeg") && !contentType.equals("image/png"))) {
                 throw new BadRequestException("허용되지 않는 파일 형식입니다: " + image.getOriginalFilename());
@@ -131,4 +135,3 @@ public class AbogImageService {
         }
     }
 }
-

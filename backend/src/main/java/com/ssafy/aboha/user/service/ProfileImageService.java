@@ -16,8 +16,9 @@ import java.util.UUID;
 public class ProfileImageService {
 
     private static final Long MAX_FILE_SIZE = 10 * 1024 * 1024L; // 최대 10MB
-    private static final String BASE_URL = "/uploads/user/"; // 반환할 URL prefix
-    private static final String UPLOAD_DIR = "src/main/resources/uploads/user/"; // 저장 경로
+    private static final String SUB_DIR = "user/"; // 하위 디렉토리
+    private static final String UPLOAD_DIR = "uploads/" + SUB_DIR; // 저장 경로
+    private static final String BASE_URL = "/uploads/" + SUB_DIR; // 반환할 URL 경로 prefix
 
     /**
      * 이미지 처리: 저장 + 기존 이미지 삭제
@@ -43,10 +44,19 @@ public class ProfileImageService {
      * 이미지 파일 저장 및 URL 반환
      */
     private String saveImage(MultipartFile image) throws IOException {
+        // UUID 기반 고유 파일명 생성
         String fileName = UUID.randomUUID().toString().replace("-", "") + "_" + image.getOriginalFilename();
+
+        // 실제 파일 저장 경로
         Path savePath = Paths.get(UPLOAD_DIR, fileName);
+
+        // 디렉토리 생성 (없으면 생성)
         Files.createDirectories(savePath.getParent());
+
+        // 파일 저장
         Files.write(savePath, image.getBytes());
+
+        // 반환할 URL 경로 (DB에 저장할 경로)
         return BASE_URL + fileName;
     }
 
