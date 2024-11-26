@@ -1,6 +1,4 @@
 <script setup>
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { UserIcon } from 'lucide-vue-next'
 import AvatarIcon from '../common/AvatarIcon.vue'
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL
@@ -20,7 +18,7 @@ const { content, createdAt } = props.data.comment
 
 <template>
   <div class="flex items-center gap-3 pb-3 border-b">
-    <AvatarIcon :src="profileImageUrl" />
+    <AvatarIcon :src="`${BASE_URL}${profileImageUrl}`" />
     <div>
       <span class="pr-2 font-bold">{{ nickname }}</span>
       <span>{{ content }}</span>
