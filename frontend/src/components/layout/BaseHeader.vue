@@ -3,10 +3,8 @@ import { RouterLink } from 'vue-router'
 import { Button } from '@/components/ui/button'
 import useUserStore from '@/stores/user'
 import { storeToRefs } from 'pinia'
-import { Avatar, AvatarImage } from '../ui/avatar'
 import { onMounted, onUnmounted, ref } from 'vue'
-import AvatarFallback from '@/components/ui/avatar/AvatarFallback.vue'
-import { UserIcon } from 'lucide-vue-next'
+import { StarIcon, UserIcon } from 'lucide-vue-next'
 import { Skeleton } from '@/components/ui/skeleton'
 import AvatarIcon from '../common/AvatarIcon.vue'
 
@@ -83,10 +81,23 @@ const handleLogout = async () => {
           {{ item.label }}
         </RouterLink>
 
-        <Button variant="ghost" class="text-sm font-medium"> 여행 계획 </Button>
+        <Button variant="outline" class="text-sm font-medium">
+          <RouterLink
+            class="flex items-center gap-2"
+            :to="{ name: 'challenge' }"
+          >
+            <StarIcon class="w-4 h-4 text-yellow-500" />
+            <span>오늘의 챌린지</span>
+            <StarIcon class="w-4 h-4 text-yellow-500" />
+          </RouterLink>
+        </Button>
 
-        <Button variant="secondary" class="text-sm font-medium">
-          <RouterLink :to="{ name: 'suggest' }">아보하 추천받기</RouterLink>
+        <Button variant="outline" class="text-sm font-medium">
+          <RouterLink class="flex items-center gap-2" :to="{ name: 'suggest' }">
+            <span>🍀</span>
+            <span>아보하 추천받기</span>
+            <span>🍀</span>
+          </RouterLink>
         </Button>
       </nav>
 
