@@ -4,11 +4,25 @@ import useUserStore from '@/stores/user'
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
 import { computed } from 'vue'
+import userAPI from '@/api/user'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
 
 const { userInfo } = storeToRefs(userStore)
+
+const handleDelete = async () => {
+  const { error: deleteError } = await userAPI.deleteUser()
+  if (deleteError) {
+    alert(deleteError)
+    return
+  }
+
+  alert('회원탈퇴가 완료되었습니다.')
+  router.push({ name: 'home' })
+}
 
 const activeRoute = computed(() => route.name)
 </script>

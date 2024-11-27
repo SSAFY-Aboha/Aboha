@@ -37,7 +37,7 @@ const handleSubmit = async () => {
     await attractionAPI.postAttractionReview(reviewData.value)
 
   if (postError) {
-    console.log(postError)
+    alert(postError)
     isOpen.value = false
     return
   }
