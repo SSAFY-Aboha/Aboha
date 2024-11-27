@@ -14,16 +14,18 @@ const userStore = useUserStore()
 const { userInfo } = storeToRefs(userStore)
 
 const handleDelete = async () => {
-  const { error: deleteError } = await userAPI.deleteUser()
-  if (deleteError) {
-    alert(deleteError)
-    return
+  if (confirm('정말 탈퇴하시겠습니까?')) {
+    const { error: deleteError } = await userAPI.deleteUser()
+    if (deleteError) {
+      alert(deleteError)
+      return
+    }
+
+    alert('회원탈퇴가 완료되었습니다.')
+    userAPI.logout()
+    router.push({ name: 'home' })
   }
-
-  alert('회원탈퇴가 완료되었습니다.')
-  router.push({ name: 'home' })
 }
-
 const activeRoute = computed(() => route.name)
 </script>
 
